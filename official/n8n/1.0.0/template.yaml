@@ -1,0 +1,26 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: n8n
+  name: n8n
+  version: 1.0.0
+  description: Workflow automation (standalone, SQLite).
+  category: Automation
+  icon: https://cdn.simpleicons.org/n8n
+  homepage: https://n8n.io
+  tags: [automation, workflow, no-code]
+volumes:
+  - name: data
+applications:
+  - name: n8n
+    image: n8nio/n8n
+    tag: "1.123.59"
+    ports:
+      - container: 5678
+        scheme: http
+    env:
+      N8N_PORT: "5678"
+      GENERIC_TIMEZONE: UTC
+    mounts:
+      - volume: data
+        path: /home/node/.n8n

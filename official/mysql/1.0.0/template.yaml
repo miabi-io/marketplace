@@ -1,0 +1,16 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: mysql
+  name: MySQL
+  version: 1.0.0
+  description: Managed MySQL database.
+  category: Database
+  icon: https://cdn.simpleicons.org/mysql
+  homepage: https://www.mysql.com
+  tags: [database, sql]
+databases:
+  - name: mysql
+    engine: mysql
+    version: "8.4"
+    placement: dedicated

@@ -1,0 +1,16 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: libsql
+  name: libSQL
+  version: 1.0.0
+  description: Managed libSQL (sqld) database.
+  category: Database
+  icon: https://cdn.simpleicons.org/sqlite
+  homepage: https://github.com/tursodatabase/libsql
+  tags: [database, sql, sqlite]
+databases:
+  - name: libsql
+    engine: libsql
+    version: "latest"
+    placement: dedicated

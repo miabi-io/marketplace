@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.26"
+          cache-dependency-path: go.sum
+
+      - name: Build
+        run: go build ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        run: go test ./...
+
+      - name: Lint catalog (validate every template + digests + unique slugs)
+        run: go run ./cmd/marketplace lint
+
+      # On PRs, nudge contributors that the generated artifacts are stale. On main
+      # we regenerate and commit them instead (see the publish job), so this is a
+      # PR-only guard rather than a hard requirement to pre-commit generated files.
+      - name: Generated artifacts are up to date
+        if: github.event_name == 'pull_request'
+        run: |
+          go run ./cmd/marketplace generate
+          git diff --exit-code export.json registry/index.json \
+            || (echo "::error::export.json / registry/index.json are stale — run 'go run ./cmd/marketplace generate' and commit, or let the merge-to-main job regenerate them." && exit 1)
+
+  # After merge to main, regenerate export.json + registry/index.json from the
+  # embedded templates and commit them back, so the published catalog (served via
+  # jsDelivr) always matches the repo without contributors having to run generate.
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: marketplace-publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.26"
+          cache-dependency-path: go.sum
+
+      - name: Generate catalog artifacts
+        run: go run ./cmd/marketplace generate
+
+      - name: Commit regenerated artifacts
+        run: |
+          if git diff --quiet -- export.json registry/index.json; then
+            echo "No catalog changes to publish."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add export.json registry/index.json
+          git commit -m "chore(catalog): regenerate export.json + index [skip ci]"
+          git push

@@ -1,0 +1,62 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: pgadmin4
+  name: pgAdmin 4
+  version: 1.0.0
+  description: Web interface to administer PostgreSQL databases.
+  category: Database
+  icon: https://cdn.simpleicons.org/postgresql
+  homepage: https://www.pgadmin.org
+  author:
+    name: Miabi
+    email: community@miabi.io
+    website: https://miabi.io
+  tags: [database, postgres, admin, tools]
+
+inputs:
+  - key: email
+    label: Admin email
+    help: Login email for the pgAdmin web interface.
+    type: string
+    required: true
+    pattern: "^[^@\\s]+@[^@\\s]+$"
+    placeholder: admin@example.com
+  - key: password
+    label: Admin password
+    help: Login password for the pgAdmin web interface. Leave blank to auto-generate.
+    type: password
+    generate: true
+
+# Holds pgAdmin's configuration database (registered servers, preferences).
+volumes:
+  - name: data
+
+applications:
+  - name: pgadmin
+    primary: true
+    image: dpage/pgadmin4
+    tag: "8.14"
+    ports:
+      - container: 80
+        scheme: http
+    env:
+      PGADMIN_DEFAULT_EMAIL: "{{ .inputs.email }}"
+      PGADMIN_DEFAULT_PASSWORD: "{{ .inputs.password }}"
+      PGADMIN_LISTEN_PORT: "80"
+    secretEnv:
+      - PGADMIN_DEFAULT_PASSWORD
+    mounts:
+      - volume: data
+        path: /var/lib/pgadmin
+    resources:
+      memory: 512Mi
+      cpu: 0.5
+    healthcheck:
+      type: http
+      path: /misc/ping
+      port: 80
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 20

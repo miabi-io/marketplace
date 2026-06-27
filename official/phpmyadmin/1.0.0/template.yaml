@@ -1,0 +1,41 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: phpmyadmin
+  name: phpMyAdmin
+  version: 1.0.0
+  description: Web interface to administer MySQL and MariaDB databases.
+  category: Database
+  icon: https://cdn.simpleicons.org/phpmyadmin
+  homepage: https://www.phpmyadmin.net
+  author:
+    name: Miabi
+    email: community@miabi.io
+    website: https://miabi.io
+  tags: [database, mysql, mariadb, admin, tools]
+
+# Connects to any MySQL/MariaDB server in the workspace: PMA_ARBITRARY lets you
+# enter the target instance's host (its in-network alias) on the login screen, so
+# no specific database dependency is wired here.
+applications:
+  - name: phpmyadmin
+    primary: true
+    image: phpmyadmin
+    tag: "5.2-apache"
+    ports:
+      - container: 80
+        scheme: http
+    env:
+      PMA_ARBITRARY: "1"
+      UPLOAD_LIMIT: 256M
+    resources:
+      memory: 256Mi
+      cpu: 0.5
+    healthcheck:
+      type: http
+      path: /
+      port: 80
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 15

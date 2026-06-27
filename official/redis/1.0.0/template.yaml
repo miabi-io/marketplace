@@ -1,0 +1,16 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: redis
+  name: Redis
+  version: 1.0.0
+  description: Managed Redis instance.
+  category: Database
+  icon: https://cdn.simpleicons.org/redis
+  homepage: https://redis.io
+  tags: [database, cache, key-value]
+databases:
+  - name: redis
+    engine: redis
+    version: "8-alpine"
+    placement: dedicated

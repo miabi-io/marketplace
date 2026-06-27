@@ -1,0 +1,35 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: okapi-example
+  name: Okapi Example
+  version: 1.0.0
+  description: Reference app for the Okapi Go API framework — middleware, routing, real-time SSE, and auto-generated OpenAPI docs at /docs.
+  category: Development
+  icon: https://cdn.simpleicons.org/go
+  homepage: https://github.com/jkaninda/okapi-example
+  author:
+    name: Jonas Kaninda
+    website: https://github.com/jkaninda
+  tags: [api, go, okapi, example]
+inputs:
+  - key: jwt_secret
+    label: JWT secret
+    help: Used to sign tokens. Leave blank to auto-generate a strong secret.
+    type: password
+    generate: true
+applications:
+  - name: okapi-example
+    image: jkaninda/okapi-example
+    tag: latest
+    ports:
+      - container: 8080
+        scheme: http
+    env:
+      JWT_SECRET: "{{ .inputs.jwt_secret }}"
+      ENABLE_DOCS: "true"
+    secretEnv: [JWT_SECRET]
+    healthcheck:
+      type: http
+      path: /
+      port: 8080

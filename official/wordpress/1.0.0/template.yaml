@@ -1,0 +1,36 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: wordpress
+  name: WordPress
+  version: 1.0.0
+  description: WordPress CMS backed by MySQL.
+  category: CMS
+  icon: https://cdn.simpleicons.org/wordpress
+  homepage: https://wordpress.org
+  tags: [cms, blog, php]
+databases:
+  - name: db
+    engine: mysql
+    version: "8.4"
+    placement: auto
+volumes:
+  - name: content
+applications:
+  - name: wordpress
+    primary: true
+    image: wordpress
+    tag: "7.0-php8.3-apache"
+    ports:
+      - container: 80
+        scheme: http
+    env:
+      WORDPRESS_DB_HOST: "{{ .databases.db.host }}"
+      WORDPRESS_DB_USER: "{{ .databases.db.user }}"
+      WORDPRESS_DB_PASSWORD: "{{ .databases.db.password }}"
+      WORDPRESS_DB_NAME: "{{ .databases.db.name }}"
+    secretEnv:
+      - WORDPRESS_DB_PASSWORD
+    mounts:
+      - volume: content
+        path: /var/www/html

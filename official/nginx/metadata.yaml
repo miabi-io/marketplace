@@ -1,0 +1,6 @@
+# Storefront-only metadata (does NOT affect install). The install manifest lives
+# in <version>/template.yaml; this enriches the catalog listing + detail page.
+featured: true
+sourceRepo: https://github.com/miabi-io/marketplace/tree/main/official/nginx
+screenshots:
+  - https://nginx.org/nginx.png

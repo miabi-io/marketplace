@@ -1,0 +1,112 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: posta
+  name: Posta
+  version: 1.0.0
+  description: Self-hosted transactional email & SMTP platform — send, receive, and verify email.
+  category: Email
+  icon: https://github.com/goposta.png
+  homepage: https://github.com/goposta/posta
+  author:
+    name: Jonas Kaninda
+    email: me@jkaninda.dev
+    website: https://goposta.org
+  tags: [email, smtp, transactional, mail, self-hosted]
+  minMiabi: "0.5.0"
+
+inputs:
+  - key: web_url
+    label: Public URL
+    help: The public base URL Posta is served on (used for links, OAuth callbacks, and the API server list).
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://posta.example.com
+  - key: admin_email
+    label: Admin email
+    help: Email of the initial admin account.
+    type: string
+    required: true
+    default: admin@example.com
+    pattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+  - key: admin_password
+    label: Admin password
+    help: Password for the initial admin account. Choose a strong value.
+    type: password
+    required: true
+  - key: jwt_secret
+    label: JWT secret
+    help: Signing key for auth tokens. Leave blank to auto-generate.
+    type: password
+    generate: true
+  - key: encryption_key
+    label: Encryption key
+    help: AES-256-GCM key used to encrypt stored SMTP passwords. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 32
+
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+  - name: redis
+    engine: redis
+    version: "8-alpine"
+    placement: dedicated
+
+applications:
+  - name: posta
+    primary: true
+    image: jkaninda/posta
+    tag: "0.11.0"
+    ports:
+      - container: 9000
+        scheme: http
+    env:
+      POSTA_ENV: production
+      POSTA_WEB_URL: "{{ .inputs.web_url }}"
+
+      # Database (a managed PostgreSQL database, resolved by placement).
+      POSTA_DB_HOST: "{{ .databases.db.host }}"
+      POSTA_DB_PORT: "{{ .databases.db.port }}"
+      POSTA_DB_USER: "{{ .databases.db.user }}"
+      POSTA_DB_PASSWORD: "{{ .databases.db.password }}"
+      POSTA_DB_NAME: "{{ .databases.db.name }}"
+
+      # Redis (a dedicated managed instance — Miabi sets a password on it).
+      POSTA_REDIS_ADDR: "{{ .databases.redis.host }}:{{ .databases.redis.port }}"
+      POSTA_REDIS_PASSWORD: "{{ .databases.redis.password }}"
+
+      # Security.
+      POSTA_JWT_SECRET: "{{ .inputs.jwt_secret }}"
+      POSTA_ENCRYPTION_KEY: "{{ .inputs.encryption_key }}"
+      POSTA_ADMIN_EMAIL: "{{ .inputs.admin_email }}"
+      POSTA_ADMIN_PASSWORD: "{{ .inputs.admin_password }}"
+
+      # Worker (run embedded in the server process).
+      POSTA_EMBEDDED_WORKER: "true"
+      POSTA_WORKER_CONCURRENCY: "10"
+      POSTA_WORKER_MAX_RETRIES: "5"
+
+      # Email verification endpoint (results cached in Redis).
+      POSTA_EMAIL_VERIFY_ENABLED: "true"
+      POSTA_EMAIL_VERIFY_CACHE_TTL_HOURS: "168"
+      POSTA_EMAIL_VERIFY_MX_CACHE_TTL_HOURS: "24"
+      POSTA_EMAIL_VERIFY_RATE_HOURLY: "1000"
+    secretEnv:
+      - POSTA_DB_PASSWORD
+      - POSTA_REDIS_PASSWORD
+      - POSTA_JWT_SECRET
+      - POSTA_ENCRYPTION_KEY
+      - POSTA_ADMIN_PASSWORD
+    healthcheck:
+      type: http
+      path: /healthz
+      port: 9000
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 10

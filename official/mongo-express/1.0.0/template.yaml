@@ -1,0 +1,57 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: mongo-express
+  name: Mongo Express
+  version: 1.0.0
+  description: Web interface to administer MongoDB databases.
+  category: Database
+  icon: https://cdn.simpleicons.org/mongodb
+  homepage: https://github.com/mongo-express/mongo-express
+  author:
+    name: Miabi
+    email: community@miabi.io
+    website: https://miabi.io
+  tags: [database, mongodb, nosql, admin, tools]
+
+# Mongo Express connects to one MongoDB server. Paste the instance's connection
+# string (from its Credentials page) so it can reach the server by its in-network
+# alias; the web UI is protected by its own basic-auth login.
+inputs:
+  - key: mongodb_url
+    label: MongoDB connection string
+    help: From the MongoDB instance's Credentials page, e.g. mongodb://admin:password@mb-db-xxxx:27017/?authSource=admin
+    type: password
+    required: true
+    placeholder: mongodb://admin:password@host:27017/?authSource=admin
+  - key: ui_username
+    label: UI username
+    help: Username for the Mongo Express login.
+    type: string
+    default: admin
+    required: true
+  - key: ui_password
+    label: UI password
+    help: Password for the Mongo Express login. Leave blank to auto-generate.
+    type: password
+    generate: true
+
+applications:
+  - name: mongo-express
+    primary: true
+    image: mongo-express
+    tag: "1.0.2-20"
+    ports:
+      - container: 8081
+        scheme: http
+    env:
+      ME_CONFIG_MONGODB_URL: "{{ .inputs.mongodb_url }}"
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_BASICAUTH_USERNAME: "{{ .inputs.ui_username }}"
+      ME_CONFIG_BASICAUTH_PASSWORD: "{{ .inputs.ui_password }}"
+    secretEnv:
+      - ME_CONFIG_MONGODB_URL
+      - ME_CONFIG_BASICAUTH_PASSWORD
+    resources:
+      memory: 256Mi
+      cpu: 0.5

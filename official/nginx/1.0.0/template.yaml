@@ -1,0 +1,18 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: nginx
+  name: Nginx
+  version: 1.0.0
+  description: Lightweight web server / static site.
+  category: Web
+  icon: https://cdn.simpleicons.org/nginx
+  homepage: https://nginx.org
+  tags: [web, server, static]
+applications:
+  - name: nginx
+    image: nginx
+    tag: 1.30-alpine
+    ports:
+      - container: 80
+        scheme: http

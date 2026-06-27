@@ -1,0 +1,42 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: gitea
+  name: Gitea
+  version: 1.0.0
+  description: Lightweight self-hosted Git service, backed by PostgreSQL.
+  category: Development
+  icon: https://cdn.simpleicons.org/gitea
+  homepage: https://gitea.io
+  tags: [git, vcs, devops]
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+volumes:
+  - name: data
+applications:
+  - name: gitea
+    primary: true
+    image: gitea/gitea
+    tag: "1.26"
+    ports:
+      - container: 3000
+        scheme: http
+    env:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__database__DB_TYPE: postgres
+      GITEA__database__HOST: "{{ .databases.db.host }}:{{ .databases.db.port }}"
+      GITEA__database__NAME: "{{ .databases.db.name }}"
+      GITEA__database__USER: "{{ .databases.db.user }}"
+      GITEA__database__PASSWD: "{{ .databases.db.password }}"
+      # DB is wired via env, so skip the first-run installer; the first registered
+      # account becomes the site administrator.
+      GITEA__security__INSTALL_LOCK: "true"
+    secretEnv:
+      - GITEA__database__PASSWD
+    mounts:
+      - volume: data
+        path: /data

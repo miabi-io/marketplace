@@ -1,0 +1,53 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: nextcloud
+  name: Nextcloud
+  version: 1.0.0
+  description: Self-hosted content collaboration platform — files, calendar and contacts, backed by PostgreSQL.
+  category: Productivity
+  icon: https://cdn.simpleicons.org/nextcloud
+  homepage: https://nextcloud.com
+  tags: [cloud, storage, files, collaboration]
+inputs:
+  - key: admin_user
+    label: Admin username
+    help: The initial administrator account created on first launch.
+    type: string
+    default: admin
+    required: true
+  - key: admin_password
+    label: Admin password
+    help: Leave blank to auto-generate a strong password.
+    type: password
+    generate: true
+    length: 24
+    required: true
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+volumes:
+  - name: data
+applications:
+  - name: nextcloud
+    primary: true
+    image: nextcloud
+    tag: "34-apache"
+    ports:
+      - container: 80
+        scheme: http
+    env:
+      POSTGRES_HOST: "{{ .databases.db.host }}:{{ .databases.db.port }}"
+      POSTGRES_DB: "{{ .databases.db.name }}"
+      POSTGRES_USER: "{{ .databases.db.user }}"
+      POSTGRES_PASSWORD: "{{ .databases.db.password }}"
+      NEXTCLOUD_ADMIN_USER: "{{ .inputs.admin_user }}"
+      NEXTCLOUD_ADMIN_PASSWORD: "{{ .inputs.admin_password }}"
+    secretEnv:
+      - POSTGRES_PASSWORD
+      - NEXTCLOUD_ADMIN_PASSWORD
+    mounts:
+      - volume: data
+        path: /var/www/html

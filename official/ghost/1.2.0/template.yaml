@@ -1,0 +1,73 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: ghost
+  name: Ghost
+  version: 1.2.0
+  description: Professional publishing platform — a headless Node.js CMS for blogs and newsletters.
+  category: CMS
+  icon: https://static.ghost.org/v5.0.0/images/ghost-logo-dark.png
+  homepage: https://ghost.org
+  author:
+    name: Miabi
+    email: community@miabi.io
+    website: https://miabi.io
+  tags: [blog, cms, publishing, newsletter]
+  minMiabi: "0.5.0"
+
+# Questions asked in the install wizard. Referenced below as {{ .inputs.<key> }}.
+inputs:
+  - key: site_url
+    label: Public URL
+    help: The full URL your blog will be served on (used for links and webhooks).
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://blog.example.com
+
+# Logical database dependency. placement: auto -> reuse a compatible MySQL
+# instance if one exists, else provision a dedicated one; either way Ghost gets
+# its own scoped database + user. Tokens resolve identically regardless.
+databases:
+  - name: db
+    engine: mysql
+    version: "8.4"
+    placement: auto
+
+# Managed volume holding Ghost's content (images, themes, settings).
+volumes:
+  - name: content
+
+applications:
+  - name: ghost
+    primary: true
+    image: ghost
+    tag: "6.45-alpine"
+    ports:
+      - container: 2368
+        scheme: http
+    env:
+      NODE_ENV: production
+      url: "{{ .inputs.site_url }}"
+      database__client: mysql
+      database__connection__host: "{{ .databases.db.host }}"
+      database__connection__port: "{{ .databases.db.port }}"
+      database__connection__user: "{{ .databases.db.user }}"
+      database__connection__password: "{{ .databases.db.password }}"
+      database__connection__database: "{{ .databases.db.name }}"
+    secretEnv:
+      - database__connection__password
+    mounts:
+      - volume: content
+        path: /var/lib/ghost/content
+    resources:
+      memory: 512Mi
+      cpu: 0.5
+    healthcheck:
+      type: http
+      path: /
+      port: 2368
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 20

@@ -1,0 +1,16 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: postgresql
+  name: PostgreSQL
+  version: 1.0.0
+  description: Managed PostgreSQL database.
+  category: Database
+  icon: https://cdn.simpleicons.org/postgresql
+  homepage: https://www.postgresql.org
+  tags: [database, sql]
+databases:
+  - name: postgres
+    engine: postgres
+    version: "17-alpine"
+    placement: dedicated

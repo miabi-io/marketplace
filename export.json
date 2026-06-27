@@ -1,0 +1,204 @@
+{
+  "etag": "\"cc07f08be4729251abd2ba99f3c2433a7f79975225db8dda431de48233ba232d\"",
+  "generatedAt": "",
+  "templates": [
+    {
+      "slug": "forgejo",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:6c782be35e797cb538f5ec4b498ed4e9fd1014c4480cc33571f8601d05afd04d",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: forgejo\n  name: Forgejo\n  version: 1.0.0\n  description: Self-hosted lightweight software forge (Gitea soft-fork), backed by PostgreSQL.\n  category: Development\n  icon: https://cdn.simpleicons.org/forgejo\n  homepage: https://forgejo.org\n  tags: [git, vcs, devops]\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: data\napplications:\n  - name: forgejo\n    primary: true\n    image: codeberg.org/forgejo/forgejo\n    tag: \"15\"\n    ports:\n      - container: 3000\n        scheme: http\n    env:\n      USER_UID: \"1000\"\n      USER_GID: \"1000\"\n      FORGEJO__database__DB_TYPE: postgres\n      FORGEJO__database__HOST: \"{{ .databases.db.host }}:{{ .databases.db.port }}\"\n      FORGEJO__database__NAME: \"{{ .databases.db.name }}\"\n      FORGEJO__database__USER: \"{{ .databases.db.user }}\"\n      FORGEJO__database__PASSWD: \"{{ .databases.db.password }}\"\n      # DB is wired via env, so skip the first-run installer; the first registered\n      # account becomes the site administrator.\n      FORGEJO__security__INSTALL_LOCK: \"true\"\n    secretEnv:\n      - FORGEJO__database__PASSWD\n    mounts:\n      - volume: data\n        path: /data\n"
+        }
+      ]
+    },
+    {
+      "slug": "ghost",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.2.0",
+          "digest": "sha256:70eb482f83941f0314bf464603047f08c97446e5926061c533ef36409e6c0908",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: ghost\n  name: Ghost\n  version: 1.2.0\n  description: Professional publishing platform — a headless Node.js CMS for blogs and newsletters.\n  category: CMS\n  icon: https://static.ghost.org/v5.0.0/images/ghost-logo-dark.png\n  homepage: https://ghost.org\n  author:\n    name: Miabi\n    email: community@miabi.io\n    website: https://miabi.io\n  tags: [blog, cms, publishing, newsletter]\n  minMiabi: \"0.5.0\"\n\n# Questions asked in the install wizard. Referenced below as {{ .inputs.\u003ckey\u003e }}.\ninputs:\n  - key: site_url\n    label: Public URL\n    help: The full URL your blog will be served on (used for links and webhooks).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://blog.example.com\n\n# Logical database dependency. placement: auto -\u003e reuse a compatible MySQL\n# instance if one exists, else provision a dedicated one; either way Ghost gets\n# its own scoped database + user. Tokens resolve identically regardless.\ndatabases:\n  - name: db\n    engine: mysql\n    version: \"8.4\"\n    placement: auto\n\n# Managed volume holding Ghost's content (images, themes, settings).\nvolumes:\n  - name: content\n\napplications:\n  - name: ghost\n    primary: true\n    image: ghost\n    tag: \"6.45-alpine\"\n    ports:\n      - container: 2368\n        scheme: http\n    env:\n      NODE_ENV: production\n      url: \"{{ .inputs.site_url }}\"\n      database__client: mysql\n      database__connection__host: \"{{ .databases.db.host }}\"\n      database__connection__port: \"{{ .databases.db.port }}\"\n      database__connection__user: \"{{ .databases.db.user }}\"\n      database__connection__password: \"{{ .databases.db.password }}\"\n      database__connection__database: \"{{ .databases.db.name }}\"\n    secretEnv:\n      - database__connection__password\n    mounts:\n      - volume: content\n        path: /var/lib/ghost/content\n    resources:\n      memory: 512Mi\n      cpu: 0.5\n    healthcheck:\n      type: http\n      path: /\n      port: 2368\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 20\n"
+        }
+      ]
+    },
+    {
+      "slug": "gitea",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:5877ae07ad1e3684d04fcffd56587f08a375fc890ce94e13ad32979dec682c2f",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: gitea\n  name: Gitea\n  version: 1.0.0\n  description: Lightweight self-hosted Git service, backed by PostgreSQL.\n  category: Development\n  icon: https://cdn.simpleicons.org/gitea\n  homepage: https://gitea.io\n  tags: [git, vcs, devops]\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: data\napplications:\n  - name: gitea\n    primary: true\n    image: gitea/gitea\n    tag: \"1.26\"\n    ports:\n      - container: 3000\n        scheme: http\n    env:\n      USER_UID: \"1000\"\n      USER_GID: \"1000\"\n      GITEA__database__DB_TYPE: postgres\n      GITEA__database__HOST: \"{{ .databases.db.host }}:{{ .databases.db.port }}\"\n      GITEA__database__NAME: \"{{ .databases.db.name }}\"\n      GITEA__database__USER: \"{{ .databases.db.user }}\"\n      GITEA__database__PASSWD: \"{{ .databases.db.password }}\"\n      # DB is wired via env, so skip the first-run installer; the first registered\n      # account becomes the site administrator.\n      GITEA__security__INSTALL_LOCK: \"true\"\n    secretEnv:\n      - GITEA__database__PASSWD\n    mounts:\n      - volume: data\n        path: /data\n"
+        }
+      ]
+    },
+    {
+      "slug": "libsql",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:1da283adb8c96aa4962e3cc054f93eaad4ef16743f6960d9a52610494478cc7b",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: libsql\n  name: libSQL\n  version: 1.0.0\n  description: Managed libSQL (sqld) database.\n  category: Database\n  icon: https://cdn.simpleicons.org/sqlite\n  homepage: https://github.com/tursodatabase/libsql\n  tags: [database, sql, sqlite]\ndatabases:\n  - name: libsql\n    engine: libsql\n    version: \"latest\"\n    placement: dedicated\n"
+        }
+      ]
+    },
+    {
+      "slug": "mongo-express",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:aa0cbe0af36d3eee4441a4854b3e0e88cce4859bcc6594fccdc76e6213a8feb9",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: mongo-express\n  name: Mongo Express\n  version: 1.0.0\n  description: Web interface to administer MongoDB databases.\n  category: Database\n  icon: https://cdn.simpleicons.org/mongodb\n  homepage: https://github.com/mongo-express/mongo-express\n  author:\n    name: Miabi\n    email: community@miabi.io\n    website: https://miabi.io\n  tags: [database, mongodb, nosql, admin, tools]\n\n# Mongo Express connects to one MongoDB server. Paste the instance's connection\n# string (from its Credentials page) so it can reach the server by its in-network\n# alias; the web UI is protected by its own basic-auth login.\ninputs:\n  - key: mongodb_url\n    label: MongoDB connection string\n    help: From the MongoDB instance's Credentials page, e.g. mongodb://admin:password@mb-db-xxxx:27017/?authSource=admin\n    type: password\n    required: true\n    placeholder: mongodb://admin:password@host:27017/?authSource=admin\n  - key: ui_username\n    label: UI username\n    help: Username for the Mongo Express login.\n    type: string\n    default: admin\n    required: true\n  - key: ui_password\n    label: UI password\n    help: Password for the Mongo Express login. Leave blank to auto-generate.\n    type: password\n    generate: true\n\napplications:\n  - name: mongo-express\n    primary: true\n    image: mongo-express\n    tag: \"1.0.2-20\"\n    ports:\n      - container: 8081\n        scheme: http\n    env:\n      ME_CONFIG_MONGODB_URL: \"{{ .inputs.mongodb_url }}\"\n      ME_CONFIG_MONGODB_ENABLE_ADMIN: \"true\"\n      ME_CONFIG_BASICAUTH_USERNAME: \"{{ .inputs.ui_username }}\"\n      ME_CONFIG_BASICAUTH_PASSWORD: \"{{ .inputs.ui_password }}\"\n    secretEnv:\n      - ME_CONFIG_MONGODB_URL\n      - ME_CONFIG_BASICAUTH_PASSWORD\n    resources:\n      memory: 256Mi\n      cpu: 0.5\n"
+        }
+      ]
+    },
+    {
+      "slug": "mongodb",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:b8e07217f096ece29c4608a2ef43e60e7867ea22a6c8ff2ec65557d62c778bbe",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: mongodb\n  name: MongoDB\n  version: 1.0.0\n  description: Managed MongoDB document database.\n  category: Database\n  icon: https://cdn.simpleicons.org/mongodb\n  homepage: https://www.mongodb.com\n  tags: [database, nosql, document]\ndatabases:\n  - name: mongodb\n    engine: mongodb\n    version: \"7.0\"\n    placement: dedicated\n"
+        }
+      ]
+    },
+    {
+      "slug": "mysql",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:4c1e9a7996a0c139eb4dbefe976219d04f0d501429e3cafdd07dafd4c0afda9e",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: mysql\n  name: MySQL\n  version: 1.0.0\n  description: Managed MySQL database.\n  category: Database\n  icon: https://cdn.simpleicons.org/mysql\n  homepage: https://www.mysql.com\n  tags: [database, sql]\ndatabases:\n  - name: mysql\n    engine: mysql\n    version: \"8.4\"\n    placement: dedicated\n"
+        }
+      ]
+    },
+    {
+      "slug": "n8n",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:0bc8d0b055abfdc7ca3eabdd73affa61987058457610487caed5124ad71253cf",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: n8n\n  name: n8n\n  version: 1.0.0\n  description: Workflow automation (standalone, SQLite).\n  category: Automation\n  icon: https://cdn.simpleicons.org/n8n\n  homepage: https://n8n.io\n  tags: [automation, workflow, no-code]\nvolumes:\n  - name: data\napplications:\n  - name: n8n\n    image: n8nio/n8n\n    tag: \"1.123.59\"\n    ports:\n      - container: 5678\n        scheme: http\n    env:\n      N8N_PORT: \"5678\"\n      GENERIC_TIMEZONE: UTC\n    mounts:\n      - volume: data\n        path: /home/node/.n8n\n"
+        }
+      ]
+    },
+    {
+      "slug": "nextcloud",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:b603b099d57579006c50fd9746179f2fb22f3e2ca2601d03c858e629d1c2f59f",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: nextcloud\n  name: Nextcloud\n  version: 1.0.0\n  description: Self-hosted content collaboration platform — files, calendar and contacts, backed by PostgreSQL.\n  category: Productivity\n  icon: https://cdn.simpleicons.org/nextcloud\n  homepage: https://nextcloud.com\n  tags: [cloud, storage, files, collaboration]\ninputs:\n  - key: admin_user\n    label: Admin username\n    help: The initial administrator account created on first launch.\n    type: string\n    default: admin\n    required: true\n  - key: admin_password\n    label: Admin password\n    help: Leave blank to auto-generate a strong password.\n    type: password\n    generate: true\n    length: 24\n    required: true\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: data\napplications:\n  - name: nextcloud\n    primary: true\n    image: nextcloud\n    tag: \"34-apache\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      POSTGRES_HOST: \"{{ .databases.db.host }}:{{ .databases.db.port }}\"\n      POSTGRES_DB: \"{{ .databases.db.name }}\"\n      POSTGRES_USER: \"{{ .databases.db.user }}\"\n      POSTGRES_PASSWORD: \"{{ .databases.db.password }}\"\n      NEXTCLOUD_ADMIN_USER: \"{{ .inputs.admin_user }}\"\n      NEXTCLOUD_ADMIN_PASSWORD: \"{{ .inputs.admin_password }}\"\n    secretEnv:\n      - POSTGRES_PASSWORD\n      - NEXTCLOUD_ADMIN_PASSWORD\n    mounts:\n      - volume: data\n        path: /var/www/html\n"
+        }
+      ]
+    },
+    {
+      "slug": "nginx",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:3e9666f0e3a299d3189b46100f77a55b7343394e70f97700e3de018cad0e605d",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: nginx\n  name: Nginx\n  version: 1.0.0\n  description: Lightweight web server / static site.\n  category: Web\n  icon: https://cdn.simpleicons.org/nginx\n  homepage: https://nginx.org\n  tags: [web, server, static]\napplications:\n  - name: nginx\n    image: nginx\n    tag: 1.30-alpine\n    ports:\n      - container: 80\n        scheme: http\n"
+        }
+      ]
+    },
+    {
+      "slug": "pgadmin4",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:110a39a2d675cac5a780d33da295bfce20dad3adad76764754d6fd03b74d08a2",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: pgadmin4\n  name: pgAdmin 4\n  version: 1.0.0\n  description: Web interface to administer PostgreSQL databases.\n  category: Database\n  icon: https://cdn.simpleicons.org/postgresql\n  homepage: https://www.pgadmin.org\n  author:\n    name: Miabi\n    email: community@miabi.io\n    website: https://miabi.io\n  tags: [database, postgres, admin, tools]\n\ninputs:\n  - key: email\n    label: Admin email\n    help: Login email for the pgAdmin web interface.\n    type: string\n    required: true\n    pattern: \"^[^@\\\\s]+@[^@\\\\s]+$\"\n    placeholder: admin@example.com\n  - key: password\n    label: Admin password\n    help: Login password for the pgAdmin web interface. Leave blank to auto-generate.\n    type: password\n    generate: true\n\n# Holds pgAdmin's configuration database (registered servers, preferences).\nvolumes:\n  - name: data\n\napplications:\n  - name: pgadmin\n    primary: true\n    image: dpage/pgadmin4\n    tag: \"8.14\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      PGADMIN_DEFAULT_EMAIL: \"{{ .inputs.email }}\"\n      PGADMIN_DEFAULT_PASSWORD: \"{{ .inputs.password }}\"\n      PGADMIN_LISTEN_PORT: \"80\"\n    secretEnv:\n      - PGADMIN_DEFAULT_PASSWORD\n    mounts:\n      - volume: data\n        path: /var/lib/pgadmin\n    resources:\n      memory: 512Mi\n      cpu: 0.5\n    healthcheck:\n      type: http\n      path: /misc/ping\n      port: 80\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 20\n"
+        }
+      ]
+    },
+    {
+      "slug": "phpmyadmin",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:15a8e2be404418bfe047dc4be54f7ac15dba85e0d9335c23cdb1124bb7a1e352",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: phpmyadmin\n  name: phpMyAdmin\n  version: 1.0.0\n  description: Web interface to administer MySQL and MariaDB databases.\n  category: Database\n  icon: https://cdn.simpleicons.org/phpmyadmin\n  homepage: https://www.phpmyadmin.net\n  author:\n    name: Miabi\n    email: community@miabi.io\n    website: https://miabi.io\n  tags: [database, mysql, mariadb, admin, tools]\n\n# Connects to any MySQL/MariaDB server in the workspace: PMA_ARBITRARY lets you\n# enter the target instance's host (its in-network alias) on the login screen, so\n# no specific database dependency is wired here.\napplications:\n  - name: phpmyadmin\n    primary: true\n    image: phpmyadmin\n    tag: \"5.2-apache\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      PMA_ARBITRARY: \"1\"\n      UPLOAD_LIMIT: 256M\n    resources:\n      memory: 256Mi\n      cpu: 0.5\n    healthcheck:\n      type: http\n      path: /\n      port: 80\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 15\n"
+        }
+      ]
+    },
+    {
+      "slug": "posta",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:898923b463c23ee4a45c81a979ca0fdd9040a90d3175181ecaaa4732f06189d4",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: posta\n  name: Posta\n  version: 1.0.0\n  description: Self-hosted transactional email \u0026 SMTP platform — send, receive, and verify email.\n  category: Email\n  icon: https://github.com/goposta.png\n  homepage: https://github.com/goposta/posta\n  author:\n    name: Jonas Kaninda\n    email: me@jkaninda.dev\n    website: https://goposta.org\n  tags: [email, smtp, transactional, mail, self-hosted]\n  minMiabi: \"0.5.0\"\n\ninputs:\n  - key: web_url\n    label: Public URL\n    help: The public base URL Posta is served on (used for links, OAuth callbacks, and the API server list).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://posta.example.com\n  - key: admin_email\n    label: Admin email\n    help: Email of the initial admin account.\n    type: string\n    required: true\n    default: admin@example.com\n    pattern: '^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$'\n  - key: admin_password\n    label: Admin password\n    help: Password for the initial admin account. Choose a strong value.\n    type: password\n    required: true\n  - key: jwt_secret\n    label: JWT secret\n    help: Signing key for auth tokens. Leave blank to auto-generate.\n    type: password\n    generate: true\n  - key: encryption_key\n    label: Encryption key\n    help: AES-256-GCM key used to encrypt stored SMTP passwords. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 32\n\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\n  - name: redis\n    engine: redis\n    version: \"8-alpine\"\n    placement: dedicated\n\napplications:\n  - name: posta\n    primary: true\n    image: jkaninda/posta\n    tag: \"0.11.0\"\n    ports:\n      - container: 9000\n        scheme: http\n    env:\n      POSTA_ENV: production\n      POSTA_WEB_URL: \"{{ .inputs.web_url }}\"\n\n      # Database (a managed PostgreSQL database, resolved by placement).\n      POSTA_DB_HOST: \"{{ .databases.db.host }}\"\n      POSTA_DB_PORT: \"{{ .databases.db.port }}\"\n      POSTA_DB_USER: \"{{ .databases.db.user }}\"\n      POSTA_DB_PASSWORD: \"{{ .databases.db.password }}\"\n      POSTA_DB_NAME: \"{{ .databases.db.name }}\"\n\n      # Redis (a dedicated managed instance — Miabi sets a password on it).\n      POSTA_REDIS_ADDR: \"{{ .databases.redis.host }}:{{ .databases.redis.port }}\"\n      POSTA_REDIS_PASSWORD: \"{{ .databases.redis.password }}\"\n\n      # Security.\n      POSTA_JWT_SECRET: \"{{ .inputs.jwt_secret }}\"\n      POSTA_ENCRYPTION_KEY: \"{{ .inputs.encryption_key }}\"\n      POSTA_ADMIN_EMAIL: \"{{ .inputs.admin_email }}\"\n      POSTA_ADMIN_PASSWORD: \"{{ .inputs.admin_password }}\"\n\n      # Worker (run embedded in the server process).\n      POSTA_EMBEDDED_WORKER: \"true\"\n      POSTA_WORKER_CONCURRENCY: \"10\"\n      POSTA_WORKER_MAX_RETRIES: \"5\"\n\n      # Email verification endpoint (results cached in Redis).\n      POSTA_EMAIL_VERIFY_ENABLED: \"true\"\n      POSTA_EMAIL_VERIFY_CACHE_TTL_HOURS: \"168\"\n      POSTA_EMAIL_VERIFY_MX_CACHE_TTL_HOURS: \"24\"\n      POSTA_EMAIL_VERIFY_RATE_HOURLY: \"1000\"\n    secretEnv:\n      - POSTA_DB_PASSWORD\n      - POSTA_REDIS_PASSWORD\n      - POSTA_JWT_SECRET\n      - POSTA_ENCRYPTION_KEY\n      - POSTA_ADMIN_PASSWORD\n    healthcheck:\n      type: http\n      path: /healthz\n      port: 9000\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 10\n"
+        }
+      ]
+    },
+    {
+      "slug": "postgresql",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:bd81f9c0d88bdb06ea007fcfab1e8e26335f999cdc38d12d7152304394fdb5f5",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: postgresql\n  name: PostgreSQL\n  version: 1.0.0\n  description: Managed PostgreSQL database.\n  category: Database\n  icon: https://cdn.simpleicons.org/postgresql\n  homepage: https://www.postgresql.org\n  tags: [database, sql]\ndatabases:\n  - name: postgres\n    engine: postgres\n    version: \"17-alpine\"\n    placement: dedicated\n"
+        }
+      ]
+    },
+    {
+      "slug": "redis",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:8cb54c3b06929ad46f3bff223d3bf947de1e5b911ac8988245cc1406022908a9",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: redis\n  name: Redis\n  version: 1.0.0\n  description: Managed Redis instance.\n  category: Database\n  icon: https://cdn.simpleicons.org/redis\n  homepage: https://redis.io\n  tags: [database, cache, key-value]\ndatabases:\n  - name: redis\n    engine: redis\n    version: \"8-alpine\"\n    placement: dedicated\n"
+        }
+      ]
+    },
+    {
+      "slug": "umami",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:43f13db074909b564c00cf6e7ad4b87446930e1130e700f3828f85e3bd6f3792",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: umami\n  name: Umami\n  version: 1.0.0\n  description: Privacy-focused web analytics backed by PostgreSQL.\n  category: Analytics\n  icon: https://cdn.simpleicons.org/umami\n  homepage: https://umami.is\n  tags: [analytics, privacy]\ninputs:\n  - key: app_secret\n    label: App secret\n    help: Secret used to sign tokens. Leave blank to auto-generate.\n    type: password\n    generate: true\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\napplications:\n  - name: umami\n    primary: true\n    image: ghcr.io/umami-software/umami\n    tag: postgresql-v2.15.1\n    ports:\n      - container: 3000\n        scheme: http\n    env:\n      DATABASE_TYPE: postgresql\n      DATABASE_URL: \"{{ .databases.db.uri }}\"\n      APP_SECRET: \"{{ .inputs.app_secret }}\"\n    secretEnv:\n      - DATABASE_URL\n      - APP_SECRET\n"
+        }
+      ]
+    },
+    {
+      "slug": "wordpress",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:aa3b30f3f9c6c69aab6d3be6b7e9f066ba14dd3302b793e4511baa932c3c33cf",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: wordpress\n  name: WordPress\n  version: 1.0.0\n  description: WordPress CMS backed by MySQL.\n  category: CMS\n  icon: https://cdn.simpleicons.org/wordpress\n  homepage: https://wordpress.org\n  tags: [cms, blog, php]\ndatabases:\n  - name: db\n    engine: mysql\n    version: \"8.4\"\n    placement: auto\nvolumes:\n  - name: content\napplications:\n  - name: wordpress\n    primary: true\n    image: wordpress\n    tag: \"7.0-php8.3-apache\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      WORDPRESS_DB_HOST: \"{{ .databases.db.host }}\"\n      WORDPRESS_DB_USER: \"{{ .databases.db.user }}\"\n      WORDPRESS_DB_PASSWORD: \"{{ .databases.db.password }}\"\n      WORDPRESS_DB_NAME: \"{{ .databases.db.name }}\"\n    secretEnv:\n      - WORDPRESS_DB_PASSWORD\n    mounts:\n      - volume: content\n        path: /var/www/html\n"
+        }
+      ]
+    },
+    {
+      "slug": "okapi-example",
+      "source": "community",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:6f24dd26983b338acda10e480f68b7ed440bb1454dd78e1927ba39c374ab2811",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: okapi-example\n  name: Okapi Example\n  version: 1.0.0\n  description: Reference app for the Okapi Go API framework — middleware, routing, real-time SSE, and auto-generated OpenAPI docs at /docs.\n  category: Development\n  icon: https://cdn.simpleicons.org/go\n  homepage: https://github.com/jkaninda/okapi-example\n  author:\n    name: Jonas Kaninda\n    website: https://github.com/jkaninda\n  tags: [api, go, okapi, example]\ninputs:\n  - key: jwt_secret\n    label: JWT secret\n    help: Used to sign tokens. Leave blank to auto-generate a strong secret.\n    type: password\n    generate: true\napplications:\n  - name: okapi-example\n    image: jkaninda/okapi-example\n    tag: latest\n    ports:\n      - container: 8080\n        scheme: http\n    env:\n      JWT_SECRET: \"{{ .inputs.jwt_secret }}\"\n      ENABLE_DOCS: \"true\"\n    secretEnv: [JWT_SECRET]\n    healthcheck:\n      type: http\n      path: /\n      port: 8080\n"
+        }
+      ]
+    }
+  ]
+}

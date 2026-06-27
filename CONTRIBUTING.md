@@ -1,0 +1,47 @@
+# Contributing templates
+
+The Miabi marketplace hosts **official** (curated) and **community**
+(contributed) templates in one repo, separated by folder. Trust = which folder a
+template came from, surfaced as a badge in the storefront and the Miabi console.
+
+## Add a community template
+
+1. Create the directory layout under `community/<slug>/`:
+
+   ```
+   community/<slug>/
+     metadata.yaml          # optional storefront enrichment (featured, screenshots, sourceRepo)
+     README.md              # optional long description, shown on the detail page
+     <version>/template.yaml  # the install manifest (apiVersion: miabi.io/v1)
+   ```
+
+   - `<slug>` must be lowercase `^[a-z0-9][a-z0-9-]*$` and **unique across both
+     `official/` and `community/`** (CI enforces this).
+   - One `template.yaml` per version directory; a version is immutable once merged.
+   - The manifest schema is documented in [`schema/template.schema.json`](schema/template.schema.json).
+     Point your editor's YAML language server at it for inline validation.
+
+2. Validate locally before opening a PR:
+
+   ```sh
+   go run ./cmd/marketplace lint            # parse + validate every template, verify digests
+   go run ./cmd/marketplace generate-index  # regenerate registry/index.json
+   git diff --exit-code registry/index.json # must be clean (CI runs this)
+   ```
+
+3. Open a PR. CI re-runs the validator and the index drift check. A maintainer
+   reviews and merges; merging to `main` redeploys the service, so your template
+   is live immediately and Miabi installs pick it up on the next sync.
+
+## Official templates
+
+Changes under `official/` require core-maintainer review (enforced by
+`CODEOWNERS` + branch protection). Official is the source of truth that Miabi
+vendors into its binary as the offline floor. Promoting a community template to
+official is a maintainer-reviewed folder move within this repo.
+
+## Safety
+
+Community manifests are untrusted input. The validator rejects host binds,
+privileged flags, unknown fields, and malformed values. Keep templates minimal
+and pin image tags.

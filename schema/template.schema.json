@@ -1,0 +1,147 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://marketplace.miabi.io/schema/template.schema.json",
+  "title": "Miabi Template (miabi.io/v1)",
+  "description": "Declarative install manifest for a Miabi marketplace template (one document per version).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata"],
+  "properties": {
+    "apiVersion": { "const": "miabi.io/v1" },
+    "kind": { "const": "Template" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slug", "name", "version"],
+      "properties": {
+        "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "icon": { "type": "string" },
+        "homepage": { "type": "string" },
+        "minMiabi": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "author": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "email": { "type": "string", "format": "email" },
+            "website": { "type": "string", "pattern": "^https?://" }
+          }
+        }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["key"],
+        "properties": {
+          "key": { "type": "string", "minLength": 1 },
+          "label": { "type": "string" },
+          "help": { "type": "string" },
+          "type": { "enum": ["string", "password", "bool", "select", "number"] },
+          "default": { "type": "string" },
+          "placeholder": { "type": "string" },
+          "pattern": { "type": "string" },
+          "options": { "type": "array", "items": { "type": "string" } },
+          "required": { "type": "boolean" },
+          "generate": { "type": "boolean" },
+          "length": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "databases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "engine"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "engine": { "enum": ["postgres", "mysql", "mariadb", "redis", "mongodb", "libsql"] },
+          "version": { "type": "string" },
+          "placement": { "enum": ["auto", "dedicated", "shared"] }
+        }
+      }
+    },
+    "volumes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": { "name": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "applications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "image"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "primary": { "type": "boolean" },
+          "image": { "type": "string", "minLength": 1 },
+          "tag": { "type": "string" },
+          "command": { "type": "array", "items": { "type": "string" } },
+          "ports": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["container"],
+              "properties": {
+                "container": { "type": "integer", "minimum": 1, "maximum": 65535 },
+                "scheme": { "enum": ["http", "https"] }
+              }
+            }
+          },
+          "env": { "type": "object", "additionalProperties": { "type": "string" } },
+          "secretEnv": { "type": "array", "items": { "type": "string" } },
+          "mounts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["volume", "path"],
+              "properties": {
+                "volume": { "type": "string" },
+                "path": { "type": "string", "pattern": "^/" },
+                "readOnly": { "type": "boolean" }
+              }
+            }
+          },
+          "resources": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "memory": { "type": "string" },
+              "cpu": { "type": "string" }
+            }
+          },
+          "healthcheck": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": { "enum": ["none", "http", "command"] },
+              "path": { "type": "string" },
+              "command": { "type": "string" },
+              "port": { "type": "integer" },
+              "intervalSeconds": { "type": "integer" },
+              "timeoutSeconds": { "type": "integer" },
+              "retries": { "type": "integer" },
+              "startPeriodSeconds": { "type": "integer" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+/bin/
+# Env
+.env
+
+# Go
+*.test
+*.out
+coverage.txt

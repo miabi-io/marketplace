@@ -1,0 +1,222 @@
+{
+  "etag": "\"cc07f08be4729251abd2ba99f3c2433a7f79975225db8dda431de48233ba232d\"",
+  "generatedAt": "",
+  "templates": [
+    {
+      "slug": "forgejo",
+      "source": "official",
+      "name": "Forgejo",
+      "category": "Development",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:6c782be35e797cb538f5ec4b498ed4e9fd1014c4480cc33571f8601d05afd04d"
+        }
+      ]
+    },
+    {
+      "slug": "ghost",
+      "source": "official",
+      "name": "Ghost",
+      "category": "CMS",
+      "versions": [
+        {
+          "version": "1.2.0",
+          "digest": "sha256:70eb482f83941f0314bf464603047f08c97446e5926061c533ef36409e6c0908"
+        }
+      ]
+    },
+    {
+      "slug": "gitea",
+      "source": "official",
+      "name": "Gitea",
+      "category": "Development",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:5877ae07ad1e3684d04fcffd56587f08a375fc890ce94e13ad32979dec682c2f"
+        }
+      ]
+    },
+    {
+      "slug": "libsql",
+      "source": "official",
+      "name": "libSQL",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:1da283adb8c96aa4962e3cc054f93eaad4ef16743f6960d9a52610494478cc7b"
+        }
+      ]
+    },
+    {
+      "slug": "mongo-express",
+      "source": "official",
+      "name": "Mongo Express",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:aa0cbe0af36d3eee4441a4854b3e0e88cce4859bcc6594fccdc76e6213a8feb9"
+        }
+      ]
+    },
+    {
+      "slug": "mongodb",
+      "source": "official",
+      "name": "MongoDB",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:b8e07217f096ece29c4608a2ef43e60e7867ea22a6c8ff2ec65557d62c778bbe"
+        }
+      ]
+    },
+    {
+      "slug": "mysql",
+      "source": "official",
+      "name": "MySQL",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:4c1e9a7996a0c139eb4dbefe976219d04f0d501429e3cafdd07dafd4c0afda9e"
+        }
+      ]
+    },
+    {
+      "slug": "n8n",
+      "source": "official",
+      "name": "n8n",
+      "category": "Automation",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:0bc8d0b055abfdc7ca3eabdd73affa61987058457610487caed5124ad71253cf"
+        }
+      ]
+    },
+    {
+      "slug": "nextcloud",
+      "source": "official",
+      "name": "Nextcloud",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:b603b099d57579006c50fd9746179f2fb22f3e2ca2601d03c858e629d1c2f59f"
+        }
+      ]
+    },
+    {
+      "slug": "nginx",
+      "source": "official",
+      "name": "Nginx",
+      "category": "Web",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:3e9666f0e3a299d3189b46100f77a55b7343394e70f97700e3de018cad0e605d"
+        }
+      ]
+    },
+    {
+      "slug": "pgadmin4",
+      "source": "official",
+      "name": "pgAdmin 4",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:110a39a2d675cac5a780d33da295bfce20dad3adad76764754d6fd03b74d08a2"
+        }
+      ]
+    },
+    {
+      "slug": "phpmyadmin",
+      "source": "official",
+      "name": "phpMyAdmin",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:15a8e2be404418bfe047dc4be54f7ac15dba85e0d9335c23cdb1124bb7a1e352"
+        }
+      ]
+    },
+    {
+      "slug": "posta",
+      "source": "official",
+      "name": "Posta",
+      "category": "Email",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:898923b463c23ee4a45c81a979ca0fdd9040a90d3175181ecaaa4732f06189d4"
+        }
+      ]
+    },
+    {
+      "slug": "postgresql",
+      "source": "official",
+      "name": "PostgreSQL",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:bd81f9c0d88bdb06ea007fcfab1e8e26335f999cdc38d12d7152304394fdb5f5"
+        }
+      ]
+    },
+    {
+      "slug": "redis",
+      "source": "official",
+      "name": "Redis",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:8cb54c3b06929ad46f3bff223d3bf947de1e5b911ac8988245cc1406022908a9"
+        }
+      ]
+    },
+    {
+      "slug": "umami",
+      "source": "official",
+      "name": "Umami",
+      "category": "Analytics",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:43f13db074909b564c00cf6e7ad4b87446930e1130e700f3828f85e3bd6f3792"
+        }
+      ]
+    },
+    {
+      "slug": "wordpress",
+      "source": "official",
+      "name": "WordPress",
+      "category": "CMS",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:aa3b30f3f9c6c69aab6d3be6b7e9f066ba14dd3302b793e4511baa932c3c33cf"
+        }
+      ]
+    },
+    {
+      "slug": "okapi-example",
+      "source": "community",
+      "name": "Okapi Example",
+      "category": "Development",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:6f24dd26983b338acda10e480f68b7ed440bb1454dd78e1927ba39c374ab2811"
+        }
+      ]
+    }
+  ]
+}

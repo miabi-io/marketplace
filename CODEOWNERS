@@ -1,0 +1,14 @@
+# Official templates are curated and security-reviewed: only core maintainers
+# may merge changes under official/. This is the source of truth Miabi vendors
+# its embedded offline floor from.
+/official/        @miabi-io/maintainers
+
+# The service, shared manifest module, schema, and CI are core-owned too.
+/internal/        @miabi-io/maintainers
+/manifest/        @miabi-io/maintainers
+/cmd/             @miabi-io/maintainers
+/schema/          @miabi-io/maintainers
+/.github/         @miabi-io/maintainers
+
+# community/ is intentionally NOT owned here — anyone may open a PR adding a
+# template under community/<slug>/; maintainers review and merge.

@@ -1,0 +1,16 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: mongodb
+  name: MongoDB
+  version: 1.0.0
+  description: Managed MongoDB document database.
+  category: Database
+  icon: https://cdn.simpleicons.org/mongodb
+  homepage: https://www.mongodb.com
+  tags: [database, nosql, document]
+databases:
+  - name: mongodb
+    engine: mongodb
+    version: "7.0"
+    placement: dedicated

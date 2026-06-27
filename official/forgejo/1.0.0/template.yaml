@@ -1,0 +1,42 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: forgejo
+  name: Forgejo
+  version: 1.0.0
+  description: Self-hosted lightweight software forge (Gitea soft-fork), backed by PostgreSQL.
+  category: Development
+  icon: https://cdn.simpleicons.org/forgejo
+  homepage: https://forgejo.org
+  tags: [git, vcs, devops]
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+volumes:
+  - name: data
+applications:
+  - name: forgejo
+    primary: true
+    image: codeberg.org/forgejo/forgejo
+    tag: "15"
+    ports:
+      - container: 3000
+        scheme: http
+    env:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      FORGEJO__database__DB_TYPE: postgres
+      FORGEJO__database__HOST: "{{ .databases.db.host }}:{{ .databases.db.port }}"
+      FORGEJO__database__NAME: "{{ .databases.db.name }}"
+      FORGEJO__database__USER: "{{ .databases.db.user }}"
+      FORGEJO__database__PASSWD: "{{ .databases.db.password }}"
+      # DB is wired via env, so skip the first-run installer; the first registered
+      # account becomes the site administrator.
+      FORGEJO__security__INSTALL_LOCK: "true"
+    secretEnv:
+      - FORGEJO__database__PASSWD
+    mounts:
+      - volume: data
+        path: /data
