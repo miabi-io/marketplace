@@ -1,0 +1,41 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: metabase
+  name: Metabase
+  version: 1.0.0
+  description: Open-source business intelligence — ask questions and build dashboards, with its app data in PostgreSQL.
+  category: Analytics
+  icon: https://cdn.simpleicons.org/metabase
+  homepage: https://www.metabase.com
+  tags: [analytics, business-intelligence, dashboards, sql]
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+applications:
+  - name: metabase
+    primary: true
+    image: metabase/metabase
+    tag: "v0.52.8"
+    ports:
+      - container: 3000
+        scheme: http
+    env:
+      MB_DB_TYPE: postgres
+      MB_DB_HOST: "{{ .databases.db.host }}"
+      MB_DB_PORT: "{{ .databases.db.port }}"
+      MB_DB_USER: "{{ .databases.db.user }}"
+      MB_DB_PASS: "{{ .databases.db.password }}"
+      MB_DB_DBNAME: "{{ .databases.db.name }}"
+    secretEnv:
+      - MB_DB_PASS
+    healthcheck:
+      type: http
+      path: /api/health
+      port: 3000
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 60

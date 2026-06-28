@@ -1,0 +1,45 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: grafana
+  name: Grafana
+  version: 1.0.0
+  description: Open-source observability platform for dashboards, metrics, logs and alerting.
+  category: Monitoring
+  icon: https://cdn.simpleicons.org/grafana
+  homepage: https://grafana.com
+  tags: [monitoring, dashboards, metrics, observability]
+inputs:
+  - key: admin_password
+    label: Admin password
+    help: Password for the initial admin account. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 24
+    required: true
+volumes:
+  - name: data
+applications:
+  - name: grafana
+    primary: true
+    image: grafana/grafana
+    tag: "11.4.0"
+    ports:
+      - container: 3000
+        scheme: http
+    env:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: "{{ .inputs.admin_password }}"
+    secretEnv:
+      - GF_SECURITY_ADMIN_PASSWORD
+    mounts:
+      - volume: data
+        path: /var/lib/grafana
+    healthcheck:
+      type: http
+      path: /api/health
+      port: 3000
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 15

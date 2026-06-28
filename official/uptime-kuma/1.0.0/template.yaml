@@ -1,0 +1,32 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: uptime-kuma
+  name: Uptime Kuma
+  version: 1.0.0
+  description: Self-hosted uptime monitoring with status pages and rich notifications.
+  category: Monitoring
+  icon: https://cdn.simpleicons.org/uptimekuma
+  homepage: https://uptime.kuma.pet
+  tags: [monitoring, uptime, status, alerting]
+volumes:
+  - name: data
+applications:
+  - name: uptime-kuma
+    primary: true
+    image: louislam/uptime-kuma
+    tag: "1"
+    ports:
+      - container: 3001
+        scheme: http
+    mounts:
+      - volume: data
+        path: /app/data
+    healthcheck:
+      type: http
+      path: /
+      port: 3001
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 15

@@ -1,0 +1,55 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: vikunja
+  name: Vikunja
+  version: 1.0.0
+  description: Self-hosted to-do and project management app, backed by PostgreSQL.
+  category: Productivity
+  icon: https://cdn.simpleicons.org/vikunja
+  homepage: https://vikunja.io
+  tags: [productivity, todo, tasks, project-management]
+inputs:
+  - key: public_url
+    label: Public URL
+    help: The public URL Vikunja is served on (used by the frontend and for links).
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://tasks.example.com
+  - key: jwt_secret
+    label: JWT secret
+    help: Signing key for auth tokens. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 32
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+volumes:
+  - name: files
+applications:
+  - name: vikunja
+    primary: true
+    image: vikunja/vikunja
+    tag: "0.24.6"
+    ports:
+      - container: 3456
+        scheme: http
+    env:
+      VIKUNJA_SERVICE_PUBLICURL: "{{ .inputs.public_url }}"
+      VIKUNJA_SERVICE_JWTSECRET: "{{ .inputs.jwt_secret }}"
+      VIKUNJA_DATABASE_TYPE: postgres
+      VIKUNJA_DATABASE_HOST: "{{ .databases.db.host }}"
+      VIKUNJA_DATABASE_PORT: "{{ .databases.db.port }}"
+      VIKUNJA_DATABASE_USER: "{{ .databases.db.user }}"
+      VIKUNJA_DATABASE_PASSWORD: "{{ .databases.db.password }}"
+      VIKUNJA_DATABASE_DATABASE: "{{ .databases.db.name }}"
+    secretEnv:
+      - VIKUNJA_SERVICE_JWTSECRET
+      - VIKUNJA_DATABASE_PASSWORD
+    mounts:
+      - volume: files
+        path: /app/vikunja/files

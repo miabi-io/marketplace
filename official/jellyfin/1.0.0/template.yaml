@@ -1,0 +1,35 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: jellyfin
+  name: Jellyfin
+  version: 1.0.0
+  description: Free, self-hosted media server for streaming your movies, shows and music.
+  category: Media
+  icon: https://cdn.simpleicons.org/jellyfin
+  homepage: https://jellyfin.org
+  tags: [media, streaming, movies, music]
+volumes:
+  - name: config
+  - name: cache
+applications:
+  - name: jellyfin
+    primary: true
+    image: jellyfin/jellyfin
+    tag: "10.10.3"
+    ports:
+      - container: 8096
+        scheme: http
+    mounts:
+      - volume: config
+        path: /config
+      - volume: cache
+        path: /cache
+    healthcheck:
+      type: http
+      path: /health
+      port: 8096
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 20

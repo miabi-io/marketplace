@@ -1,0 +1,47 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: wallabag
+  name: Wallabag
+  version: 1.0.0
+  description: Self-hosted read-it-later app that saves and cleans up web articles, backed by PostgreSQL.
+  category: Productivity
+  icon: https://cdn.simpleicons.org/wallabag
+  homepage: https://wallabag.org
+  tags: [productivity, bookmarks, read-later, articles]
+inputs:
+  - key: domain_name
+    label: Public URL
+    help: The public URL Wallabag is served on (used for links and asset URLs).
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://read.example.com
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+volumes:
+  - name: images
+applications:
+  - name: wallabag
+    primary: true
+    image: wallabag/wallabag
+    tag: "2.6.10"
+    ports:
+      - container: 80
+        scheme: http
+    env:
+      SYMFONY__ENV__DATABASE_DRIVER: pdo_pgsql
+      SYMFONY__ENV__DATABASE_HOST: "{{ .databases.db.host }}"
+      SYMFONY__ENV__DATABASE_PORT: "{{ .databases.db.port }}"
+      SYMFONY__ENV__DATABASE_NAME: "{{ .databases.db.name }}"
+      SYMFONY__ENV__DATABASE_USER: "{{ .databases.db.user }}"
+      SYMFONY__ENV__DATABASE_PASSWORD: "{{ .databases.db.password }}"
+      SYMFONY__ENV__DOMAIN_NAME: "{{ .inputs.domain_name }}"
+    secretEnv:
+      - SYMFONY__ENV__DATABASE_PASSWORD
+    mounts:
+      - volume: images
+        path: /var/www/wallabag/web/assets/images

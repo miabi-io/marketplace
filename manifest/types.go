@@ -72,7 +72,23 @@ type Manifest struct {
 	Inputs       []Input    `yaml:"inputs,omitempty" json:"inputs,omitempty"`
 	Databases    []Database `yaml:"databases,omitempty" json:"databases,omitempty"`
 	Volumes      []Volume   `yaml:"volumes,omitempty" json:"volumes,omitempty"`
+	Stack        *StackSpec `yaml:"stack,omitempty" json:"stack,omitempty"`
 	Applications []AppSpec  `yaml:"applications,omitempty" json:"applications,omitempty"`
+}
+
+// StackSpec optionally configures the Stack a template is grouped into on
+// install. A template with two or more applications is always grouped into a
+// stack; declaring this block additionally forces a stack for a single-app
+// template and lets the template describe it and share configuration across its
+// members. Env declared here is injected into every member application's
+// containers at deploy time (an app-level var with the same key wins), so the
+// connection details every member needs are written once instead of per app —
+// e.g. authentik's server + worker sharing the same database and Redis.
+type StackSpec struct {
+	Description string            `yaml:"description,omitempty" json:"description,omitempty"`
+	Env         map[string]string `yaml:"env,omitempty" json:"env,omitempty"`
+	SecretEnv   []string          `yaml:"secretEnv,omitempty" json:"secretEnv,omitempty"`
+	Annotations map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
 }
 
 // Metadata describes and identifies a template.
@@ -198,4 +214,11 @@ func (m *Manifest) PrimaryApp() (AppSpec, bool) {
 // applications) — the former KindDatabase entries.
 func (m *Manifest) IsDatabaseOnly() bool {
 	return len(m.Applications) == 0 && len(m.Databases) > 0
+}
+
+// WantsStack reports whether the install should group the template's apps into a
+// Stack: always for a multi-application template, and whenever a stack block is
+// declared (forcing a stack even for a single application).
+func (m *Manifest) WantsStack() bool {
+	return len(m.Applications) > 1 || m.Stack != nil
 }

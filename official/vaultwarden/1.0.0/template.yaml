@@ -1,0 +1,60 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: vaultwarden
+  name: Vaultwarden
+  version: 1.0.0
+  description: Lightweight Bitwarden-compatible password manager server (SQLite-backed).
+  category: Security
+  icon: https://cdn.simpleicons.org/vaultwarden
+  homepage: https://github.com/dani-garcia/vaultwarden
+  tags: [security, passwords, bitwarden, self-hosted]
+inputs:
+  - key: domain
+    label: Public URL
+    help: The public HTTPS URL Vaultwarden is served on. Required for WebAuthn / U2F and email links.
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://vault.example.com
+  - key: admin_token
+    label: Admin token
+    help: Token guarding the /admin diagnostics panel. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 48
+    required: true
+  - key: signups_allowed
+    label: Allow signups
+    help: Allow new users to register. Disable once your accounts are created.
+    type: select
+    options: ["true", "false"]
+    default: "true"
+volumes:
+  - name: data
+applications:
+  - name: vaultwarden
+    primary: true
+    image: vaultwarden/server
+    tag: "1.34.1-alpine"
+    ports:
+      - container: 80
+        scheme: http
+    env:
+      DOMAIN: "{{ .inputs.domain }}"
+      ADMIN_TOKEN: "{{ .inputs.admin_token }}"
+      SIGNUPS_ALLOWED: "{{ .inputs.signups_allowed }}"
+      ROCKET_PORT: "80"
+    secretEnv:
+      - ADMIN_TOKEN
+    mounts:
+      - volume: data
+        path: /data
+    healthcheck:
+      type: http
+      path: /alive
+      port: 80
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 10

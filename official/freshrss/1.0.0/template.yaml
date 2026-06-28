@@ -1,0 +1,41 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: freshrss
+  name: FreshRSS
+  version: 1.0.0
+  description: Self-hosted, lightweight RSS/Atom feed aggregator (SQLite-backed).
+  category: News
+  icon: https://cdn.simpleicons.org/freshrss
+  homepage: https://freshrss.org
+  tags: [rss, news, feeds, reader]
+inputs:
+  - key: timezone
+    label: Timezone
+    help: IANA timezone used for feed timestamps and the cron refresh.
+    type: string
+    default: UTC
+volumes:
+  - name: data
+applications:
+  - name: freshrss
+    primary: true
+    image: freshrss/freshrss
+    tag: "1.24.3"
+    ports:
+      - container: 80
+        scheme: http
+    env:
+      TZ: "{{ .inputs.timezone }}"
+      CRON_MIN: "*/20"
+    mounts:
+      - volume: data
+        path: /var/www/FreshRSS/data
+    healthcheck:
+      type: http
+      path: /
+      port: 80
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 15

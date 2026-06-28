@@ -1,0 +1,54 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: minio
+  name: MinIO
+  version: 1.0.0
+  description: High-performance, S3-compatible object storage with a built-in web console.
+  category: Storage
+  icon: https://cdn.simpleicons.org/minio
+  homepage: https://min.io
+  tags: [storage, s3, object-storage]
+inputs:
+  - key: root_user
+    label: Root user
+    help: The object-storage administrator username (3+ characters).
+    type: string
+    default: minioadmin
+    required: true
+  - key: root_password
+    label: Root password
+    help: Administrator secret key (8+ characters). Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 24
+    required: true
+volumes:
+  - name: data
+applications:
+  - name: minio
+    primary: true
+    image: minio/minio
+    tag: "RELEASE.2025-04-22T22-12-26Z"
+    command: ["server", "/data", "--console-address", ":9001"]
+    ports:
+      - container: 9000
+        scheme: http
+      - container: 9001
+        scheme: http
+    env:
+      MINIO_ROOT_USER: "{{ .inputs.root_user }}"
+      MINIO_ROOT_PASSWORD: "{{ .inputs.root_password }}"
+    secretEnv:
+      - MINIO_ROOT_PASSWORD
+    mounts:
+      - volume: data
+        path: /data
+    healthcheck:
+      type: http
+      path: /minio/health/live
+      port: 9000
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 15
