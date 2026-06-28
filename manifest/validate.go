@@ -132,6 +132,19 @@ func (m *Manifest) Validate() error {
 			return err
 		}
 	}
+
+	// Stack: a stack groups applications, so a database-only template cannot
+	// declare one; secretEnv keys must be present in the shared stack env.
+	if m.Stack != nil {
+		if len(m.Applications) == 0 {
+			return fmt.Errorf("stack: a template with no applications cannot declare a stack")
+		}
+		for _, k := range m.Stack.SecretEnv {
+			if _, ok := m.Stack.Env[k]; !ok {
+				return fmt.Errorf("stack: secretEnv %q is not declared in stack env", k)
+			}
+		}
+	}
 	return nil
 }
 

@@ -1,0 +1,68 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: roundcube
+  name: Roundcube
+  version: 1.0.0
+  description: Browser-based IMAP webmail client, backed by PostgreSQL.
+  category: Email
+  icon: https://cdn.simpleicons.org/roundcube
+  homepage: https://roundcube.net
+  tags: [email, webmail, imap, smtp]
+inputs:
+  - key: imap_host
+    label: IMAP server
+    help: Your mail server's IMAP host. Prefix with ssl:// for implicit TLS (port 993) or tls:// for STARTTLS.
+    type: string
+    required: true
+    placeholder: ssl://imap.example.com
+  - key: imap_port
+    label: IMAP port
+    help: IMAP port — 993 for SSL/TLS, 143 for STARTTLS.
+    type: number
+    default: "993"
+  - key: smtp_host
+    label: SMTP server
+    help: Your mail server's outgoing SMTP host. Prefix with tls:// for STARTTLS or ssl:// for implicit TLS.
+    type: string
+    required: true
+    placeholder: tls://smtp.example.com
+  - key: smtp_port
+    label: SMTP port
+    help: SMTP submission port — 587 for STARTTLS, 465 for SSL/TLS.
+    type: number
+    default: "587"
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+applications:
+  - name: roundcube
+    primary: true
+    image: roundcube/roundcubemail
+    tag: "1.6.11-apache"
+    ports:
+      - container: 80
+        scheme: http
+    env:
+      ROUNDCUBEMAIL_DB_TYPE: pgsql
+      ROUNDCUBEMAIL_DB_HOST: "{{ .databases.db.host }}"
+      ROUNDCUBEMAIL_DB_PORT: "{{ .databases.db.port }}"
+      ROUNDCUBEMAIL_DB_USER: "{{ .databases.db.user }}"
+      ROUNDCUBEMAIL_DB_PASSWORD: "{{ .databases.db.password }}"
+      ROUNDCUBEMAIL_DB_NAME: "{{ .databases.db.name }}"
+      ROUNDCUBEMAIL_DEFAULT_HOST: "{{ .inputs.imap_host }}"
+      ROUNDCUBEMAIL_DEFAULT_PORT: "{{ .inputs.imap_port }}"
+      ROUNDCUBEMAIL_SMTP_SERVER: "{{ .inputs.smtp_host }}"
+      ROUNDCUBEMAIL_SMTP_PORT: "{{ .inputs.smtp_port }}"
+    secretEnv:
+      - ROUNDCUBEMAIL_DB_PASSWORD
+    healthcheck:
+      type: http
+      path: /
+      port: 80
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 15

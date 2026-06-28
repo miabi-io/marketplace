@@ -79,6 +79,17 @@
         "properties": { "name": { "type": "string", "minLength": 1 } }
       }
     },
+    "stack": {
+      "type": "object",
+      "description": "Configures the Stack the template's applications are grouped into. Present even for a single application forces a stack. Env declared here is shared across every member application (an app-level var with the same key wins).",
+      "additionalProperties": false,
+      "properties": {
+        "description": { "type": "string" },
+        "env": { "type": "object", "additionalProperties": { "type": "string" } },
+        "secretEnv": { "type": "array", "items": { "type": "string" } },
+        "annotations": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
     "applications": {
       "type": "array",
       "items": {

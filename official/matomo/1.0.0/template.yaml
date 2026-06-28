@@ -1,0 +1,37 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  slug: matomo
+  name: Matomo
+  version: 1.0.0
+  description: Privacy-respecting, self-hosted web analytics — a Google Analytics alternative, backed by MariaDB.
+  category: Analytics
+  icon: https://cdn.simpleicons.org/matomo
+  homepage: https://matomo.org
+  tags: [analytics, privacy, statistics]
+databases:
+  - name: db
+    engine: mariadb
+    version: "11.4"
+    placement: auto
+volumes:
+  - name: data
+applications:
+  - name: matomo
+    primary: true
+    image: matomo
+    tag: "5-apache"
+    ports:
+      - container: 80
+        scheme: http
+    env:
+      MATOMO_DATABASE_ADAPTER: mysql
+      MATOMO_DATABASE_HOST: "{{ .databases.db.host }}"
+      MATOMO_DATABASE_USERNAME: "{{ .databases.db.user }}"
+      MATOMO_DATABASE_PASSWORD: "{{ .databases.db.password }}"
+      MATOMO_DATABASE_DBNAME: "{{ .databases.db.name }}"
+    secretEnv:
+      - MATOMO_DATABASE_PASSWORD
+    mounts:
+      - volume: data
+        path: /var/www/html

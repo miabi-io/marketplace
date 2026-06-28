@@ -6,7 +6,7 @@ metadata:
   version: 1.2.0
   description: Professional publishing platform — a headless Node.js CMS for blogs and newsletters.
   category: CMS
-  icon: https://static.ghost.org/v5.0.0/images/ghost-logo-dark.png
+  icon: https://cdn.simpleicons.org/ghost
   homepage: https://ghost.org
   author:
     name: Miabi
