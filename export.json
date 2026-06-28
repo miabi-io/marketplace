@@ -1,7 +1,18 @@
 {
-  "etag": "\"cc07f08be4729251abd2ba99f3c2433a7f79975225db8dda431de48233ba232d\"",
+  "etag": "\"66ff3827e80db0d77ed3ed7ff649dd750adc69758b5312170cc2a533fc524b5e\"",
   "generatedAt": "",
   "templates": [
+    {
+      "slug": "goauthentik",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:3a0e26422dd98eada25c99ca0395542c04387c6da4650cc66bd559bac7782f29",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: goauthentik\n  name: authentik\n  version: 1.0.0\n  description: Self-hosted identity provider — SSO, OAuth2/OIDC, SAML and LDAP — backed by PostgreSQL and Redis.\n  category: Security\n  icon: https://cdn.simpleicons.org/authentik\n  homepage: https://goauthentik.io\n  tags: [security, sso, identity, oauth, saml, oidc]\ninputs:\n  - key: secret_key\n    label: Secret key\n    help: Signing key for sessions and tokens. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 50\n    required: true\n  - key: bootstrap_email\n    label: Initial admin email\n    help: Email for the initial akadmin superuser created on first launch.\n    type: string\n    required: true\n    default: admin@example.com\n    pattern: '^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$'\n  - key: bootstrap_password\n    label: Initial admin password\n    help: Password for the initial akadmin superuser. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 24\n    required: true\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\n  - name: redis\n    engine: redis\n    version: \"8-alpine\"\n    placement: dedicated\nvolumes:\n  - name: media\n# Shared across the server + worker: both processes need the same secret key and\n# the same PostgreSQL/Redis connection, so they are declared once here instead of\n# being repeated in every application.\nstack:\n  description: authentik identity provider — a server and a background worker sharing PostgreSQL and Redis.\n  env:\n    AUTHENTIK_SECRET_KEY: \"{{ .inputs.secret_key }}\"\n    AUTHENTIK_POSTGRESQL__HOST: \"{{ .databases.db.host }}\"\n    AUTHENTIK_POSTGRESQL__PORT: \"{{ .databases.db.port }}\"\n    AUTHENTIK_POSTGRESQL__USER: \"{{ .databases.db.user }}\"\n    AUTHENTIK_POSTGRESQL__PASSWORD: \"{{ .databases.db.password }}\"\n    AUTHENTIK_POSTGRESQL__NAME: \"{{ .databases.db.name }}\"\n    AUTHENTIK_REDIS__HOST: \"{{ .databases.redis.host }}\"\n    AUTHENTIK_REDIS__PORT: \"{{ .databases.redis.port }}\"\n    AUTHENTIK_REDIS__PASSWORD: \"{{ .databases.redis.password }}\"\n  secretEnv:\n    - AUTHENTIK_SECRET_KEY\n    - AUTHENTIK_POSTGRESQL__PASSWORD\n    - AUTHENTIK_REDIS__PASSWORD\napplications:\n  - name: server\n    primary: true\n    image: ghcr.io/goauthentik/server\n    tag: \"2025.10.2\"\n    command: [\"server\"]\n    ports:\n      - container: 9000\n        scheme: http\n    env:\n      AUTHENTIK_BOOTSTRAP_EMAIL: \"{{ .inputs.bootstrap_email }}\"\n      AUTHENTIK_BOOTSTRAP_PASSWORD: \"{{ .inputs.bootstrap_password }}\"\n    secretEnv:\n      - AUTHENTIK_BOOTSTRAP_PASSWORD\n    mounts:\n      - volume: media\n        path: /media\n    healthcheck:\n      type: http\n      path: /-/health/live/\n      port: 9000\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 30\n  - name: worker\n    image: ghcr.io/goauthentik/server\n    tag: \"2025.10.2\"\n    command: [\"worker\"]\n    mounts:\n      - volume: media\n        path: /media\n"
+        }
+      ]
+    },
     {
       "slug": "forgejo",
       "source": "official",
@@ -14,13 +25,24 @@
       ]
     },
     {
+      "slug": "freshrss",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:bd43c3c83122e85d57d5cb14f95b2ad07e8ad328d2691b54e6db0a473607e58b",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: freshrss\n  name: FreshRSS\n  version: 1.0.0\n  description: Self-hosted, lightweight RSS/Atom feed aggregator (SQLite-backed).\n  category: News\n  icon: https://cdn.simpleicons.org/freshrss\n  homepage: https://freshrss.org\n  tags: [rss, news, feeds, reader]\ninputs:\n  - key: timezone\n    label: Timezone\n    help: IANA timezone used for feed timestamps and the cron refresh.\n    type: string\n    default: UTC\nvolumes:\n  - name: data\napplications:\n  - name: freshrss\n    primary: true\n    image: freshrss/freshrss\n    tag: \"1.24.3\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      TZ: \"{{ .inputs.timezone }}\"\n      CRON_MIN: \"*/20\"\n    mounts:\n      - volume: data\n        path: /var/www/FreshRSS/data\n    healthcheck:\n      type: http\n      path: /\n      port: 80\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 15\n"
+        }
+      ]
+    },
+    {
       "slug": "ghost",
       "source": "official",
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:70eb482f83941f0314bf464603047f08c97446e5926061c533ef36409e6c0908",
-          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: ghost\n  name: Ghost\n  version: 1.2.0\n  description: Professional publishing platform — a headless Node.js CMS for blogs and newsletters.\n  category: CMS\n  icon: https://static.ghost.org/v5.0.0/images/ghost-logo-dark.png\n  homepage: https://ghost.org\n  author:\n    name: Miabi\n    email: community@miabi.io\n    website: https://miabi.io\n  tags: [blog, cms, publishing, newsletter]\n  minMiabi: \"0.5.0\"\n\n# Questions asked in the install wizard. Referenced below as {{ .inputs.\u003ckey\u003e }}.\ninputs:\n  - key: site_url\n    label: Public URL\n    help: The full URL your blog will be served on (used for links and webhooks).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://blog.example.com\n\n# Logical database dependency. placement: auto -\u003e reuse a compatible MySQL\n# instance if one exists, else provision a dedicated one; either way Ghost gets\n# its own scoped database + user. Tokens resolve identically regardless.\ndatabases:\n  - name: db\n    engine: mysql\n    version: \"8.4\"\n    placement: auto\n\n# Managed volume holding Ghost's content (images, themes, settings).\nvolumes:\n  - name: content\n\napplications:\n  - name: ghost\n    primary: true\n    image: ghost\n    tag: \"6.45-alpine\"\n    ports:\n      - container: 2368\n        scheme: http\n    env:\n      NODE_ENV: production\n      url: \"{{ .inputs.site_url }}\"\n      database__client: mysql\n      database__connection__host: \"{{ .databases.db.host }}\"\n      database__connection__port: \"{{ .databases.db.port }}\"\n      database__connection__user: \"{{ .databases.db.user }}\"\n      database__connection__password: \"{{ .databases.db.password }}\"\n      database__connection__database: \"{{ .databases.db.name }}\"\n    secretEnv:\n      - database__connection__password\n    mounts:\n      - volume: content\n        path: /var/lib/ghost/content\n    resources:\n      memory: 512Mi\n      cpu: 0.5\n    healthcheck:\n      type: http\n      path: /\n      port: 2368\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 20\n"
+          "digest": "sha256:db8b457a173d3f86898ed5f9c65dd1ae478e1615d79ff88c6284f05f33ed8e19",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: ghost\n  name: Ghost\n  version: 1.2.0\n  description: Professional publishing platform — a headless Node.js CMS for blogs and newsletters.\n  category: CMS\n  icon: https://cdn.simpleicons.org/ghost\n  homepage: https://ghost.org\n  author:\n    name: Miabi\n    email: community@miabi.io\n    website: https://miabi.io\n  tags: [blog, cms, publishing, newsletter]\n  minMiabi: \"0.5.0\"\n\n# Questions asked in the install wizard. Referenced below as {{ .inputs.\u003ckey\u003e }}.\ninputs:\n  - key: site_url\n    label: Public URL\n    help: The full URL your blog will be served on (used for links and webhooks).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://blog.example.com\n\n# Logical database dependency. placement: auto -\u003e reuse a compatible MySQL\n# instance if one exists, else provision a dedicated one; either way Ghost gets\n# its own scoped database + user. Tokens resolve identically regardless.\ndatabases:\n  - name: db\n    engine: mysql\n    version: \"8.4\"\n    placement: auto\n\n# Managed volume holding Ghost's content (images, themes, settings).\nvolumes:\n  - name: content\n\napplications:\n  - name: ghost\n    primary: true\n    image: ghost\n    tag: \"6.45-alpine\"\n    ports:\n      - container: 2368\n        scheme: http\n    env:\n      NODE_ENV: production\n      url: \"{{ .inputs.site_url }}\"\n      database__client: mysql\n      database__connection__host: \"{{ .databases.db.host }}\"\n      database__connection__port: \"{{ .databases.db.port }}\"\n      database__connection__user: \"{{ .databases.db.user }}\"\n      database__connection__password: \"{{ .databases.db.password }}\"\n      database__connection__database: \"{{ .databases.db.name }}\"\n    secretEnv:\n      - database__connection__password\n    mounts:\n      - volume: content\n        path: /var/lib/ghost/content\n    resources:\n      memory: 512Mi\n      cpu: 0.5\n    healthcheck:\n      type: http\n      path: /\n      port: 2368\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 20\n"
         }
       ]
     },
@@ -36,6 +58,28 @@
       ]
     },
     {
+      "slug": "grafana",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:8826f8f1ceaa357f672623fc87d7936e95288df9b176f505dc6d02b59c903f5a",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: grafana\n  name: Grafana\n  version: 1.0.0\n  description: Open-source observability platform for dashboards, metrics, logs and alerting.\n  category: Monitoring\n  icon: https://cdn.simpleicons.org/grafana\n  homepage: https://grafana.com\n  tags: [monitoring, dashboards, metrics, observability]\ninputs:\n  - key: admin_password\n    label: Admin password\n    help: Password for the initial admin account. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 24\n    required: true\nvolumes:\n  - name: data\napplications:\n  - name: grafana\n    primary: true\n    image: grafana/grafana\n    tag: \"11.4.0\"\n    ports:\n      - container: 3000\n        scheme: http\n    env:\n      GF_SECURITY_ADMIN_USER: admin\n      GF_SECURITY_ADMIN_PASSWORD: \"{{ .inputs.admin_password }}\"\n    secretEnv:\n      - GF_SECURITY_ADMIN_PASSWORD\n    mounts:\n      - volume: data\n        path: /var/lib/grafana\n    healthcheck:\n      type: http\n      path: /api/health\n      port: 3000\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 15\n"
+        }
+      ]
+    },
+    {
+      "slug": "jellyfin",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:88da6b84b613f47153202b79bfeed4bd59a124b50bed54639f41d667882a2d65",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: jellyfin\n  name: Jellyfin\n  version: 1.0.0\n  description: Free, self-hosted media server for streaming your movies, shows and music.\n  category: Media\n  icon: https://cdn.simpleicons.org/jellyfin\n  homepage: https://jellyfin.org\n  tags: [media, streaming, movies, music]\nvolumes:\n  - name: config\n  - name: cache\napplications:\n  - name: jellyfin\n    primary: true\n    image: jellyfin/jellyfin\n    tag: \"10.10.3\"\n    ports:\n      - container: 8096\n        scheme: http\n    mounts:\n      - volume: config\n        path: /config\n      - volume: cache\n        path: /cache\n    healthcheck:\n      type: http\n      path: /health\n      port: 8096\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 20\n"
+        }
+      ]
+    },
+    {
       "slug": "libsql",
       "source": "official",
       "versions": [
@@ -43,6 +87,50 @@
           "version": "1.0.0",
           "digest": "sha256:1da283adb8c96aa4962e3cc054f93eaad4ef16743f6960d9a52610494478cc7b",
           "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: libsql\n  name: libSQL\n  version: 1.0.0\n  description: Managed libSQL (sqld) database.\n  category: Database\n  icon: https://cdn.simpleicons.org/sqlite\n  homepage: https://github.com/tursodatabase/libsql\n  tags: [database, sql, sqlite]\ndatabases:\n  - name: libsql\n    engine: libsql\n    version: \"latest\"\n    placement: dedicated\n"
+        }
+      ]
+    },
+    {
+      "slug": "matomo",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:c34730dcdcdd70972ce33bcbd38a2a215eb429c1768e245f447a513e654c847a",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: matomo\n  name: Matomo\n  version: 1.0.0\n  description: Privacy-respecting, self-hosted web analytics — a Google Analytics alternative, backed by MariaDB.\n  category: Analytics\n  icon: https://cdn.simpleicons.org/matomo\n  homepage: https://matomo.org\n  tags: [analytics, privacy, statistics]\ndatabases:\n  - name: db\n    engine: mariadb\n    version: \"11.4\"\n    placement: auto\nvolumes:\n  - name: data\napplications:\n  - name: matomo\n    primary: true\n    image: matomo\n    tag: \"5-apache\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      MATOMO_DATABASE_ADAPTER: mysql\n      MATOMO_DATABASE_HOST: \"{{ .databases.db.host }}\"\n      MATOMO_DATABASE_USERNAME: \"{{ .databases.db.user }}\"\n      MATOMO_DATABASE_PASSWORD: \"{{ .databases.db.password }}\"\n      MATOMO_DATABASE_DBNAME: \"{{ .databases.db.name }}\"\n    secretEnv:\n      - MATOMO_DATABASE_PASSWORD\n    mounts:\n      - volume: data\n        path: /var/www/html\n"
+        }
+      ]
+    },
+    {
+      "slug": "mealie",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:dbdcbcc5deed1fbadffa851a2095486cb672a66361c739692a19546c6f51d115",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: mealie\n  name: Mealie\n  version: 1.0.0\n  description: Self-hosted recipe manager and meal planner with a shopping-list, backed by PostgreSQL.\n  category: Productivity\n  icon: https://cdn.simpleicons.org/mealie\n  homepage: https://mealie.io\n  tags: [productivity, recipes, meal-planning, cooking]\ninputs:\n  - key: base_url\n    label: Public URL\n    help: The public URL Mealie is served on (used for links and invitations).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://recipes.example.com\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: data\napplications:\n  - name: mealie\n    primary: true\n    image: ghcr.io/mealie-recipes/mealie\n    tag: \"v2.6.0\"\n    ports:\n      - container: 9000\n        scheme: http\n    env:\n      BASE_URL: \"{{ .inputs.base_url }}\"\n      DB_ENGINE: postgres\n      POSTGRES_SERVER: \"{{ .databases.db.host }}\"\n      POSTGRES_PORT: \"{{ .databases.db.port }}\"\n      POSTGRES_USER: \"{{ .databases.db.user }}\"\n      POSTGRES_PASSWORD: \"{{ .databases.db.password }}\"\n      POSTGRES_DB: \"{{ .databases.db.name }}\"\n    secretEnv:\n      - POSTGRES_PASSWORD\n    mounts:\n      - volume: data\n        path: /app/data\n    healthcheck:\n      type: http\n      path: /api/app/about\n      port: 9000\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 20\n"
+        }
+      ]
+    },
+    {
+      "slug": "metabase",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:8e0e88188f9190eb494fbddf1510341644a3c7215aea6653be101a8407032a6f",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: metabase\n  name: Metabase\n  version: 1.0.0\n  description: Open-source business intelligence — ask questions and build dashboards, with its app data in PostgreSQL.\n  category: Analytics\n  icon: https://cdn.simpleicons.org/metabase\n  homepage: https://www.metabase.com\n  tags: [analytics, business-intelligence, dashboards, sql]\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\napplications:\n  - name: metabase\n    primary: true\n    image: metabase/metabase\n    tag: \"v0.52.8\"\n    ports:\n      - container: 3000\n        scheme: http\n    env:\n      MB_DB_TYPE: postgres\n      MB_DB_HOST: \"{{ .databases.db.host }}\"\n      MB_DB_PORT: \"{{ .databases.db.port }}\"\n      MB_DB_USER: \"{{ .databases.db.user }}\"\n      MB_DB_PASS: \"{{ .databases.db.password }}\"\n      MB_DB_DBNAME: \"{{ .databases.db.name }}\"\n    secretEnv:\n      - MB_DB_PASS\n    healthcheck:\n      type: http\n      path: /api/health\n      port: 3000\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 60\n"
+        }
+      ]
+    },
+    {
+      "slug": "minio",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:32e54d37e235564c833cb722a6e0ff16b1bfb3afcaf77495148136ed348615dc",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: minio\n  name: MinIO\n  version: 1.0.0\n  description: High-performance, S3-compatible object storage with a built-in web console.\n  category: Storage\n  icon: https://cdn.simpleicons.org/minio\n  homepage: https://min.io\n  tags: [storage, s3, object-storage]\ninputs:\n  - key: root_user\n    label: Root user\n    help: The object-storage administrator username (3+ characters).\n    type: string\n    default: minioadmin\n    required: true\n  - key: root_password\n    label: Root password\n    help: Administrator secret key (8+ characters). Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 24\n    required: true\nvolumes:\n  - name: data\napplications:\n  - name: minio\n    primary: true\n    image: minio/minio\n    tag: \"RELEASE.2025-04-22T22-12-26Z\"\n    command: [\"server\", \"/data\", \"--console-address\", \":9001\"]\n    ports:\n      - container: 9000\n        scheme: http\n      - container: 9001\n        scheme: http\n    env:\n      MINIO_ROOT_USER: \"{{ .inputs.root_user }}\"\n      MINIO_ROOT_PASSWORD: \"{{ .inputs.root_password }}\"\n    secretEnv:\n      - MINIO_ROOT_PASSWORD\n    mounts:\n      - volume: data\n        path: /data\n    healthcheck:\n      type: http\n      path: /minio/health/live\n      port: 9000\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 15\n"
         }
       ]
     },
@@ -168,6 +256,17 @@
       ]
     },
     {
+      "slug": "roundcube",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:4ab8dda25ee1c3ec9162f233ea404a432892018c2bf2061aaaa51a6502d525f9",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: roundcube\n  name: Roundcube\n  version: 1.0.0\n  description: Browser-based IMAP webmail client, backed by PostgreSQL.\n  category: Email\n  icon: https://cdn.simpleicons.org/roundcube\n  homepage: https://roundcube.net\n  tags: [email, webmail, imap, smtp]\ninputs:\n  - key: imap_host\n    label: IMAP server\n    help: Your mail server's IMAP host. Prefix with ssl:// for implicit TLS (port 993) or tls:// for STARTTLS.\n    type: string\n    required: true\n    placeholder: ssl://imap.example.com\n  - key: imap_port\n    label: IMAP port\n    help: IMAP port — 993 for SSL/TLS, 143 for STARTTLS.\n    type: number\n    default: \"993\"\n  - key: smtp_host\n    label: SMTP server\n    help: Your mail server's outgoing SMTP host. Prefix with tls:// for STARTTLS or ssl:// for implicit TLS.\n    type: string\n    required: true\n    placeholder: tls://smtp.example.com\n  - key: smtp_port\n    label: SMTP port\n    help: SMTP submission port — 587 for STARTTLS, 465 for SSL/TLS.\n    type: number\n    default: \"587\"\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\napplications:\n  - name: roundcube\n    primary: true\n    image: roundcube/roundcubemail\n    tag: \"1.6.11-apache\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      ROUNDCUBEMAIL_DB_TYPE: pgsql\n      ROUNDCUBEMAIL_DB_HOST: \"{{ .databases.db.host }}\"\n      ROUNDCUBEMAIL_DB_PORT: \"{{ .databases.db.port }}\"\n      ROUNDCUBEMAIL_DB_USER: \"{{ .databases.db.user }}\"\n      ROUNDCUBEMAIL_DB_PASSWORD: \"{{ .databases.db.password }}\"\n      ROUNDCUBEMAIL_DB_NAME: \"{{ .databases.db.name }}\"\n      ROUNDCUBEMAIL_DEFAULT_HOST: \"{{ .inputs.imap_host }}\"\n      ROUNDCUBEMAIL_DEFAULT_PORT: \"{{ .inputs.imap_port }}\"\n      ROUNDCUBEMAIL_SMTP_SERVER: \"{{ .inputs.smtp_host }}\"\n      ROUNDCUBEMAIL_SMTP_PORT: \"{{ .inputs.smtp_port }}\"\n    secretEnv:\n      - ROUNDCUBEMAIL_DB_PASSWORD\n    healthcheck:\n      type: http\n      path: /\n      port: 80\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 15\n"
+        }
+      ]
+    },
+    {
       "slug": "umami",
       "source": "official",
       "versions": [
@@ -175,6 +274,50 @@
           "version": "1.0.0",
           "digest": "sha256:43f13db074909b564c00cf6e7ad4b87446930e1130e700f3828f85e3bd6f3792",
           "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: umami\n  name: Umami\n  version: 1.0.0\n  description: Privacy-focused web analytics backed by PostgreSQL.\n  category: Analytics\n  icon: https://cdn.simpleicons.org/umami\n  homepage: https://umami.is\n  tags: [analytics, privacy]\ninputs:\n  - key: app_secret\n    label: App secret\n    help: Secret used to sign tokens. Leave blank to auto-generate.\n    type: password\n    generate: true\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\napplications:\n  - name: umami\n    primary: true\n    image: ghcr.io/umami-software/umami\n    tag: postgresql-v2.15.1\n    ports:\n      - container: 3000\n        scheme: http\n    env:\n      DATABASE_TYPE: postgresql\n      DATABASE_URL: \"{{ .databases.db.uri }}\"\n      APP_SECRET: \"{{ .inputs.app_secret }}\"\n    secretEnv:\n      - DATABASE_URL\n      - APP_SECRET\n"
+        }
+      ]
+    },
+    {
+      "slug": "uptime-kuma",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:52334764dc371c84648365f149b0dce2622712fb73593746a40580408d840339",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: uptime-kuma\n  name: Uptime Kuma\n  version: 1.0.0\n  description: Self-hosted uptime monitoring with status pages and rich notifications.\n  category: Monitoring\n  icon: https://cdn.simpleicons.org/uptimekuma\n  homepage: https://uptime.kuma.pet\n  tags: [monitoring, uptime, status, alerting]\nvolumes:\n  - name: data\napplications:\n  - name: uptime-kuma\n    primary: true\n    image: louislam/uptime-kuma\n    tag: \"1\"\n    ports:\n      - container: 3001\n        scheme: http\n    mounts:\n      - volume: data\n        path: /app/data\n    healthcheck:\n      type: http\n      path: /\n      port: 3001\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 15\n"
+        }
+      ]
+    },
+    {
+      "slug": "vaultwarden",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:8d986c1f73ccbd637bb374c6641c9ff5cd7dbb30734aa2c9784fb923bb4f71f0",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: vaultwarden\n  name: Vaultwarden\n  version: 1.0.0\n  description: Lightweight Bitwarden-compatible password manager server (SQLite-backed).\n  category: Security\n  icon: https://cdn.simpleicons.org/vaultwarden\n  homepage: https://github.com/dani-garcia/vaultwarden\n  tags: [security, passwords, bitwarden, self-hosted]\ninputs:\n  - key: domain\n    label: Public URL\n    help: The public HTTPS URL Vaultwarden is served on. Required for WebAuthn / U2F and email links.\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://vault.example.com\n  - key: admin_token\n    label: Admin token\n    help: Token guarding the /admin diagnostics panel. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 48\n    required: true\n  - key: signups_allowed\n    label: Allow signups\n    help: Allow new users to register. Disable once your accounts are created.\n    type: select\n    options: [\"true\", \"false\"]\n    default: \"true\"\nvolumes:\n  - name: data\napplications:\n  - name: vaultwarden\n    primary: true\n    image: vaultwarden/server\n    tag: \"1.34.1-alpine\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      DOMAIN: \"{{ .inputs.domain }}\"\n      ADMIN_TOKEN: \"{{ .inputs.admin_token }}\"\n      SIGNUPS_ALLOWED: \"{{ .inputs.signups_allowed }}\"\n      ROCKET_PORT: \"80\"\n    secretEnv:\n      - ADMIN_TOKEN\n    mounts:\n      - volume: data\n        path: /data\n    healthcheck:\n      type: http\n      path: /alive\n      port: 80\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 10\n"
+        }
+      ]
+    },
+    {
+      "slug": "vikunja",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:fddad0fee32043d4ed3da0053ab4052552b363f032c6183c5d858ca330f4e7bf",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: vikunja\n  name: Vikunja\n  version: 1.0.0\n  description: Self-hosted to-do and project management app, backed by PostgreSQL.\n  category: Productivity\n  icon: https://cdn.simpleicons.org/vikunja\n  homepage: https://vikunja.io\n  tags: [productivity, todo, tasks, project-management]\ninputs:\n  - key: public_url\n    label: Public URL\n    help: The public URL Vikunja is served on (used by the frontend and for links).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://tasks.example.com\n  - key: jwt_secret\n    label: JWT secret\n    help: Signing key for auth tokens. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 32\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: files\napplications:\n  - name: vikunja\n    primary: true\n    image: vikunja/vikunja\n    tag: \"0.24.6\"\n    ports:\n      - container: 3456\n        scheme: http\n    env:\n      VIKUNJA_SERVICE_PUBLICURL: \"{{ .inputs.public_url }}\"\n      VIKUNJA_SERVICE_JWTSECRET: \"{{ .inputs.jwt_secret }}\"\n      VIKUNJA_DATABASE_TYPE: postgres\n      VIKUNJA_DATABASE_HOST: \"{{ .databases.db.host }}\"\n      VIKUNJA_DATABASE_PORT: \"{{ .databases.db.port }}\"\n      VIKUNJA_DATABASE_USER: \"{{ .databases.db.user }}\"\n      VIKUNJA_DATABASE_PASSWORD: \"{{ .databases.db.password }}\"\n      VIKUNJA_DATABASE_DATABASE: \"{{ .databases.db.name }}\"\n    secretEnv:\n      - VIKUNJA_SERVICE_JWTSECRET\n      - VIKUNJA_DATABASE_PASSWORD\n    mounts:\n      - volume: files\n        path: /app/vikunja/files\n"
+        }
+      ]
+    },
+    {
+      "slug": "wallabag",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:89a59b1710fa851eea07de92ed1afbce6653945797ae631a4dd885c1de7e9b0e",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  slug: wallabag\n  name: Wallabag\n  version: 1.0.0\n  description: Self-hosted read-it-later app that saves and cleans up web articles, backed by PostgreSQL.\n  category: Productivity\n  icon: https://cdn.simpleicons.org/wallabag\n  homepage: https://wallabag.org\n  tags: [productivity, bookmarks, read-later, articles]\ninputs:\n  - key: domain_name\n    label: Public URL\n    help: The public URL Wallabag is served on (used for links and asset URLs).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://read.example.com\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: images\napplications:\n  - name: wallabag\n    primary: true\n    image: wallabag/wallabag\n    tag: \"2.6.10\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      SYMFONY__ENV__DATABASE_DRIVER: pdo_pgsql\n      SYMFONY__ENV__DATABASE_HOST: \"{{ .databases.db.host }}\"\n      SYMFONY__ENV__DATABASE_PORT: \"{{ .databases.db.port }}\"\n      SYMFONY__ENV__DATABASE_NAME: \"{{ .databases.db.name }}\"\n      SYMFONY__ENV__DATABASE_USER: \"{{ .databases.db.user }}\"\n      SYMFONY__ENV__DATABASE_PASSWORD: \"{{ .databases.db.password }}\"\n      SYMFONY__ENV__DOMAIN_NAME: \"{{ .inputs.domain_name }}\"\n    secretEnv:\n      - SYMFONY__ENV__DATABASE_PASSWORD\n    mounts:\n      - volume: images\n        path: /var/www/wallabag/web/assets/images\n"
         }
       ]
     },

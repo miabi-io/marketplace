@@ -1,7 +1,19 @@
 {
-  "etag": "\"cc07f08be4729251abd2ba99f3c2433a7f79975225db8dda431de48233ba232d\"",
+  "etag": "\"66ff3827e80db0d77ed3ed7ff649dd750adc69758b5312170cc2a533fc524b5e\"",
   "generatedAt": "",
   "templates": [
+    {
+      "slug": "goauthentik",
+      "source": "official",
+      "name": "authentik",
+      "category": "Security",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:3a0e26422dd98eada25c99ca0395542c04387c6da4650cc66bd559bac7782f29"
+        }
+      ]
+    },
     {
       "slug": "forgejo",
       "source": "official",
@@ -15,6 +27,18 @@
       ]
     },
     {
+      "slug": "freshrss",
+      "source": "official",
+      "name": "FreshRSS",
+      "category": "News",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:bd43c3c83122e85d57d5cb14f95b2ad07e8ad328d2691b54e6db0a473607e58b"
+        }
+      ]
+    },
+    {
       "slug": "ghost",
       "source": "official",
       "name": "Ghost",
@@ -22,7 +46,7 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:70eb482f83941f0314bf464603047f08c97446e5926061c533ef36409e6c0908"
+          "digest": "sha256:db8b457a173d3f86898ed5f9c65dd1ae478e1615d79ff88c6284f05f33ed8e19"
         }
       ]
     },
@@ -39,6 +63,30 @@
       ]
     },
     {
+      "slug": "grafana",
+      "source": "official",
+      "name": "Grafana",
+      "category": "Monitoring",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:8826f8f1ceaa357f672623fc87d7936e95288df9b176f505dc6d02b59c903f5a"
+        }
+      ]
+    },
+    {
+      "slug": "jellyfin",
+      "source": "official",
+      "name": "Jellyfin",
+      "category": "Media",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:88da6b84b613f47153202b79bfeed4bd59a124b50bed54639f41d667882a2d65"
+        }
+      ]
+    },
+    {
       "slug": "libsql",
       "source": "official",
       "name": "libSQL",
@@ -47,6 +95,54 @@
         {
           "version": "1.0.0",
           "digest": "sha256:1da283adb8c96aa4962e3cc054f93eaad4ef16743f6960d9a52610494478cc7b"
+        }
+      ]
+    },
+    {
+      "slug": "matomo",
+      "source": "official",
+      "name": "Matomo",
+      "category": "Analytics",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:c34730dcdcdd70972ce33bcbd38a2a215eb429c1768e245f447a513e654c847a"
+        }
+      ]
+    },
+    {
+      "slug": "mealie",
+      "source": "official",
+      "name": "Mealie",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:dbdcbcc5deed1fbadffa851a2095486cb672a66361c739692a19546c6f51d115"
+        }
+      ]
+    },
+    {
+      "slug": "metabase",
+      "source": "official",
+      "name": "Metabase",
+      "category": "Analytics",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:8e0e88188f9190eb494fbddf1510341644a3c7215aea6653be101a8407032a6f"
+        }
+      ]
+    },
+    {
+      "slug": "minio",
+      "source": "official",
+      "name": "MinIO",
+      "category": "Storage",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:32e54d37e235564c833cb722a6e0ff16b1bfb3afcaf77495148136ed348615dc"
         }
       ]
     },
@@ -183,6 +279,18 @@
       ]
     },
     {
+      "slug": "roundcube",
+      "source": "official",
+      "name": "Roundcube",
+      "category": "Email",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:4ab8dda25ee1c3ec9162f233ea404a432892018c2bf2061aaaa51a6502d525f9"
+        }
+      ]
+    },
+    {
       "slug": "umami",
       "source": "official",
       "name": "Umami",
@@ -191,6 +299,54 @@
         {
           "version": "1.0.0",
           "digest": "sha256:43f13db074909b564c00cf6e7ad4b87446930e1130e700f3828f85e3bd6f3792"
+        }
+      ]
+    },
+    {
+      "slug": "uptime-kuma",
+      "source": "official",
+      "name": "Uptime Kuma",
+      "category": "Monitoring",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:52334764dc371c84648365f149b0dce2622712fb73593746a40580408d840339"
+        }
+      ]
+    },
+    {
+      "slug": "vaultwarden",
+      "source": "official",
+      "name": "Vaultwarden",
+      "category": "Security",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:8d986c1f73ccbd637bb374c6641c9ff5cd7dbb30734aa2c9784fb923bb4f71f0"
+        }
+      ]
+    },
+    {
+      "slug": "vikunja",
+      "source": "official",
+      "name": "Vikunja",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:fddad0fee32043d4ed3da0053ab4052552b363f032c6183c5d858ca330f4e7bf"
+        }
+      ]
+    },
+    {
+      "slug": "wallabag",
+      "source": "official",
+      "name": "Wallabag",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:89a59b1710fa851eea07de92ed1afbce6653945797ae631a4dd885c1de7e9b0e"
         }
       ]
     },
