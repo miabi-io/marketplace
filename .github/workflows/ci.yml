@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
+    tags: ["v*.*.*"]
   pull_request:
 
 permissions:
@@ -41,8 +42,9 @@ jobs:
             || (echo "::error::export.json / registry/index.json are stale — run 'go run ./cmd/marketplace generate' and commit, or let the merge-to-main job regenerate them." && exit 1)
 
   # After merge to main, regenerate export.json + registry/index.json from the
-  # embedded templates and commit them back, so the published catalog (served via
-  # jsDelivr) always matches the repo without contributors having to run generate.
+  # templates and commit them back, so the repo always matches without
+  # contributors having to run generate. (The catalog Miabi syncs is published as
+  # a Release asset on tag — see the release job — not from main directly.)
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: validate
@@ -73,3 +75,35 @@ jobs:
           git add export.json registry/index.json
           git commit -m "chore(catalog): regenerate export.json + index [skip ci]"
           git push
+
+  # Miabi syncs the catalog from the
+  # latest release's export.json (a stable, immutable URL — see MIABI_MARKETPLACE_URL),
+  # so cutting a tag is how a new catalog goes live.
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.26"
+          cache-dependency-path: go.sum
+
+      - name: Generate catalog bundle
+        run: go run ./cmd/marketplace generate
+
+      - name: Publish release with export.json
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          count=$(grep -o '"slug"' export.json | wc -l | tr -d ' ')
+          notes="Marketplace catalog bundle for ${GITHUB_REF_NAME} (${count} templates)."
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" export.json registry/index.json --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" export.json registry/index.json \
+              --title "Catalog ${GITHUB_REF_NAME}" --notes "${notes}"
+          fi
