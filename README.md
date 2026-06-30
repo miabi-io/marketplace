@@ -36,28 +36,28 @@ cmd/marketplace                           server + generate-index + lint
 ## API
 
 The service mirrors the Miabi/Posta stack (Go + Okapi, `{success,data,error}`
-envelope on client routes). Machine routes return their raw document so a
-consumer can decode it directly.
+envelope on client routes). Machine routes (`/v1/export`, `/v1/index`) return
+their raw document so a consumer can decode it directly; `/v1/export` is Miabi's
+primary sync call.
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/v1/export` | **Full bundle** (index + every version's manifest, inline). ETag-conditional. Miabi's primary sync call. |
-| GET | `/v1/index` | Lightweight machine index (sources, versions, digests). ETag. |
-| GET | `/v1/templates?q=&source=&category=&tag=&sort=&page=&per_page=` | Paginated search/filter. |
-| GET | `/v1/templates/{slug}` | Detail: listing + all versions + README + manifest (`?version`). |
-| GET | `/v1/templates/{slug}/versions/{version}` | One version's metadata + digest. |
-| GET | `/v1/templates/{slug}/versions/{version}/manifest` | Raw `template.yaml`; digest in ETag. |
-| GET | `/v1/categories` | Category facets. |
-| GET | `/healthz` · `/metrics` · `/openapi.json` · `/docs` | Ops + API docs. |
+The full reference — every route, parameters, and schemas — is served live and
+interactive:
 
-Pagination is offset-style: `page` (1-based) + `per_page` (default 24, max 100);
-responses carry `items`, `page`, `per_page`, `total`, `total_pages`.
+| Path | Purpose |
+|------|---------|
+| `/docs` | **Interactive API documentation** (browse and try every endpoint). |
+| `/openapi.json` | The raw OpenAPI spec behind `/docs`. |
+| `/healthz` · `/metrics` | Health probe + Prometheus metrics. |
 
 ## Storefront
 
 Server-rendered (no build step): a paginated, searchable home grid and a
 per-template detail page, served from the same catalog at `/` and
 `/templates/{slug}`.
+
+<p align="center">
+  <img src="docs/images/storefront.png" alt="Miabi Marketplace storefront — searchable template grid" width="100%">
+</p>
 
 ## Run
 
@@ -81,3 +81,7 @@ serving Official / Community / Custom tabs locally (search + pagination are done
 client-side, so no server round-trips are needed). Set `MIABI_MARKETPLACE_URL` to
 the CDN `export.json` URL or a server base URL to enable the sync (empty =
 embedded-only / air-gapped).
+
+<p align="center">
+  <img src="docs/images/miabi-marketplace.png" alt="Miabi console Marketplace — Official / Community / Custom template tabs" width="100%">
+</p>
