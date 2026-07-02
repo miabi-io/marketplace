@@ -93,8 +93,11 @@ type StackSpec struct {
 
 // Metadata describes and identifies a template.
 type Metadata struct {
-	Slug        string   `yaml:"slug" json:"slug"`
-	Name        string   `yaml:"name" json:"name"`
+	// Name is the stable template handle (e.g. "ghost"). It must match
+	// ^[a-z0-9][a-z0-9-]*$ and equal the template's directory name.
+	Name string `yaml:"name" json:"name"`
+	// DisplayName is the free-text catalog label shown in the UI (e.g. "Ghost").
+	DisplayName string   `yaml:"displayName" json:"displayName"`
 	Version     string   `yaml:"version" json:"version"`
 	Description string   `yaml:"description,omitempty" json:"description,omitempty"`
 	Category    string   `yaml:"category,omitempty" json:"category,omitempty"`

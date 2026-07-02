@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: wallabag
-  name: Wallabag
+  name: wallabag
+  displayName: Wallabag
   version: 1.0.0
   description: Self-hosted read-it-later app that saves and cleans up web articles, backed by PostgreSQL.
   category: Productivity

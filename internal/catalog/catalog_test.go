@@ -93,8 +93,8 @@ func TestSearchFilterAndPaginate(t *testing.T) {
 const fixtureManifest = `apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: dup
-  name: Dup
+  name: dup
+  displayName: Dup
   version: 1.0.0
   category: Web
 applications:

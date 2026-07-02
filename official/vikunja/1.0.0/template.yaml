@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: vikunja
-  name: Vikunja
+  name: vikunja
+  displayName: Vikunja
   version: 1.0.0
   description: Self-hosted to-do and project management app, backed by PostgreSQL.
   category: Productivity

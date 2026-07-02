@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: minio
-  name: MinIO
+  name: minio
+  displayName: MinIO
   version: 1.0.0
   description: High-performance, S3-compatible object storage with a built-in web console.
   category: Storage

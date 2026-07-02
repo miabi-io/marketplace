@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: roundcube
-  name: Roundcube
+  name: roundcube
+  displayName: Roundcube
   version: 1.0.0
   description: Browser-based IMAP webmail client, backed by PostgreSQL.
   category: Email

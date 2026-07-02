@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: vaultwarden
-  name: Vaultwarden
+  name: vaultwarden
+  displayName: Vaultwarden
   version: 1.0.0
   description: Lightweight Bitwarden-compatible password manager server (SQLite-backed).
   category: Security

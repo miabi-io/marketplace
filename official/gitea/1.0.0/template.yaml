@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: gitea
-  name: Gitea
+  name: gitea
+  displayName: Gitea
   version: 1.0.0
   description: Lightweight self-hosted Git service, backed by PostgreSQL.
   category: Development

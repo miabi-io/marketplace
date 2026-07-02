@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: mealie
-  name: Mealie
+  name: mealie
+  displayName: Mealie
   version: 1.0.0
   description: Self-hosted recipe manager and meal planner with a shopping-list, backed by PostgreSQL.
   category: Productivity

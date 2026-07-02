@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: uptime-kuma
-  name: Uptime Kuma
+  name: uptime-kuma
+  displayName: Uptime Kuma
   version: 1.0.0
   description: Self-hosted uptime monitoring with status pages and rich notifications.
   category: Monitoring

@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: freshrss
-  name: FreshRSS
+  name: freshrss
+  displayName: FreshRSS
   version: 1.0.0
   description: Self-hosted, lightweight RSS/Atom feed aggregator (SQLite-backed).
   category: News

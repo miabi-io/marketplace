@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: metabase
-  name: Metabase
+  name: metabase
+  displayName: Metabase
   version: 1.0.0
   description: Open-source business intelligence — ask questions and build dashboards, with its app data in PostgreSQL.
   category: Analytics

@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: nextcloud
-  name: Nextcloud
+  name: nextcloud
+  displayName: Nextcloud
   version: 1.0.0
   description: Self-hosted content collaboration platform — files, calendar and contacts, backed by PostgreSQL.
   category: Productivity

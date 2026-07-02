@@ -139,7 +139,7 @@ func loadFS(fsys fs.FS) (*Catalog, error) {
 		if a.Source != b.Source {
 			return a.Source == SourceOfficial
 		}
-		return strings.ToLower(a.Latest().Manifest.Metadata.Name) < strings.ToLower(b.Latest().Manifest.Metadata.Name)
+		return strings.ToLower(a.Latest().Manifest.Metadata.DisplayName) < strings.ToLower(b.Latest().Manifest.Metadata.DisplayName)
 	})
 
 	c.bySlug = make(map[string]*Template, len(c.templates))
@@ -182,8 +182,8 @@ func loadTemplate(fsys fs.FS, source, slug string) (*Template, error) {
 		if err != nil {
 			return nil, fmt.Errorf("version %s: %w", ver, err)
 		}
-		if m.Metadata.Slug != slug {
-			return nil, fmt.Errorf("version %s: manifest slug %q disagrees with directory %q", ver, m.Metadata.Slug, slug)
+		if m.Metadata.Name != slug {
+			return nil, fmt.Errorf("version %s: manifest name %q disagrees with directory %q", ver, m.Metadata.Name, slug)
 		}
 		if m.Metadata.Version != ver {
 			return nil, fmt.Errorf("version directory %q disagrees with manifest version %q", ver, m.Metadata.Version)

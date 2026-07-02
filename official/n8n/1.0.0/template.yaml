@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: n8n
   name: n8n
+  displayName: n8n
   version: 1.0.0
   description: Workflow automation (standalone, SQLite).
   category: Automation

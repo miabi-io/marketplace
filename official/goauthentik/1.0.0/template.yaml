@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: goauthentik
-  name: authentik
+  name: goauthentik
+  displayName: authentik
   version: 1.0.0
   description: Self-hosted identity provider — SSO, OAuth2/OIDC, SAML and LDAP — backed by PostgreSQL and Redis.
   category: Security

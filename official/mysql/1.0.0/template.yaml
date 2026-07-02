@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: mysql
-  name: MySQL
+  name: mysql
+  displayName: MySQL
   version: 1.0.0
   description: Managed MySQL database.
   category: Database

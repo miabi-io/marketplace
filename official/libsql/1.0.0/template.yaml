@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: libsql
-  name: libSQL
+  name: libsql
+  displayName: libSQL
   version: 1.0.0
   description: Managed libSQL (sqld) database.
   category: Database

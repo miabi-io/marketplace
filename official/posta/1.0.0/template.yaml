@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: posta
-  name: Posta
+  name: posta
+  displayName: Posta
   version: 1.0.0
   description: Self-hosted transactional email & SMTP platform — send, receive, and verify email.
   category: Email
