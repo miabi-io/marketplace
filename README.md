@@ -21,10 +21,10 @@ catalog into a local cache and serves it in the console).
 ## Repository layout
 
 ```
-official/<slug>/<version>/template.yaml   curated, CODEOWNERS-protected (source of truth for official)
-official/<slug>/metadata.yaml             optional storefront metadata (featured, screenshots, …)
-official/<slug>/README.md                 optional long description (detail page)
-community/<slug>/...                      contributed, same shape; open PRs
+official/<name>/<version>/template.yaml   curated, CODEOWNERS-protected (source of truth for official)
+official/<name>/metadata.yaml             optional storefront metadata (featured, screenshots, …)
+official/<name>/README.md                 optional long description (detail page)
+community/<name>/...                      contributed, same shape; open PRs
 export.json                               GENERATED full bundle (every manifest inline) — served via jsDelivr
 registry/index.json                       GENERATED lightweight machine index (CI checks for drift)
 manifest/                                 the miabi.io/v1 manifest module: parse + validate + digest
@@ -32,6 +32,11 @@ schema/template.schema.json               JSON Schema for editors + CI
 internal/{catalog,api,storefront}         the Okapi service
 cmd/marketplace                           server + generate-index + lint
 ```
+
+`<name>` is the template **handle** — lowercase `^[a-z0-9][a-z0-9-]*$`, matching
+the manifest's `metadata.name` and unique across `official/` + `community/`. The
+manifest also carries a `metadata.displayName` (the free-text label shown in the
+storefront and console) and a `metadata.version`.
 
 ## API
 
@@ -67,11 +72,6 @@ go run ./cmd/marketplace lint       # validate every embedded template
 go run ./cmd/marketplace generate   # rewrite export.json + registry/index.json (CI runs + diffs this)
 ```
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md). Community templates are a fast
-PR-to-live path; official templates are maintainer-gated via `CODEOWNERS`.
-
 ## How Miabi consumes it
 
 Miabi does a conditional GET (ETag) of the bundle — either the static
@@ -85,3 +85,8 @@ embedded-only / air-gapped).
 <p align="center">
   <img src="docs/images/miabi-marketplace.png" alt="Miabi console Marketplace — Official / Community / Custom template tabs" width="100%">
 </p>
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Community templates are a fast
+PR-to-live path; official templates are maintainer-gated via `CODEOWNERS`.
