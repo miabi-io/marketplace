@@ -6,20 +6,32 @@ template came from, surfaced as a badge in the storefront and the Miabi console.
 
 ## Add a community template
 
-1. Create the directory layout under `community/<slug>/`:
+1. Create the directory layout under `community/<name>/`:
 
    ```
-   community/<slug>/
+   community/<name>/
      metadata.yaml          # optional storefront enrichment (featured, screenshots, sourceRepo)
      README.md              # optional long description, shown on the detail page
      <version>/template.yaml  # the install manifest (apiVersion: miabi.io/v1)
    ```
 
-   - `<slug>` must be lowercase `^[a-z0-9][a-z0-9-]*$` and **unique across both
-     `official/` and `community/`** (CI enforces this).
+   - `<name>` is the template **handle**: lowercase `^[a-z0-9][a-z0-9-]*$`,
+     **unique across both `official/` and `community/`** (CI enforces this), and it
+     must equal the manifest's `metadata.name`.
    - One `template.yaml` per version directory; a version is immutable once merged.
    - The manifest schema is documented in [`schema/template.schema.json`](schema/template.schema.json).
      Point your editor's YAML language server at it for inline validation.
+
+   The manifest's `metadata` block identifies the template:
+
+   ```yaml
+   apiVersion: miabi.io/v1
+   kind: Template
+   metadata:
+     name: my-app          # the handle — lowercase [a-z0-9-], equals the directory name
+     displayName: My App   # free-text label shown in the storefront and Miabi console
+     version: 1.0.0        # immutable per version directory
+   ```
 
 2. Validate locally before opening a PR:
 
