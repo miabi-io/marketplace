@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: umami
-  name: Umami
+  name: umami
+  displayName: Umami
   version: 1.0.0
   description: Privacy-focused web analytics backed by PostgreSQL.
   category: Analytics

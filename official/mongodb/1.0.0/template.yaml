@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: mongodb
-  name: MongoDB
+  name: mongodb
+  displayName: MongoDB
   version: 1.0.0
   description: Managed MongoDB document database.
   category: Database

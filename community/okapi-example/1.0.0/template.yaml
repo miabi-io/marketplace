@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: okapi-example
-  name: Okapi Example
+  name: okapi-example
+  displayName: Okapi Example
   version: 1.0.0
   description: Reference app for the Okapi Go API framework — middleware, routing, real-time SSE, and auto-generated OpenAPI docs at /docs.
   category: Development

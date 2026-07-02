@@ -12,10 +12,10 @@
     "metadata": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["slug", "name", "version"],
+      "required": ["name", "displayName", "version"],
       "properties": {
-        "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
-        "name": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "displayName": { "type": "string", "minLength": 1 },
         "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+" },
         "description": { "type": "string" },
         "category": { "type": "string" },

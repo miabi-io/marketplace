@@ -83,7 +83,7 @@ type IndexVersion struct {
 func (c *Catalog) Index() Index {
 	idx := Index{ETag: c.etag, GeneratedAt: c.generatedAt, Templates: make([]IndexTemplate, 0, len(c.templates))}
 	for _, t := range c.templates {
-		it := IndexTemplate{Slug: t.Slug, Source: t.Source, Name: t.Latest().Manifest.Metadata.Name, Category: t.Latest().Manifest.Metadata.Category}
+		it := IndexTemplate{Slug: t.Slug, Source: t.Source, Name: t.Latest().Manifest.Metadata.DisplayName, Category: t.Latest().Manifest.Metadata.Category}
 		for _, v := range t.Versions {
 			it.Versions = append(it.Versions, IndexVersion{Version: v.Version, Digest: v.Digest})
 		}
@@ -120,7 +120,7 @@ func (t *Template) Listing() Listing {
 		vers = append(vers, v.Version)
 	}
 	return Listing{
-		Slug: t.Slug, Name: m.Metadata.Name, Description: m.Metadata.Description,
+		Slug: t.Slug, Name: m.Metadata.DisplayName, Description: m.Metadata.Description,
 		Category: m.Metadata.Category, Icon: m.Metadata.Icon, Tags: m.Metadata.Tags,
 		Homepage: m.Metadata.Homepage, Author: m.Metadata.Author, Source: t.Source,
 		Featured: t.Meta.Featured, Version: m.Metadata.Version, Versions: vers,

@@ -47,11 +47,11 @@ func (m *Manifest) Validate() error {
 	if m.Kind != KindValue {
 		return fmt.Errorf("kind must be %q, got %q", KindValue, m.Kind)
 	}
-	if !slugRe.MatchString(m.Metadata.Slug) {
-		return fmt.Errorf("metadata.slug %q must match %s", m.Metadata.Slug, slugRe)
+	if !slugRe.MatchString(m.Metadata.Name) {
+		return fmt.Errorf("metadata.name %q must match %s", m.Metadata.Name, slugRe)
 	}
-	if strings.TrimSpace(m.Metadata.Name) == "" {
-		return fmt.Errorf("metadata.name is required")
+	if strings.TrimSpace(m.Metadata.DisplayName) == "" {
+		return fmt.Errorf("metadata.displayName is required")
 	}
 	if strings.TrimSpace(m.Metadata.Version) == "" {
 		return fmt.Errorf("metadata.version is required")

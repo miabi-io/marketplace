@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: redis
-  name: Redis
+  name: redis
+  displayName: Redis
   version: 1.0.0
   description: Managed Redis instance.
   category: Database

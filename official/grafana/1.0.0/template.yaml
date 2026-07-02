@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: grafana
-  name: Grafana
+  name: grafana
+  displayName: Grafana
   version: 1.0.0
   description: Open-source observability platform for dashboards, metrics, logs and alerting.
   category: Monitoring

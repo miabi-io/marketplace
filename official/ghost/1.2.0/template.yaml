@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: ghost
-  name: Ghost
+  name: ghost
+  displayName: Ghost
   version: 1.2.0
   description: Professional publishing platform — a headless Node.js CMS for blogs and newsletters.
   category: CMS

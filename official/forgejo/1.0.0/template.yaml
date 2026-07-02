@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: forgejo
-  name: Forgejo
+  name: forgejo
+  displayName: Forgejo
   version: 1.0.0
   description: Self-hosted lightweight software forge (Gitea soft-fork), backed by PostgreSQL.
   category: Development

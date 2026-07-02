@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: pgadmin4
-  name: pgAdmin 4
+  name: pgadmin4
+  displayName: pgAdmin 4
   version: 1.0.0
   description: Web interface to administer PostgreSQL databases.
   category: Database

@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: mongo-express
-  name: Mongo Express
+  name: mongo-express
+  displayName: Mongo Express
   version: 1.0.0
   description: Web interface to administer MongoDB databases.
   category: Database

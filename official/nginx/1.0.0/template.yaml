@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: nginx
-  name: Nginx
+  name: nginx
+  displayName: Nginx
   version: 1.0.0
   description: Lightweight web server / static site.
   category: Web

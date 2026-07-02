@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: matomo
-  name: Matomo
+  name: matomo
+  displayName: Matomo
   version: 1.0.0
   description: Privacy-respecting, self-hosted web analytics — a Google Analytics alternative, backed by MariaDB.
   category: Analytics

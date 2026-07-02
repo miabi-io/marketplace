@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: jellyfin
-  name: Jellyfin
+  name: jellyfin
+  displayName: Jellyfin
   version: 1.0.0
   description: Free, self-hosted media server for streaming your movies, shows and music.
   category: Media

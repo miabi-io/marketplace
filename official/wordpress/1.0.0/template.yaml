@@ -1,8 +1,8 @@
 apiVersion: miabi.io/v1
 kind: Template
 metadata:
-  slug: wordpress
-  name: WordPress
+  name: wordpress
+  displayName: WordPress
   version: 1.0.0
   description: WordPress CMS backed by MySQL.
   category: CMS
