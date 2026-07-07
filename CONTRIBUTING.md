@@ -6,6 +6,10 @@ template came from, surfaced as a badge in the storefront and the Miabi console.
 
 ## Add a community template
 
+You can develop and test a template entirely in the Miabi console first —
+**Marketplace → Import**, paste your `template.yaml`, and install it into a
+workspace — before adding it here (see the tip under step 2).
+
 1. Create the directory layout under `community/<name>/`:
 
    ```
@@ -40,6 +44,12 @@ template came from, surfaced as a badge in the storefront and the Miabi console.
    go run ./cmd/marketplace generate-index  # regenerate registry/index.json
    git diff --exit-code registry/index.json # must be clean (CI runs this)
    ```
+
+   > **Tip — try it in Miabi first.** Beyond the linter, you can test the
+   > template end to end: in the Miabi console open **Marketplace → Import**,
+   > paste your `template.yaml`, then install it into a workspace. Installing it
+   > for real is the surest way to confirm it deploys and runs as intended before
+   > you open a PR.
 
 3. Open a PR. CI re-runs the validator and the index drift check. A maintainer
    reviews and merges; merging to `main` redeploys the service, so your template
