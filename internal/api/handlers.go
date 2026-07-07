@@ -58,7 +58,7 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 		okapi.DocResponse(http.StatusOK, &Envelope[catalog.Page]{}),
 	).WithInput(&ListTemplatesRequest{})
 
-	app.Get("/v1/templates/{slug}", okapi.H(h.GetTemplate),
+	app.Get("/v1/templates/{name}", okapi.H(h.GetTemplate),
 		okapi.DocSummary("Template detail"),
 		okapi.DocDescription("A template's detail: listing, all versions, README, and the manifest of the requested version (?version, default latest)."),
 		okapi.DocTag("templates"),
@@ -66,7 +66,7 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 		okapi.DocErrorResponse(http.StatusNotFound, &ErrorResponse{}),
 	).WithInput(&TemplateRequest{})
 
-	app.Get("/v1/templates/{slug}/versions/{version}", okapi.H(h.GetVersion),
+	app.Get("/v1/templates/{name}/versions/{version}", okapi.H(h.GetVersion),
 		okapi.DocSummary("Version metadata"),
 		okapi.DocDescription("One version's metadata + digest."),
 		okapi.DocTag("templates"),
@@ -74,7 +74,7 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 		okapi.DocErrorResponse(http.StatusNotFound, &ErrorResponse{}),
 	).WithInput(&VersionRequest{})
 
-	app.Get("/v1/templates/{slug}/versions/{version}/manifest", okapi.H(h.GetManifest),
+	app.Get("/v1/templates/{name}/versions/{version}/manifest", okapi.H(h.GetManifest),
 		okapi.DocSummary("Raw template manifest"),
 		okapi.DocDescription("The raw template.yaml to install; the version digest is the ETag. Content-Type application/yaml; ETag-conditional."),
 		okapi.DocTag("templates"),
@@ -86,7 +86,7 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 
 	app.Get("/v1/categories", h.Categories,
 		okapi.DocSummary("Category facets"),
-		okapi.DocDescription("The category facets (slug + count)."),
+		okapi.DocDescription("The category facets (name + count)."),
 		okapi.DocTag("catalog"),
 		okapi.DocResponse(http.StatusOK, &Envelope[[]catalog.CategoryFacet]{}),
 	)
@@ -127,7 +127,7 @@ func (h *Handlers) Index(c *okapi.Context) error {
 type ListTemplatesRequest struct {
 	Q        string `query:"q" description:"Free-text search over name/description/tags."`
 	Source   string `query:"source" enum:"official,community" description:"Filter by source."`
-	Category string `query:"category" description:"Filter by category slug."`
+	Category string `query:"category" description:"Filter by category name."`
 	Tag      string `query:"tag" description:"Filter by tag."`
 	Sort     string `query:"sort" enum:"name,updated,popularity" description:"Sort order (updated/popularity fall back to name today)."`
 	Page     int    `query:"page" default:"1" description:"1-based page number."`
@@ -148,16 +148,16 @@ func (h *Handlers) ListTemplates(c *okapi.Context, in *ListTemplatesRequest) err
 	return ok(c, page)
 }
 
-// TemplateRequest identifies a template (slug) and an optional version.
+// TemplateRequest identifies a template (name) and an optional version.
 type TemplateRequest struct {
-	Slug    string `path:"slug" required:"true" description:"Template slug."`
+	Name    string `path:"name" required:"true" description:"Template name."`
 	Version string `query:"version" description:"Specific version (default: latest)."`
 }
 
 // GetTemplate returns a template's detail: listing, all versions, README, and
 // the manifest of the requested version (?version, default latest).
 func (h *Handlers) GetTemplate(c *okapi.Context, in *TemplateRequest) error {
-	t, found := h.cat.Get(in.Slug)
+	t, found := h.cat.Get(in.Name)
 	if !found {
 		return fail(c, http.StatusNotFound, "TEMPLATE_NOT_FOUND", "template not found")
 	}
@@ -168,15 +168,15 @@ func (h *Handlers) GetTemplate(c *okapi.Context, in *TemplateRequest) error {
 	return ok(c, detailOf(t, ver))
 }
 
-// VersionRequest identifies a specific template version by slug + version path.
+// VersionRequest identifies a specific template version by name + version path.
 type VersionRequest struct {
-	Slug    string `path:"slug" required:"true" description:"Template slug."`
+	Name    string `path:"name" required:"true" description:"Template name."`
 	Version string `path:"version" required:"true" description:"Version identifier."`
 }
 
 // GetVersion returns one version's metadata + digest.
 func (h *Handlers) GetVersion(c *okapi.Context, in *VersionRequest) error {
-	t, found := h.cat.Get(in.Slug)
+	t, found := h.cat.Get(in.Name)
 	if !found {
 		return fail(c, http.StatusNotFound, "TEMPLATE_NOT_FOUND", "template not found")
 	}
@@ -184,12 +184,12 @@ func (h *Handlers) GetVersion(c *okapi.Context, in *VersionRequest) error {
 	if !vok {
 		return fail(c, http.StatusNotFound, "VERSION_NOT_FOUND", "template version not found")
 	}
-	return ok(c, VersionDetail{Slug: t.Slug, Source: t.Source, Version: ver.Version, Digest: ver.Digest, Metadata: ver.Manifest.Metadata})
+	return ok(c, VersionDetail{Name: t.Name, Source: t.Source, Version: ver.Version, Digest: ver.Digest, Metadata: ver.Manifest.Metadata})
 }
 
 // GetManifest returns the raw template.yaml to install; the digest is the ETag.
 func (h *Handlers) GetManifest(c *okapi.Context, in *VersionRequest) error {
-	t, found := h.cat.Get(in.Slug)
+	t, found := h.cat.Get(in.Name)
 	if !found {
 		return fail(c, http.StatusNotFound, "TEMPLATE_NOT_FOUND", "template not found")
 	}
@@ -267,7 +267,7 @@ type VersionRef struct {
 
 // VersionDetail is one version's metadata + digest.
 type VersionDetail struct {
-	Slug     string            `json:"slug"`
+	Name     string            `json:"name"`
 	Source   string            `json:"source"`
 	Version  string            `json:"version"`
 	Digest   string            `json:"digest"`

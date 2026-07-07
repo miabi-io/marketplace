@@ -71,7 +71,7 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 	app.WithRenderer(renderer())
 	h := &Handlers{cat: cat}
 	app.Get("/", h.Home)
-	app.Get("/templates/{slug}", h.Detail)
+	app.Get("/templates/{name}", h.Detail)
 }
 
 type homeData struct {
@@ -111,7 +111,7 @@ type detailData struct {
 
 // Detail renders one template's page.
 func (h *Handlers) Detail(c *okapi.Context) error {
-	t, ok := h.cat.Get(c.Param("slug"))
+	t, ok := h.cat.Get(c.Param("name"))
 	if !ok {
 		return c.Render(http.StatusNotFound, "notfound", nil)
 	}

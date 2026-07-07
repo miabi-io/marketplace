@@ -126,7 +126,7 @@ func writeJSON(path string, v any) error {
 }
 
 // lint loads the catalog, which validates every manifest, verifies digests, and
-// enforces cross-source slug uniqueness — a non-zero exit fails CI.
+// enforces cross-source name uniqueness — a non-zero exit fails CI.
 func lint() error {
 	cat, err := catalog.Load()
 	if err != nil {

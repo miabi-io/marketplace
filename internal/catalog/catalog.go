@@ -44,9 +44,9 @@ const (
 	SourceCommunity = "community"
 )
 
-var slugRe = regexp.MustCompile(`^[a-z0-9][a-z0-9-]*$`)
+var nameRe = regexp.MustCompile(`^[a-z0-9][a-z0-9-]*$`)
 
-// Metadata is storefront-only enrichment from <slug>/metadata.yaml — it never
+// Metadata is storefront-only enrichment from <name>/metadata.yaml — it never
 // affects an install (the manifest is authoritative for that).
 type Metadata struct {
 	Featured    bool     `yaml:"featured" json:"featured,omitempty"`
@@ -65,7 +65,7 @@ type Version struct {
 
 // Template is one catalog entry with all of its versions (newest-first).
 type Template struct {
-	Slug     string
+	Name     string
 	Source   string
 	Meta     Metadata
 	Readme   string
@@ -91,7 +91,7 @@ func (t *Template) FindVersion(v string) (Version, bool) {
 // Catalog is the loaded, immutable set of templates.
 type Catalog struct {
 	templates   []Template
-	bySlug      map[string]*Template
+	byName      map[string]*Template
 	etag        string
 	generatedAt string
 }
@@ -100,11 +100,11 @@ type Catalog struct {
 func Load() (*Catalog, error) { return loadFS(marketplace.Content) }
 
 // loadFS builds a catalog from any fs (embedded in production; a fixture in
-// tests). A malformed manifest, a digest/slug/version mismatch, or a slug
+// tests). A malformed manifest, a digest/name/version mismatch, or a name
 // duplicated across sources is a hard error — the build/CI fails closed.
 func loadFS(fsys fs.FS) (*Catalog, error) {
 	c := &Catalog{}
-	seen := map[string]string{} // slug -> source, for cross-folder uniqueness
+	seen := map[string]string{} // name -> source, for cross-folder uniqueness
 	for _, source := range []string{SourceOfficial, SourceCommunity} {
 		entries, err := fs.ReadDir(fsys, source)
 		if errors.Is(err, fs.ErrNotExist) {
@@ -117,18 +117,18 @@ func loadFS(fsys fs.FS) (*Catalog, error) {
 			if !e.IsDir() {
 				continue
 			}
-			slug := e.Name()
-			if other, ok := seen[slug]; ok {
-				return nil, fmt.Errorf("duplicate slug %q in %s/ and %s/", slug, other, source)
+			name := e.Name()
+			if other, ok := seen[name]; ok {
+				return nil, fmt.Errorf("duplicate template %q in %s/ and %s/", name, other, source)
 			}
-			t, err := loadTemplate(fsys, source, slug)
+			t, err := loadTemplate(fsys, source, name)
 			if err != nil {
-				return nil, fmt.Errorf("%s/%s: %w", source, slug, err)
+				return nil, fmt.Errorf("%s/%s: %w", source, name, err)
 			}
 			if t == nil {
-				continue // a slug dir with no versions is ignored
+				continue // a template dir with no versions is ignored
 			}
-			seen[slug] = source
+			seen[name] = source
 			c.templates = append(c.templates, *t)
 		}
 	}
@@ -142,25 +142,25 @@ func loadFS(fsys fs.FS) (*Catalog, error) {
 		return strings.ToLower(a.Latest().Manifest.Metadata.DisplayName) < strings.ToLower(b.Latest().Manifest.Metadata.DisplayName)
 	})
 
-	c.bySlug = make(map[string]*Template, len(c.templates))
+	c.byName = make(map[string]*Template, len(c.templates))
 	for i := range c.templates {
-		c.bySlug[c.templates[i].Slug] = &c.templates[i]
+		c.byName[c.templates[i].Name] = &c.templates[i]
 	}
 	c.etag = computeETag(c.templates)
 	c.generatedAt = time.Now().UTC().Format(time.RFC3339)
 	return c, nil
 }
 
-func loadTemplate(fsys fs.FS, source, slug string) (*Template, error) {
-	if !slugRe.MatchString(slug) {
-		return nil, fmt.Errorf("invalid slug directory %q", slug)
+func loadTemplate(fsys fs.FS, source, name string) (*Template, error) {
+	if !nameRe.MatchString(name) {
+		return nil, fmt.Errorf("invalid template directory %q", name)
 	}
-	base := path.Join(source, slug)
+	base := path.Join(source, name)
 	entries, err := fs.ReadDir(fsys, base)
 	if err != nil {
 		return nil, err
 	}
-	t := &Template{Slug: slug, Source: source}
+	t := &Template{Name: name, Source: source}
 	if b, err := fs.ReadFile(fsys, path.Join(base, "metadata.yaml")); err == nil {
 		if err := yaml.Unmarshal(b, &t.Meta); err != nil {
 			return nil, fmt.Errorf("metadata.yaml: %w", err)
@@ -182,8 +182,8 @@ func loadTemplate(fsys fs.FS, source, slug string) (*Template, error) {
 		if err != nil {
 			return nil, fmt.Errorf("version %s: %w", ver, err)
 		}
-		if m.Metadata.Name != slug {
-			return nil, fmt.Errorf("version %s: manifest name %q disagrees with directory %q", ver, m.Metadata.Name, slug)
+		if m.Metadata.Name != name {
+			return nil, fmt.Errorf("version %s: manifest name %q disagrees with directory %q", ver, m.Metadata.Name, name)
 		}
 		if m.Metadata.Version != ver {
 			return nil, fmt.Errorf("version directory %q disagrees with manifest version %q", ver, m.Metadata.Version)
@@ -206,7 +206,7 @@ func computeETag(ts []Template) string {
 	lines := make([]string, 0, len(ts))
 	for _, t := range ts {
 		for _, v := range t.Versions {
-			lines = append(lines, t.Source+"/"+t.Slug+"@"+v.Version+"="+v.Digest)
+			lines = append(lines, t.Source+"/"+t.Name+"@"+v.Version+"="+v.Digest)
 		}
 	}
 	sort.Strings(lines)
@@ -217,9 +217,9 @@ func computeETag(ts []Template) string {
 // Templates returns all templates (official first, then by name).
 func (c *Catalog) Templates() []Template { return c.templates }
 
-// Get returns a template by slug.
-func (c *Catalog) Get(slug string) (*Template, bool) {
-	t, ok := c.bySlug[slug]
+// Get returns a template by name.
+func (c *Catalog) Get(name string) (*Template, bool) {
+	t, ok := c.byName[name]
 	return t, ok
 }
 

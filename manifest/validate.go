@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	slugRe = regexp.MustCompile(`^[a-z0-9][a-z0-9-]*$`)
+	nameRe = regexp.MustCompile(`^[a-z0-9][a-z0-9-]*$`)
 	// validEngines are the database engines a template may request.
 	validEngines = map[string]bool{"postgres": true, "mysql": true, "mariadb": true, "redis": true, "mongodb": true, "libsql": true}
 )
@@ -47,8 +47,8 @@ func (m *Manifest) Validate() error {
 	if m.Kind != KindValue {
 		return fmt.Errorf("kind must be %q, got %q", KindValue, m.Kind)
 	}
-	if !slugRe.MatchString(m.Metadata.Name) {
-		return fmt.Errorf("metadata.name %q must match %s", m.Metadata.Name, slugRe)
+	if !nameRe.MatchString(m.Metadata.Name) {
+		return fmt.Errorf("metadata.name %q must match %s", m.Metadata.Name, nameRe)
 	}
 	if strings.TrimSpace(m.Metadata.DisplayName) == "" {
 		return fmt.Errorf("metadata.displayName is required")
@@ -152,8 +152,8 @@ func (m *Manifest) validateApplications(volNames map[string]bool) error {
 	appNames := map[string]bool{}
 	primaries := 0
 	for _, a := range m.Applications {
-		if !slugRe.MatchString(a.Name) {
-			return fmt.Errorf("application name %q must match %s", a.Name, slugRe)
+		if !nameRe.MatchString(a.Name) {
+			return fmt.Errorf("application name %q must match %s", a.Name, nameRe)
 		}
 		if appNames[a.Name] {
 			return fmt.Errorf("duplicate application name %q", a.Name)
