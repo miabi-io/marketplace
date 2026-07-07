@@ -1,5 +1,5 @@
 {
-  "etag": "\"d3a661c6f49698efb4e00a0203f5ef611e87464ab8b19a40c4b3ed3e08355918\"",
+  "etag": "\"e53cff09325d45624d0f77c0c096be21f5b612f15538b69c02fd2031d4546060\"",
   "generatedAt": "",
   "templates": [
     {
@@ -370,11 +370,11 @@
       "versions": [
         {
           "version": "2.0.0",
-          "digest": "sha256:b660288cacee464b2f253eb85b7e9e7955216ce58cae237dfdee3ffb3f02ba9c"
+          "digest": "sha256:66035af5cf95e61d1a81a1de96f6dfa70cc6802d3d72c517d41363fa802c3e2d"
         },
         {
           "version": "1.0.0",
-          "digest": "sha256:cd7294fc0116496e8682e2c1a075d7bef7d80fa584313b0d27a988038fc0891d"
+          "digest": "sha256:b56f5d78df4d713c38b8a14f9d488602e24e86c26de58112f7959180bb06b50a"
         }
       ]
     },
