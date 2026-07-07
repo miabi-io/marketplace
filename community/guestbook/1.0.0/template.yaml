@@ -1,0 +1,43 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: guestbook
+  displayName: Guestbook
+  version: 1.0.0
+  description: A tiny self-hosted guestbook — Okapi (Go) + Postgres with live SSE updates, an online-user count, and a server-time card. The reference example for deploying to Miabi.
+  category: Development
+  icon: https://cdn.simpleicons.org/go
+  homepage: https://github.com/miabi-io/guestbook
+  author:
+    name: Jonas Kaninda
+    website: https://github.com/jkaninda
+    email: ''
+  tags: [example, go, okapi, guestbook, sse]
+inputs:
+  - key: app_name
+    label: Display name
+    help: Shown in the guestbook header and health payload.
+    type: string
+    default: Miabi Guestbook
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+applications:
+  - name: guestbook
+    primary: true
+    image: miabi/guestbook
+    tag: "1.0.0"
+    ports:
+      - container: 8080
+        scheme: http
+    env:
+      DATABASE_URL: "{{ .databases.db.uri }}"
+      APP_NAME: "{{ .inputs.app_name }}"
+    secretEnv:
+      - DATABASE_URL
+    healthcheck:
+      type: http
+      path: /healthz
+      port: 8080

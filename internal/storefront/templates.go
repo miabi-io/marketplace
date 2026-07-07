@@ -92,12 +92,12 @@ const homeHTML = `{{define "content"}}
 {{else}}
   <div class="grid">
     {{range .Result.Items}}
-    <a class="card" href="/templates/{{.Slug}}">
+    <a class="card" href="/templates/{{.Name}}">
       <div class="head">
-        <span class="icon">{{if isURL .Icon}}<img src="{{.Icon}}" alt="{{.Name}}">{{else}}{{slice .Name 0 1}}{{end}}</span>
+        <span class="icon">{{if isURL .Icon}}<img src="{{.Icon}}" alt="{{.DisplayName}}">{{else}}{{slice .DisplayName 0 1}}{{end}}</span>
         <span class="badge {{badge .Source}}">{{.Source}}</span>
       </div>
-      <p class="name">{{.Name}}</p>
+      <p class="name">{{.DisplayName}}</p>
       <p class="desc">{{.Description}}</p>
       <div class="meta"><span>{{provision .}}</span><span>v{{.Version}}</span></div>
     </a>
@@ -114,9 +114,9 @@ const homeHTML = `{{define "content"}}
 const detailHTML = `{{define "content"}}
 <p><a href="/">← All templates</a></p>
 <div class="detail-head">
-  <span class="icon">{{if isURL .Listing.Icon}}<img src="{{.Listing.Icon}}" alt="{{.Listing.Name}}">{{else}}{{slice .Listing.Name 0 1}}{{end}}</span>
+  <span class="icon">{{if isURL .Listing.Icon}}<img src="{{.Listing.Icon}}" alt="{{.Listing.DisplayName}}">{{else}}{{slice .Listing.DisplayName 0 1}}{{end}}</span>
   <div>
-    <h1 style="margin:0">{{.Listing.Name}}</h1>
+    <h1 style="margin:0">{{.Listing.DisplayName}}</h1>
     <div style="margin-top:6px">
       <span class="badge {{badge .Listing.Source}}">{{.Listing.Source}}</span>
       {{if .Listing.Category}}<span class="badge badge-cat">{{.Listing.Category}}</span>{{end}}
@@ -157,7 +157,7 @@ const detailHTML = `{{define "content"}}
 
 <div class="section">
   <h3>Install</h3>
-  <p style="font-size:14px;color:var(--muted)">In Miabi, open <b>Marketplace → {{.Listing.Source}}</b>, find <b>{{.Listing.Name}}</b>, and click Install. Requires <code>MIABI_MARKETPLACE_URL</code> to point at this registry.</p>
+  <p style="font-size:14px;color:var(--muted)">In Miabi, open <b>Marketplace → {{.Listing.Source}}</b>, find <b>{{.Listing.DisplayName}}</b>, and click Install. Requires <code>MIABI_MARKETPLACE_URL</code> to point at this registry.</p>
 </div>
 
 {{if .T.Readme}}

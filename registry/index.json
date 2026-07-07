@@ -1,11 +1,11 @@
 {
-  "etag": "\"c75d86046eb6b106d6b6e349ea968eb089a6c3c34f17a6f22e151cb2b1cff327\"",
+  "etag": "\"e53cff09325d45624d0f77c0c096be21f5b612f15538b69c02fd2031d4546060\"",
   "generatedAt": "",
   "templates": [
     {
-      "slug": "goauthentik",
+      "name": "goauthentik",
       "source": "official",
-      "name": "authentik",
+      "displayName": "authentik",
       "category": "Security",
       "versions": [
         {
@@ -15,9 +15,9 @@
       ]
     },
     {
-      "slug": "forgejo",
+      "name": "forgejo",
       "source": "official",
-      "name": "Forgejo",
+      "displayName": "Forgejo",
       "category": "Development",
       "versions": [
         {
@@ -27,9 +27,9 @@
       ]
     },
     {
-      "slug": "freshrss",
+      "name": "freshrss",
       "source": "official",
-      "name": "FreshRSS",
+      "displayName": "FreshRSS",
       "category": "News",
       "versions": [
         {
@@ -39,9 +39,9 @@
       ]
     },
     {
-      "slug": "ghost",
+      "name": "ghost",
       "source": "official",
-      "name": "Ghost",
+      "displayName": "Ghost",
       "category": "CMS",
       "versions": [
         {
@@ -51,9 +51,9 @@
       ]
     },
     {
-      "slug": "gitea",
+      "name": "gitea",
       "source": "official",
-      "name": "Gitea",
+      "displayName": "Gitea",
       "category": "Development",
       "versions": [
         {
@@ -63,9 +63,9 @@
       ]
     },
     {
-      "slug": "grafana",
+      "name": "grafana",
       "source": "official",
-      "name": "Grafana",
+      "displayName": "Grafana",
       "category": "Monitoring",
       "versions": [
         {
@@ -75,9 +75,9 @@
       ]
     },
     {
-      "slug": "jellyfin",
+      "name": "jellyfin",
       "source": "official",
-      "name": "Jellyfin",
+      "displayName": "Jellyfin",
       "category": "Media",
       "versions": [
         {
@@ -87,9 +87,9 @@
       ]
     },
     {
-      "slug": "libsql",
+      "name": "libsql",
       "source": "official",
-      "name": "libSQL",
+      "displayName": "libSQL",
       "category": "Database",
       "versions": [
         {
@@ -99,9 +99,9 @@
       ]
     },
     {
-      "slug": "matomo",
+      "name": "matomo",
       "source": "official",
-      "name": "Matomo",
+      "displayName": "Matomo",
       "category": "Analytics",
       "versions": [
         {
@@ -111,9 +111,9 @@
       ]
     },
     {
-      "slug": "mealie",
+      "name": "mealie",
       "source": "official",
-      "name": "Mealie",
+      "displayName": "Mealie",
       "category": "Productivity",
       "versions": [
         {
@@ -123,9 +123,9 @@
       ]
     },
     {
-      "slug": "metabase",
+      "name": "metabase",
       "source": "official",
-      "name": "Metabase",
+      "displayName": "Metabase",
       "category": "Analytics",
       "versions": [
         {
@@ -135,9 +135,9 @@
       ]
     },
     {
-      "slug": "minio",
+      "name": "minio",
       "source": "official",
-      "name": "MinIO",
+      "displayName": "MinIO",
       "category": "Storage",
       "versions": [
         {
@@ -147,9 +147,9 @@
       ]
     },
     {
-      "slug": "mongo-express",
+      "name": "mongo-express",
       "source": "official",
-      "name": "Mongo Express",
+      "displayName": "Mongo Express",
       "category": "Database",
       "versions": [
         {
@@ -159,9 +159,9 @@
       ]
     },
     {
-      "slug": "mongodb",
+      "name": "mongodb",
       "source": "official",
-      "name": "MongoDB",
+      "displayName": "MongoDB",
       "category": "Database",
       "versions": [
         {
@@ -171,9 +171,9 @@
       ]
     },
     {
-      "slug": "mysql",
+      "name": "mysql",
       "source": "official",
-      "name": "MySQL",
+      "displayName": "MySQL",
       "category": "Database",
       "versions": [
         {
@@ -183,9 +183,9 @@
       ]
     },
     {
-      "slug": "n8n",
-      "source": "official",
       "name": "n8n",
+      "source": "official",
+      "displayName": "n8n",
       "category": "Automation",
       "versions": [
         {
@@ -195,9 +195,9 @@
       ]
     },
     {
-      "slug": "nextcloud",
+      "name": "nextcloud",
       "source": "official",
-      "name": "Nextcloud",
+      "displayName": "Nextcloud",
       "category": "Productivity",
       "versions": [
         {
@@ -207,9 +207,9 @@
       ]
     },
     {
-      "slug": "nginx",
+      "name": "nginx",
       "source": "official",
-      "name": "Nginx",
+      "displayName": "Nginx",
       "category": "Web",
       "versions": [
         {
@@ -219,9 +219,9 @@
       ]
     },
     {
-      "slug": "pgadmin4",
+      "name": "pgadmin4",
       "source": "official",
-      "name": "pgAdmin 4",
+      "displayName": "pgAdmin 4",
       "category": "Database",
       "versions": [
         {
@@ -231,9 +231,9 @@
       ]
     },
     {
-      "slug": "phpmyadmin",
+      "name": "phpmyadmin",
       "source": "official",
-      "name": "phpMyAdmin",
+      "displayName": "phpMyAdmin",
       "category": "Database",
       "versions": [
         {
@@ -243,9 +243,9 @@
       ]
     },
     {
-      "slug": "posta",
+      "name": "posta",
       "source": "official",
-      "name": "Posta",
+      "displayName": "Posta",
       "category": "Email",
       "versions": [
         {
@@ -255,9 +255,9 @@
       ]
     },
     {
-      "slug": "postgresql",
+      "name": "postgresql",
       "source": "official",
-      "name": "PostgreSQL",
+      "displayName": "PostgreSQL",
       "category": "Database",
       "versions": [
         {
@@ -267,9 +267,9 @@
       ]
     },
     {
-      "slug": "redis",
+      "name": "redis",
       "source": "official",
-      "name": "Redis",
+      "displayName": "Redis",
       "category": "Database",
       "versions": [
         {
@@ -279,9 +279,9 @@
       ]
     },
     {
-      "slug": "roundcube",
+      "name": "roundcube",
       "source": "official",
-      "name": "Roundcube",
+      "displayName": "Roundcube",
       "category": "Email",
       "versions": [
         {
@@ -291,9 +291,9 @@
       ]
     },
     {
-      "slug": "umami",
+      "name": "umami",
       "source": "official",
-      "name": "Umami",
+      "displayName": "Umami",
       "category": "Analytics",
       "versions": [
         {
@@ -303,9 +303,9 @@
       ]
     },
     {
-      "slug": "uptime-kuma",
+      "name": "uptime-kuma",
       "source": "official",
-      "name": "Uptime Kuma",
+      "displayName": "Uptime Kuma",
       "category": "Monitoring",
       "versions": [
         {
@@ -315,9 +315,9 @@
       ]
     },
     {
-      "slug": "vaultwarden",
+      "name": "vaultwarden",
       "source": "official",
-      "name": "Vaultwarden",
+      "displayName": "Vaultwarden",
       "category": "Security",
       "versions": [
         {
@@ -327,9 +327,9 @@
       ]
     },
     {
-      "slug": "vikunja",
+      "name": "vikunja",
       "source": "official",
-      "name": "Vikunja",
+      "displayName": "Vikunja",
       "category": "Productivity",
       "versions": [
         {
@@ -339,9 +339,9 @@
       ]
     },
     {
-      "slug": "wallabag",
+      "name": "wallabag",
       "source": "official",
-      "name": "Wallabag",
+      "displayName": "Wallabag",
       "category": "Productivity",
       "versions": [
         {
@@ -351,9 +351,9 @@
       ]
     },
     {
-      "slug": "wordpress",
+      "name": "wordpress",
       "source": "official",
-      "name": "WordPress",
+      "displayName": "WordPress",
       "category": "CMS",
       "versions": [
         {
@@ -363,9 +363,25 @@
       ]
     },
     {
-      "slug": "okapi-example",
+      "name": "guestbook",
       "source": "community",
-      "name": "Okapi Example",
+      "displayName": "Guestbook",
+      "category": "Development",
+      "versions": [
+        {
+          "version": "2.0.0",
+          "digest": "sha256:66035af5cf95e61d1a81a1de96f6dfa70cc6802d3d72c517d41363fa802c3e2d"
+        },
+        {
+          "version": "1.0.0",
+          "digest": "sha256:b56f5d78df4d713c38b8a14f9d488602e24e86c26de58112f7959180bb06b50a"
+        }
+      ]
+    },
+    {
+      "name": "okapi-example",
+      "source": "community",
+      "displayName": "Okapi Example",
       "category": "Development",
       "versions": [
         {

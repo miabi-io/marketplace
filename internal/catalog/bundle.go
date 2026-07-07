@@ -34,7 +34,7 @@ type Bundle struct {
 }
 
 type BundleTemplate struct {
-	Slug     string          `json:"slug"`
+	Name     string          `json:"name"`
 	Source   string          `json:"source"`
 	Versions []BundleVersion `json:"versions"`
 }
@@ -49,7 +49,7 @@ type BundleVersion struct {
 func (c *Catalog) Bundle() Bundle {
 	b := Bundle{ETag: c.etag, GeneratedAt: c.generatedAt, Templates: make([]BundleTemplate, 0, len(c.templates))}
 	for _, t := range c.templates {
-		bt := BundleTemplate{Slug: t.Slug, Source: t.Source}
+		bt := BundleTemplate{Name: t.Name, Source: t.Source}
 		for _, v := range t.Versions {
 			bt.Versions = append(bt.Versions, BundleVersion{Version: v.Version, Digest: v.Digest, Manifest: string(v.Raw)})
 		}
@@ -67,11 +67,11 @@ type Index struct {
 }
 
 type IndexTemplate struct {
-	Slug     string         `json:"slug"`
-	Source   string         `json:"source"`
-	Name     string         `json:"name"`
-	Category string         `json:"category,omitempty"`
-	Versions []IndexVersion `json:"versions"`
+	Name        string         `json:"name"`
+	Source      string         `json:"source"`
+	DisplayName string         `json:"displayName"`
+	Category    string         `json:"category,omitempty"`
+	Versions    []IndexVersion `json:"versions"`
 }
 
 type IndexVersion struct {
@@ -83,7 +83,7 @@ type IndexVersion struct {
 func (c *Catalog) Index() Index {
 	idx := Index{ETag: c.etag, GeneratedAt: c.generatedAt, Templates: make([]IndexTemplate, 0, len(c.templates))}
 	for _, t := range c.templates {
-		it := IndexTemplate{Slug: t.Slug, Source: t.Source, Name: t.Latest().Manifest.Metadata.DisplayName, Category: t.Latest().Manifest.Metadata.Category}
+		it := IndexTemplate{Name: t.Name, Source: t.Source, DisplayName: t.Latest().Manifest.Metadata.DisplayName, Category: t.Latest().Manifest.Metadata.Category}
 		for _, v := range t.Versions {
 			it.Versions = append(it.Versions, IndexVersion{Version: v.Version, Digest: v.Digest})
 		}
@@ -94,8 +94,8 @@ func (c *Catalog) Index() Index {
 
 // Listing is the storefront card view of a template (its latest version).
 type Listing struct {
-	Slug         string           `json:"slug"`
 	Name         string           `json:"name"`
+	DisplayName  string           `json:"displayName"`
 	Description  string           `json:"description"`
 	Category     string           `json:"category"`
 	Icon         string           `json:"icon,omitempty"`
@@ -120,7 +120,7 @@ func (t *Template) Listing() Listing {
 		vers = append(vers, v.Version)
 	}
 	return Listing{
-		Slug: t.Slug, Name: m.Metadata.DisplayName, Description: m.Metadata.Description,
+		Name: t.Name, DisplayName: m.Metadata.DisplayName, Description: m.Metadata.Description,
 		Category: m.Metadata.Category, Icon: m.Metadata.Icon, Tags: m.Metadata.Tags,
 		Homepage: m.Metadata.Homepage, Author: m.Metadata.Author, Source: t.Source,
 		Featured: t.Meta.Featured, Version: m.Metadata.Version, Versions: vers,
@@ -233,6 +233,7 @@ func (c *Catalog) Search(q Query) Page {
 
 func matchesText(l Listing, needle string) bool {
 	if strings.Contains(strings.ToLower(l.Name), needle) ||
+		strings.Contains(strings.ToLower(l.DisplayName), needle) ||
 		strings.Contains(strings.ToLower(l.Description), needle) ||
 		strings.Contains(strings.ToLower(l.Category), needle) {
 		return true
