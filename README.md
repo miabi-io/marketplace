@@ -58,7 +58,7 @@ interactive:
 
 Server-rendered (no build step): a paginated, searchable home grid and a
 per-template detail page, served from the same catalog at `/` and
-`/templates/{slug}`.
+`/templates/{name}`.
 
 <p align="center">
   <img src="docs/images/storefront.png" alt="Miabi Marketplace storefront — searchable template grid" width="100%">
@@ -89,4 +89,6 @@ embedded-only / air-gapped).
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Community templates are a fast
-PR-to-live path; official templates are maintainer-gated via `CODEOWNERS`.
+PR-to-live path; official templates are maintainer-gated via `CODEOWNERS`. You
+can also test a template live before contributing by importing it into the Miabi
+console (**Marketplace → Import**) and installing it.
