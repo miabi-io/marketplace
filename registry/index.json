@@ -1,5 +1,5 @@
 {
-  "etag": "\"c75d86046eb6b106d6b6e349ea968eb089a6c3c34f17a6f22e151cb2b1cff327\"",
+  "etag": "\"d3a661c6f49698efb4e00a0203f5ef611e87464ab8b19a40c4b3ed3e08355918\"",
   "generatedAt": "",
   "templates": [
     {
@@ -359,6 +359,22 @@
         {
           "version": "1.0.0",
           "digest": "sha256:6e96b630743734e805246a285aa8a2f964eb09f3362263d9ba9cd4438f6e7975"
+        }
+      ]
+    },
+    {
+      "slug": "guestbook",
+      "source": "community",
+      "name": "Guestbook",
+      "category": "Development",
+      "versions": [
+        {
+          "version": "2.0.0",
+          "digest": "sha256:b660288cacee464b2f253eb85b7e9e7955216ce58cae237dfdee3ffb3f02ba9c"
+        },
+        {
+          "version": "1.0.0",
+          "digest": "sha256:cd7294fc0116496e8682e2c1a075d7bef7d80fa584313b0d27a988038fc0891d"
         }
       ]
     },

@@ -1,5 +1,5 @@
 {
-  "etag": "\"c75d86046eb6b106d6b6e349ea968eb089a6c3c34f17a6f22e151cb2b1cff327\"",
+  "etag": "\"d3a661c6f49698efb4e00a0203f5ef611e87464ab8b19a40c4b3ed3e08355918\"",
   "generatedAt": "",
   "templates": [
     {
@@ -329,6 +329,22 @@
           "version": "1.0.0",
           "digest": "sha256:6e96b630743734e805246a285aa8a2f964eb09f3362263d9ba9cd4438f6e7975",
           "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: wordpress\n  displayName: WordPress\n  version: 1.0.0\n  description: WordPress CMS backed by MySQL.\n  category: CMS\n  icon: https://cdn.simpleicons.org/wordpress\n  homepage: https://wordpress.org\n  tags: [cms, blog, php]\ndatabases:\n  - name: db\n    engine: mysql\n    version: \"8.4\"\n    placement: auto\nvolumes:\n  - name: content\napplications:\n  - name: wordpress\n    primary: true\n    image: wordpress\n    tag: \"7.0-php8.3-apache\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      WORDPRESS_DB_HOST: \"{{ .databases.db.host }}\"\n      WORDPRESS_DB_USER: \"{{ .databases.db.user }}\"\n      WORDPRESS_DB_PASSWORD: \"{{ .databases.db.password }}\"\n      WORDPRESS_DB_NAME: \"{{ .databases.db.name }}\"\n    secretEnv:\n      - WORDPRESS_DB_PASSWORD\n    mounts:\n      - volume: content\n        path: /var/www/html\n"
+        }
+      ]
+    },
+    {
+      "slug": "guestbook",
+      "source": "community",
+      "versions": [
+        {
+          "version": "2.0.0",
+          "digest": "sha256:b660288cacee464b2f253eb85b7e9e7955216ce58cae237dfdee3ffb3f02ba9c",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: guestbook\n  displayName: Guestbook\n  version: 2.0.0\n  description: A tiny self-hosted guestbook — Okapi (Go) + Postgres with live SSE updates, an online-user count, and a server-time card. The reference example for deploying to Miabi.\n  category: Development\n  icon: https://cdn.simpleicons.org/go\n  homepage: https://github.com/miabi-io/guestbook\n  author:\n    name: Jonas Kaninda\n    website: https://github.com/jkaninda\n  tags: [example, go, okapi, guestbook, sse]\ninputs:\n  - key: app_name\n    label: Display name\n    help: Shown in the guestbook header and health payload.\n    type: string\n    default: Miabi Guestbook\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\napplications:\n  - name: guestbook\n    primary: true\n    image: miabi/guestbook\n    tag: \"2.0.0\"\n    ports:\n      - container: 8080\n        scheme: http\n    env:\n      DATABASE_URL: \"{{ .databases.db.uri }}\"\n      APP_NAME: \"{{ .inputs.app_name }}\"\n    secretEnv:\n      - DATABASE_URL\n    healthcheck:\n      type: http\n      path: /healthz\n      port: 8080\n"
+        },
+        {
+          "version": "1.0.0",
+          "digest": "sha256:cd7294fc0116496e8682e2c1a075d7bef7d80fa584313b0d27a988038fc0891d",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: guestbook\n  displayName: Guestbook\n  version: 1.0.0\n  description: A tiny self-hosted guestbook — Okapi (Go) + Postgres with live SSE updates, an online-user count, and a server-time card. The reference example for deploying to Miabi.\n  category: Development\n  icon: https://cdn.simpleicons.org/go\n  homepage: https://github.com/miabi-io/guestbook\n  author:\n    name: Jonas Kaninda\n    website: https://github.com/jkaninda\n  tags: [example, go, okapi, guestbook, sse]\ninputs:\n  - key: app_name\n    label: Display name\n    help: Shown in the guestbook header and health payload.\n    type: string\n    default: Miabi Guestbook\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\napplications:\n  - name: guestbook\n    primary: true\n    image: miabi/guestbook\n    tag: \"1.0.0\"\n    ports:\n      - container: 8080\n        scheme: http\n    env:\n      DATABASE_URL: \"{{ .databases.db.uri }}\"\n      APP_NAME: \"{{ .inputs.app_name }}\"\n    secretEnv:\n      - DATABASE_URL\n    healthcheck:\n      type: http\n      path: /healthz\n      port: 8080\n"
         }
       ]
     },
