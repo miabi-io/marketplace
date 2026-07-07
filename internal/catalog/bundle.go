@@ -34,7 +34,11 @@ type Bundle struct {
 }
 
 type BundleTemplate struct {
-	Name     string          `json:"name"`
+	Name string `json:"name"`
+	// Slug is a deprecated alias of Name, emitted so pre-rename consumers (which
+	// read "slug") keep working during the transition. Remove once all Miabi
+	// instances read "name".
+	Slug     string          `json:"slug"`
 	Source   string          `json:"source"`
 	Versions []BundleVersion `json:"versions"`
 }
@@ -49,7 +53,7 @@ type BundleVersion struct {
 func (c *Catalog) Bundle() Bundle {
 	b := Bundle{ETag: c.etag, GeneratedAt: c.generatedAt, Templates: make([]BundleTemplate, 0, len(c.templates))}
 	for _, t := range c.templates {
-		bt := BundleTemplate{Name: t.Name, Source: t.Source}
+		bt := BundleTemplate{Name: t.Name, Slug: t.Name, Source: t.Source}
 		for _, v := range t.Versions {
 			bt.Versions = append(bt.Versions, BundleVersion{Version: v.Version, Digest: v.Digest, Manifest: string(v.Raw)})
 		}
@@ -68,8 +72,9 @@ type Index struct {
 
 type IndexTemplate struct {
 	Name        string         `json:"name"`
+	Slug        string         `json:"slug"` // deprecated: alias of Name, for pre-rename consumers
 	Source      string         `json:"source"`
-	DisplayName string         `json:"displayName"`
+	DisplayName string         `json:"display_name"`
 	Category    string         `json:"category,omitempty"`
 	Versions    []IndexVersion `json:"versions"`
 }
@@ -83,7 +88,7 @@ type IndexVersion struct {
 func (c *Catalog) Index() Index {
 	idx := Index{ETag: c.etag, GeneratedAt: c.generatedAt, Templates: make([]IndexTemplate, 0, len(c.templates))}
 	for _, t := range c.templates {
-		it := IndexTemplate{Name: t.Name, Source: t.Source, DisplayName: t.Latest().Manifest.Metadata.DisplayName, Category: t.Latest().Manifest.Metadata.Category}
+		it := IndexTemplate{Name: t.Name, Slug: t.Name, Source: t.Source, DisplayName: t.Latest().Manifest.Metadata.DisplayName, Category: t.Latest().Manifest.Metadata.Category}
 		for _, v := range t.Versions {
 			it.Versions = append(it.Versions, IndexVersion{Version: v.Version, Digest: v.Digest})
 		}
@@ -95,7 +100,8 @@ func (c *Catalog) Index() Index {
 // Listing is the storefront card view of a template (its latest version).
 type Listing struct {
 	Name         string           `json:"name"`
-	DisplayName  string           `json:"displayName"`
+	Slug         string           `json:"slug"` // deprecated: alias of Name, for pre-rename consumers
+	DisplayName  string           `json:"display_name"`
 	Description  string           `json:"description"`
 	Category     string           `json:"category"`
 	Icon         string           `json:"icon,omitempty"`
@@ -120,7 +126,7 @@ func (t *Template) Listing() Listing {
 		vers = append(vers, v.Version)
 	}
 	return Listing{
-		Name: t.Name, DisplayName: m.Metadata.DisplayName, Description: m.Metadata.Description,
+		Name: t.Name, Slug: t.Name, DisplayName: m.Metadata.DisplayName, Description: m.Metadata.Description,
 		Category: m.Metadata.Category, Icon: m.Metadata.Icon, Tags: m.Metadata.Tags,
 		Homepage: m.Metadata.Homepage, Author: m.Metadata.Author, Source: t.Source,
 		Featured: t.Meta.Featured, Version: m.Metadata.Version, Versions: vers,

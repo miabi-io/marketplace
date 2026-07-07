@@ -4,6 +4,7 @@
   "templates": [
     {
       "name": "goauthentik",
+      "slug": "goauthentik",
       "source": "official",
       "versions": [
         {
@@ -15,6 +16,7 @@
     },
     {
       "name": "forgejo",
+      "slug": "forgejo",
       "source": "official",
       "versions": [
         {
@@ -26,6 +28,7 @@
     },
     {
       "name": "freshrss",
+      "slug": "freshrss",
       "source": "official",
       "versions": [
         {
@@ -37,6 +40,7 @@
     },
     {
       "name": "ghost",
+      "slug": "ghost",
       "source": "official",
       "versions": [
         {
@@ -48,6 +52,7 @@
     },
     {
       "name": "gitea",
+      "slug": "gitea",
       "source": "official",
       "versions": [
         {
@@ -59,6 +64,7 @@
     },
     {
       "name": "grafana",
+      "slug": "grafana",
       "source": "official",
       "versions": [
         {
@@ -70,6 +76,7 @@
     },
     {
       "name": "jellyfin",
+      "slug": "jellyfin",
       "source": "official",
       "versions": [
         {
@@ -81,6 +88,7 @@
     },
     {
       "name": "libsql",
+      "slug": "libsql",
       "source": "official",
       "versions": [
         {
@@ -92,6 +100,7 @@
     },
     {
       "name": "matomo",
+      "slug": "matomo",
       "source": "official",
       "versions": [
         {
@@ -103,6 +112,7 @@
     },
     {
       "name": "mealie",
+      "slug": "mealie",
       "source": "official",
       "versions": [
         {
@@ -114,6 +124,7 @@
     },
     {
       "name": "metabase",
+      "slug": "metabase",
       "source": "official",
       "versions": [
         {
@@ -125,6 +136,7 @@
     },
     {
       "name": "minio",
+      "slug": "minio",
       "source": "official",
       "versions": [
         {
@@ -136,6 +148,7 @@
     },
     {
       "name": "mongo-express",
+      "slug": "mongo-express",
       "source": "official",
       "versions": [
         {
@@ -147,6 +160,7 @@
     },
     {
       "name": "mongodb",
+      "slug": "mongodb",
       "source": "official",
       "versions": [
         {
@@ -158,6 +172,7 @@
     },
     {
       "name": "mysql",
+      "slug": "mysql",
       "source": "official",
       "versions": [
         {
@@ -169,6 +184,7 @@
     },
     {
       "name": "n8n",
+      "slug": "n8n",
       "source": "official",
       "versions": [
         {
@@ -180,6 +196,7 @@
     },
     {
       "name": "nextcloud",
+      "slug": "nextcloud",
       "source": "official",
       "versions": [
         {
@@ -191,6 +208,7 @@
     },
     {
       "name": "nginx",
+      "slug": "nginx",
       "source": "official",
       "versions": [
         {
@@ -202,6 +220,7 @@
     },
     {
       "name": "pgadmin4",
+      "slug": "pgadmin4",
       "source": "official",
       "versions": [
         {
@@ -213,6 +232,7 @@
     },
     {
       "name": "phpmyadmin",
+      "slug": "phpmyadmin",
       "source": "official",
       "versions": [
         {
@@ -224,6 +244,7 @@
     },
     {
       "name": "posta",
+      "slug": "posta",
       "source": "official",
       "versions": [
         {
@@ -235,6 +256,7 @@
     },
     {
       "name": "postgresql",
+      "slug": "postgresql",
       "source": "official",
       "versions": [
         {
@@ -246,6 +268,7 @@
     },
     {
       "name": "redis",
+      "slug": "redis",
       "source": "official",
       "versions": [
         {
@@ -257,6 +280,7 @@
     },
     {
       "name": "roundcube",
+      "slug": "roundcube",
       "source": "official",
       "versions": [
         {
@@ -268,6 +292,7 @@
     },
     {
       "name": "umami",
+      "slug": "umami",
       "source": "official",
       "versions": [
         {
@@ -279,6 +304,7 @@
     },
     {
       "name": "uptime-kuma",
+      "slug": "uptime-kuma",
       "source": "official",
       "versions": [
         {
@@ -290,6 +316,7 @@
     },
     {
       "name": "vaultwarden",
+      "slug": "vaultwarden",
       "source": "official",
       "versions": [
         {
@@ -301,6 +328,7 @@
     },
     {
       "name": "vikunja",
+      "slug": "vikunja",
       "source": "official",
       "versions": [
         {
@@ -312,6 +340,7 @@
     },
     {
       "name": "wallabag",
+      "slug": "wallabag",
       "source": "official",
       "versions": [
         {
@@ -323,6 +352,7 @@
     },
     {
       "name": "wordpress",
+      "slug": "wordpress",
       "source": "official",
       "versions": [
         {
@@ -334,6 +364,7 @@
     },
     {
       "name": "guestbook",
+      "slug": "guestbook",
       "source": "community",
       "versions": [
         {
@@ -350,6 +381,7 @@
     },
     {
       "name": "okapi-example",
+      "slug": "okapi-example",
       "source": "community",
       "versions": [
         {
