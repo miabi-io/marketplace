@@ -4,8 +4,9 @@
   "templates": [
     {
       "name": "goauthentik",
+      "slug": "goauthentik",
       "source": "official",
-      "displayName": "authentik",
+      "display_name": "authentik",
       "category": "Security",
       "versions": [
         {
@@ -16,8 +17,9 @@
     },
     {
       "name": "forgejo",
+      "slug": "forgejo",
       "source": "official",
-      "displayName": "Forgejo",
+      "display_name": "Forgejo",
       "category": "Development",
       "versions": [
         {
@@ -28,8 +30,9 @@
     },
     {
       "name": "freshrss",
+      "slug": "freshrss",
       "source": "official",
-      "displayName": "FreshRSS",
+      "display_name": "FreshRSS",
       "category": "News",
       "versions": [
         {
@@ -40,8 +43,9 @@
     },
     {
       "name": "ghost",
+      "slug": "ghost",
       "source": "official",
-      "displayName": "Ghost",
+      "display_name": "Ghost",
       "category": "CMS",
       "versions": [
         {
@@ -52,8 +56,9 @@
     },
     {
       "name": "gitea",
+      "slug": "gitea",
       "source": "official",
-      "displayName": "Gitea",
+      "display_name": "Gitea",
       "category": "Development",
       "versions": [
         {
@@ -64,8 +69,9 @@
     },
     {
       "name": "grafana",
+      "slug": "grafana",
       "source": "official",
-      "displayName": "Grafana",
+      "display_name": "Grafana",
       "category": "Monitoring",
       "versions": [
         {
@@ -76,8 +82,9 @@
     },
     {
       "name": "jellyfin",
+      "slug": "jellyfin",
       "source": "official",
-      "displayName": "Jellyfin",
+      "display_name": "Jellyfin",
       "category": "Media",
       "versions": [
         {
@@ -88,8 +95,9 @@
     },
     {
       "name": "libsql",
+      "slug": "libsql",
       "source": "official",
-      "displayName": "libSQL",
+      "display_name": "libSQL",
       "category": "Database",
       "versions": [
         {
@@ -100,8 +108,9 @@
     },
     {
       "name": "matomo",
+      "slug": "matomo",
       "source": "official",
-      "displayName": "Matomo",
+      "display_name": "Matomo",
       "category": "Analytics",
       "versions": [
         {
@@ -112,8 +121,9 @@
     },
     {
       "name": "mealie",
+      "slug": "mealie",
       "source": "official",
-      "displayName": "Mealie",
+      "display_name": "Mealie",
       "category": "Productivity",
       "versions": [
         {
@@ -124,8 +134,9 @@
     },
     {
       "name": "metabase",
+      "slug": "metabase",
       "source": "official",
-      "displayName": "Metabase",
+      "display_name": "Metabase",
       "category": "Analytics",
       "versions": [
         {
@@ -136,8 +147,9 @@
     },
     {
       "name": "minio",
+      "slug": "minio",
       "source": "official",
-      "displayName": "MinIO",
+      "display_name": "MinIO",
       "category": "Storage",
       "versions": [
         {
@@ -148,8 +160,9 @@
     },
     {
       "name": "mongo-express",
+      "slug": "mongo-express",
       "source": "official",
-      "displayName": "Mongo Express",
+      "display_name": "Mongo Express",
       "category": "Database",
       "versions": [
         {
@@ -160,8 +173,9 @@
     },
     {
       "name": "mongodb",
+      "slug": "mongodb",
       "source": "official",
-      "displayName": "MongoDB",
+      "display_name": "MongoDB",
       "category": "Database",
       "versions": [
         {
@@ -172,8 +186,9 @@
     },
     {
       "name": "mysql",
+      "slug": "mysql",
       "source": "official",
-      "displayName": "MySQL",
+      "display_name": "MySQL",
       "category": "Database",
       "versions": [
         {
@@ -184,8 +199,9 @@
     },
     {
       "name": "n8n",
+      "slug": "n8n",
       "source": "official",
-      "displayName": "n8n",
+      "display_name": "n8n",
       "category": "Automation",
       "versions": [
         {
@@ -196,8 +212,9 @@
     },
     {
       "name": "nextcloud",
+      "slug": "nextcloud",
       "source": "official",
-      "displayName": "Nextcloud",
+      "display_name": "Nextcloud",
       "category": "Productivity",
       "versions": [
         {
@@ -208,8 +225,9 @@
     },
     {
       "name": "nginx",
+      "slug": "nginx",
       "source": "official",
-      "displayName": "Nginx",
+      "display_name": "Nginx",
       "category": "Web",
       "versions": [
         {
@@ -220,8 +238,9 @@
     },
     {
       "name": "pgadmin4",
+      "slug": "pgadmin4",
       "source": "official",
-      "displayName": "pgAdmin 4",
+      "display_name": "pgAdmin 4",
       "category": "Database",
       "versions": [
         {
@@ -232,8 +251,9 @@
     },
     {
       "name": "phpmyadmin",
+      "slug": "phpmyadmin",
       "source": "official",
-      "displayName": "phpMyAdmin",
+      "display_name": "phpMyAdmin",
       "category": "Database",
       "versions": [
         {
@@ -244,8 +264,9 @@
     },
     {
       "name": "posta",
+      "slug": "posta",
       "source": "official",
-      "displayName": "Posta",
+      "display_name": "Posta",
       "category": "Email",
       "versions": [
         {
@@ -256,8 +277,9 @@
     },
     {
       "name": "postgresql",
+      "slug": "postgresql",
       "source": "official",
-      "displayName": "PostgreSQL",
+      "display_name": "PostgreSQL",
       "category": "Database",
       "versions": [
         {
@@ -268,8 +290,9 @@
     },
     {
       "name": "redis",
+      "slug": "redis",
       "source": "official",
-      "displayName": "Redis",
+      "display_name": "Redis",
       "category": "Database",
       "versions": [
         {
@@ -280,8 +303,9 @@
     },
     {
       "name": "roundcube",
+      "slug": "roundcube",
       "source": "official",
-      "displayName": "Roundcube",
+      "display_name": "Roundcube",
       "category": "Email",
       "versions": [
         {
@@ -292,8 +316,9 @@
     },
     {
       "name": "umami",
+      "slug": "umami",
       "source": "official",
-      "displayName": "Umami",
+      "display_name": "Umami",
       "category": "Analytics",
       "versions": [
         {
@@ -304,8 +329,9 @@
     },
     {
       "name": "uptime-kuma",
+      "slug": "uptime-kuma",
       "source": "official",
-      "displayName": "Uptime Kuma",
+      "display_name": "Uptime Kuma",
       "category": "Monitoring",
       "versions": [
         {
@@ -316,8 +342,9 @@
     },
     {
       "name": "vaultwarden",
+      "slug": "vaultwarden",
       "source": "official",
-      "displayName": "Vaultwarden",
+      "display_name": "Vaultwarden",
       "category": "Security",
       "versions": [
         {
@@ -328,8 +355,9 @@
     },
     {
       "name": "vikunja",
+      "slug": "vikunja",
       "source": "official",
-      "displayName": "Vikunja",
+      "display_name": "Vikunja",
       "category": "Productivity",
       "versions": [
         {
@@ -340,8 +368,9 @@
     },
     {
       "name": "wallabag",
+      "slug": "wallabag",
       "source": "official",
-      "displayName": "Wallabag",
+      "display_name": "Wallabag",
       "category": "Productivity",
       "versions": [
         {
@@ -352,8 +381,9 @@
     },
     {
       "name": "wordpress",
+      "slug": "wordpress",
       "source": "official",
-      "displayName": "WordPress",
+      "display_name": "WordPress",
       "category": "CMS",
       "versions": [
         {
@@ -364,8 +394,9 @@
     },
     {
       "name": "guestbook",
+      "slug": "guestbook",
       "source": "community",
-      "displayName": "Guestbook",
+      "display_name": "Guestbook",
       "category": "Development",
       "versions": [
         {
@@ -380,8 +411,9 @@
     },
     {
       "name": "okapi-example",
+      "slug": "okapi-example",
       "source": "community",
-      "displayName": "Okapi Example",
+      "display_name": "Okapi Example",
       "category": "Development",
       "versions": [
         {

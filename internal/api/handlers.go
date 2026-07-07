@@ -184,7 +184,7 @@ func (h *Handlers) GetVersion(c *okapi.Context, in *VersionRequest) error {
 	if !vok {
 		return fail(c, http.StatusNotFound, "VERSION_NOT_FOUND", "template version not found")
 	}
-	return ok(c, VersionDetail{Name: t.Name, Source: t.Source, Version: ver.Version, Digest: ver.Digest, Metadata: ver.Manifest.Metadata})
+	return ok(c, VersionDetail{Name: t.Name, Slug: t.Name, Source: t.Source, Version: ver.Version, Digest: ver.Digest, Metadata: ver.Manifest.Metadata})
 }
 
 // GetManifest returns the raw template.yaml to install; the digest is the ETag.
@@ -268,6 +268,7 @@ type VersionRef struct {
 // VersionDetail is one version's metadata + digest.
 type VersionDetail struct {
 	Name     string            `json:"name"`
+	Slug     string            `json:"slug"` // deprecated: alias of Name, for pre-rename consumers
 	Source   string            `json:"source"`
 	Version  string            `json:"version"`
 	Digest   string            `json:"digest"`
