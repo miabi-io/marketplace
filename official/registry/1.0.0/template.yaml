@@ -1,0 +1,42 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: registry
+  displayName: Docker Registry
+  version: 1.0.0
+  description: Private OCI image registry (CNCF Distribution). Ships without authentication — keep it internal or put access control in front of it.
+  category: Development
+  icon: https://cdn.simpleicons.org/docker
+  homepage: https://distribution.github.io/distribution/
+  tags: [registry, docker, oci, images, development]
+inputs:
+  - key: delete_enabled
+    label: Allow deletes
+    help: Permit DELETE of blobs and manifests, which garbage collection needs.
+    type: select
+    options: ["true", "false"]
+    default: "true"
+volumes:
+  - name: data
+applications:
+  - name: registry
+    primary: true
+    image: registry
+    tag: "3.1"
+    ports:
+      - container: 5000
+        scheme: http
+    env:
+      REGISTRY_STORAGE_DELETE_ENABLED: "{{ .inputs.delete_enabled }}"
+      REGISTRY_HTTP_ADDR: ":5000"
+    mounts:
+      - volume: data
+        path: /var/lib/registry
+    healthcheck:
+      type: http
+      path: /v2/
+      port: 5000
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 10

@@ -1,0 +1,112 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: paperless-ngx
+  displayName: Paperless-ngx
+  version: 1.0.0
+  description: Document management system that scans, OCRs, indexes and archives your paperwork.
+  category: Productivity
+  icon: https://github.com/paperless-ngx.png
+  homepage: https://docs.paperless-ngx.com
+  tags: [documents, ocr, archive, scanning, dms]
+inputs:
+  - key: url
+    label: Public URL
+    help: The public base URL Paperless is served on (used for links and CSRF checks).
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://paperless.example.com
+  - key: admin_user
+    label: Admin username
+    help: Superuser created on first start.
+    type: string
+    default: admin
+    required: true
+  - key: admin_password
+    label: Admin password
+    help: Password for the superuser. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 24
+    required: true
+  - key: secret_key
+    label: Secret key
+    help: Django signing key for sessions and tokens. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 50
+  - key: ocr_language
+    label: OCR language
+    help: 'Tesseract language code used when documents are processed, e.g. "eng", "deu" or "eng+fra".'
+    type: string
+    default: eng
+    required: true
+  - key: timezone
+    label: Time zone
+    help: 'IANA time zone used for dates in the UI, e.g. "Europe/Paris".'
+    type: string
+    default: UTC
+    required: true
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+  - name: redis
+    engine: redis
+    version: "8-alpine"
+    placement: dedicated
+volumes:
+  - name: data
+  - name: media
+  - name: consume
+  - name: export
+applications:
+  - name: paperless
+    primary: true
+    image: ghcr.io/paperless-ngx/paperless-ngx
+    tag: "3.0.5"
+    ports:
+      - container: 8000
+        scheme: http
+    env:
+      PAPERLESS_URL: "{{ .inputs.url }}"
+      PAPERLESS_SECRET_KEY: "{{ .inputs.secret_key }}"
+      PAPERLESS_TIME_ZONE: "{{ .inputs.timezone }}"
+      PAPERLESS_OCR_LANGUAGE: "{{ .inputs.ocr_language }}"
+
+      PAPERLESS_DBENGINE: postgresql
+      PAPERLESS_DBHOST: "{{ .databases.db.host }}"
+      PAPERLESS_DBPORT: "{{ .databases.db.port }}"
+      PAPERLESS_DBNAME: "{{ .databases.db.name }}"
+      PAPERLESS_DBUSER: "{{ .databases.db.user }}"
+      PAPERLESS_DBPASS: "{{ .databases.db.password }}"
+
+      # The task queue and the websocket channel layer both live in Redis.
+      PAPERLESS_REDIS: "redis://:{{ .databases.redis.password }}@{{ .databases.redis.host }}:{{ .databases.redis.port }}"
+
+      PAPERLESS_ADMIN_USER: "{{ .inputs.admin_user }}"
+      PAPERLESS_ADMIN_PASSWORD: "{{ .inputs.admin_password }}"
+    secretEnv:
+      - PAPERLESS_SECRET_KEY
+      - PAPERLESS_DBPASS
+      - PAPERLESS_REDIS
+      - PAPERLESS_ADMIN_PASSWORD
+    mounts:
+      - volume: data
+        path: /usr/src/paperless/data
+      - volume: media
+        path: /usr/src/paperless/media
+      - volume: consume
+        path: /usr/src/paperless/consume
+      - volume: export
+        path: /usr/src/paperless/export
+    healthcheck:
+      type: http
+      path: /accounts/login/
+      port: 8000
+      intervalSeconds: 30
+      timeoutSeconds: 10
+      retries: 5
+      startPeriodSeconds: 120

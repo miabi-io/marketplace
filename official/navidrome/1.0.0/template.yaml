@@ -1,0 +1,54 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: navidrome
+  displayName: Navidrome
+  version: 1.0.0
+  description: Self-hosted music server and streamer, compatible with every Subsonic client.
+  category: Media
+  icon: https://github.com/navidrome.png
+  homepage: https://www.navidrome.org
+  tags: [music, media, streaming, subsonic]
+inputs:
+  - key: scan_schedule
+    label: Library scan schedule
+    help: 'How often the music folder is rescanned — a cron expression or an interval such as "@every 24h". Use "0" to scan only on start.'
+    type: string
+    default: "@every 24h"
+    required: true
+  - key: log_level
+    label: Log level
+    type: select
+    options: [error, warn, info, debug]
+    default: info
+volumes:
+  - name: data
+  - name: music
+applications:
+  - name: navidrome
+    primary: true
+    image: deluan/navidrome
+    tag: "0.63.2"
+    ports:
+      - container: 4533
+        scheme: http
+    env:
+      ND_MUSICFOLDER: /music
+      ND_DATAFOLDER: /data
+      ND_SCANSCHEDULE: "{{ .inputs.scan_schedule }}"
+      ND_LOGLEVEL: "{{ .inputs.log_level }}"
+    mounts:
+      - volume: data
+        path: /data
+      # Starts empty — upload your library into this volume, then rescan.
+      - volume: music
+        path: /music
+        readOnly: false
+    healthcheck:
+      type: http
+      path: /ping
+      port: 4533
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 15

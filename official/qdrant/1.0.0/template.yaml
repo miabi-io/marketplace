@@ -1,0 +1,50 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: qdrant
+  displayName: Qdrant
+  version: 1.0.0
+  description: Vector database for similarity search, embeddings and retrieval-augmented generation.
+  category: Database
+  icon: https://cdn.simpleicons.org/qdrant
+  homepage: https://qdrant.tech
+  tags: [database, vector, embeddings, search, ai]
+inputs:
+  - key: api_key
+    label: API key
+    help: Key clients must send in the api-key header. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 32
+    required: true
+volumes:
+  - name: storage
+applications:
+  - name: qdrant
+    primary: true
+    image: qdrant/qdrant
+    tag: "v1.19.0"
+    # 6333 is the REST API (and dashboard); gRPC stays on 6334, reachable over
+    # the workspace network.
+    ports:
+      - container: 6333
+        scheme: http
+    env:
+      QDRANT__SERVICE__API_KEY: "{{ .inputs.api_key }}"
+    secretEnv:
+      - QDRANT__SERVICE__API_KEY
+    mounts:
+      - volume: storage
+        path: /qdrant/storage
+    # The image ships neither curl nor wget, so the readiness probe talks to the
+    # REST port through bash's /dev/tcp.
+    healthcheck:
+      type: command
+      command: >-
+        bash -c 'exec 3<>/dev/tcp/127.0.0.1/6333 &&
+        printf "GET /healthz HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n" >&3 &&
+        cat <&3 | grep -q passed'
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 15

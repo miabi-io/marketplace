@@ -1,0 +1,76 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: keycloak
+  displayName: Keycloak
+  version: 1.0.0
+  description: Identity and access management — OpenID Connect, OAuth 2.0 and SAML, with user federation.
+  category: Security
+  icon: https://cdn.simpleicons.org/keycloak
+  homepage: https://www.keycloak.org
+  tags: [security, sso, identity, oidc, saml, oauth]
+inputs:
+  - key: hostname
+    label: Public URL
+    help: The public base URL Keycloak is served on. It ends up in issuer URLs and every redirect.
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://auth.example.com
+  - key: admin_user
+    label: Admin username
+    help: Temporary admin created on first start; create a permanent account and remove it afterwards.
+    type: string
+    default: admin
+    required: true
+  - key: admin_password
+    label: Admin password
+    help: Password for the bootstrap admin. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 24
+    required: true
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+applications:
+  - name: keycloak
+    primary: true
+    image: quay.io/keycloak/keycloak
+    tag: "26.7.1"
+    # Production mode; the first boot builds the optimized server image itself.
+    command: ["start"]
+    ports:
+      - container: 8080
+        scheme: http
+    env:
+      KC_DB: postgres
+      KC_DB_URL_HOST: "{{ .databases.db.host }}"
+      KC_DB_URL_PORT: "{{ .databases.db.port }}"
+      KC_DB_URL_DATABASE: "{{ .databases.db.name }}"
+      KC_DB_USERNAME: "{{ .databases.db.user }}"
+      KC_DB_PASSWORD: "{{ .databases.db.password }}"
+
+      KC_HOSTNAME: "{{ .inputs.hostname }}"
+      # TLS terminates at the gateway, which forwards the original scheme/host.
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: xforwarded
+      KC_HEALTH_ENABLED: "true"
+
+      KC_BOOTSTRAP_ADMIN_USERNAME: "{{ .inputs.admin_user }}"
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "{{ .inputs.admin_password }}"
+    secretEnv:
+      - KC_DB_PASSWORD
+      - KC_BOOTSTRAP_ADMIN_PASSWORD
+    healthcheck:
+      type: command
+      command: >-
+        exec 3<>/dev/tcp/127.0.0.1/9000 &&
+        printf 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 &&
+        cat <&3 | grep -q '"UP"'
+      intervalSeconds: 30
+      timeoutSeconds: 10
+      retries: 5
+      startPeriodSeconds: 90

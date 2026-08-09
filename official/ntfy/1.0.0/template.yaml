@@ -1,0 +1,58 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: ntfy
+  displayName: ntfy
+  version: 1.0.0
+  description: Push notifications over HTTP — send alerts to your phone or desktop with a simple PUT/POST.
+  category: Productivity
+  icon: https://cdn.simpleicons.org/ntfy
+  homepage: https://ntfy.sh
+  tags: [notifications, push, alerts, messaging]
+inputs:
+  - key: base_url
+    label: Public URL
+    help: The public base URL ntfy is served on. Clients and the web app build topic links from it.
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://ntfy.example.com
+  - key: default_access
+    label: Default access
+    help: "Access for anonymous clients. deny-all keeps the server private — create users afterwards with: ntfy user add --role=admin <name>."
+    type: select
+    options: [deny-all, read-only, read-write]
+    default: deny-all
+volumes:
+  - name: data
+  - name: cache
+applications:
+  - name: ntfy
+    primary: true
+    image: binwiederhier/ntfy
+    tag: "v2.27"
+    command: ["serve"]
+    ports:
+      - container: 80
+        scheme: http
+    env:
+      NTFY_BASE_URL: "{{ .inputs.base_url }}"
+      NTFY_LISTEN_HTTP: ":80"
+      NTFY_BEHIND_PROXY: "true"
+      NTFY_AUTH_FILE: /var/lib/ntfy/user.db
+      NTFY_AUTH_DEFAULT_ACCESS: "{{ .inputs.default_access }}"
+      NTFY_CACHE_FILE: /var/cache/ntfy/cache.db
+      NTFY_ATTACHMENT_CACHE_DIR: /var/cache/ntfy/attachments
+    mounts:
+      - volume: data
+        path: /var/lib/ntfy
+      - volume: cache
+        path: /var/cache/ntfy
+    healthcheck:
+      type: http
+      path: /v1/health
+      port: 80
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 10

@@ -1,0 +1,41 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: adminer
+  displayName: Adminer
+  version: 1.0.0
+  description: Single-file database management UI for PostgreSQL, MySQL, MariaDB, SQLite and MongoDB.
+  category: Database
+  icon: https://cdn.simpleicons.org/adminer
+  homepage: https://www.adminer.org
+  tags: [database, admin, sql, tools]
+inputs:
+  - key: default_server
+    label: Default server
+    help: Host prefilled on the login form — the network alias of a managed database, for example. Leave blank to type it every time.
+    type: string
+  - key: design
+    label: Theme
+    help: Adminer skin used for the UI.
+    type: select
+    options: [pepa-linha, hydra, nette, price, flat, brade]
+    default: pepa-linha
+applications:
+  - name: adminer
+    primary: true
+    image: adminer
+    tag: "5.5.1"
+    ports:
+      - container: 8080
+        scheme: http
+    env:
+      ADMINER_DEFAULT_SERVER: "{{ .inputs.default_server }}"
+      ADMINER_DESIGN: "{{ .inputs.design }}"
+    healthcheck:
+      type: http
+      path: /
+      port: 8080
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 10

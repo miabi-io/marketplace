@@ -1,7 +1,19 @@
 {
-  "etag": "\"98a5439f9ff011501bac1f12bcf2e1eb87da23a249e9a34eae7060c2a908a5f0\"",
+  "etag": "\"a69d7283451ab5f503571931dba57766cb675537204f0b41e4ec929a1f44b08a\"",
   "generatedAt": "",
   "templates": [
+    {
+      "name": "adminer",
+      "slug": "adminer",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:3d6b3d41eaa19f6ec3b652a2e7260f8b4a4461848194f3745a6b2fa0804e5a4d",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: adminer\n  displayName: Adminer\n  version: 1.0.0\n  description: Single-file database management UI for PostgreSQL, MySQL, MariaDB, SQLite and MongoDB.\n  category: Database\n  icon: https://cdn.simpleicons.org/adminer\n  homepage: https://www.adminer.org\n  tags: [database, admin, sql, tools]\ninputs:\n  - key: default_server\n    label: Default server\n    help: Host prefilled on the login form — the network alias of a managed database, for example. Leave blank to type it every time.\n    type: string\n  - key: design\n    label: Theme\n    help: Adminer skin used for the UI.\n    type: select\n    options: [pepa-linha, hydra, nette, price, flat, brade]\n    default: pepa-linha\napplications:\n  - name: adminer\n    primary: true\n    image: adminer\n    tag: \"5.5.1\"\n    ports:\n      - container: 8080\n        scheme: http\n    env:\n      ADMINER_DEFAULT_SERVER: \"{{ .inputs.default_server }}\"\n      ADMINER_DESIGN: \"{{ .inputs.design }}\"\n    healthcheck:\n      type: http\n      path: /\n      port: 8080\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 10\n"
+        }
+      ]
+    },
     {
       "name": "goauthentik",
       "slug": "goauthentik",
@@ -11,6 +23,18 @@
           "version": "1.0.0",
           "digest": "sha256:b8469611bd9e928dd1bc457e63ecace31752f02bcaef32cf425c411eb13f2a72",
           "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: goauthentik\n  displayName: authentik\n  version: 1.0.0\n  description: Self-hosted identity provider — SSO, OAuth2/OIDC, SAML and LDAP — backed by PostgreSQL and Redis.\n  category: Security\n  icon: https://cdn.simpleicons.org/authentik\n  homepage: https://goauthentik.io\n  tags: [security, sso, identity, oauth, saml, oidc]\ninputs:\n  - key: secret_key\n    label: Secret key\n    help: Signing key for sessions and tokens. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 50\n    required: true\n  - key: bootstrap_email\n    label: Initial admin email\n    help: Email for the initial akadmin superuser created on first launch.\n    type: string\n    required: true\n    default: admin@example.com\n    pattern: '^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$'\n  - key: bootstrap_password\n    label: Initial admin password\n    help: Password for the initial akadmin superuser. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 24\n    required: true\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\n  - name: redis\n    engine: redis\n    version: \"8-alpine\"\n    placement: dedicated\nvolumes:\n  - name: media\n# Shared across the server + worker: both processes need the same secret key and\n# the same PostgreSQL/Redis connection, so they are declared once here instead of\n# being repeated in every application.\nstack:\n  description: authentik identity provider — a server and a background worker sharing PostgreSQL and Redis.\n  env:\n    AUTHENTIK_SECRET_KEY: \"{{ .inputs.secret_key }}\"\n    AUTHENTIK_POSTGRESQL__HOST: \"{{ .databases.db.host }}\"\n    AUTHENTIK_POSTGRESQL__PORT: \"{{ .databases.db.port }}\"\n    AUTHENTIK_POSTGRESQL__USER: \"{{ .databases.db.user }}\"\n    AUTHENTIK_POSTGRESQL__PASSWORD: \"{{ .databases.db.password }}\"\n    AUTHENTIK_POSTGRESQL__NAME: \"{{ .databases.db.name }}\"\n    AUTHENTIK_REDIS__HOST: \"{{ .databases.redis.host }}\"\n    AUTHENTIK_REDIS__PORT: \"{{ .databases.redis.port }}\"\n    AUTHENTIK_REDIS__PASSWORD: \"{{ .databases.redis.password }}\"\n  secretEnv:\n    - AUTHENTIK_SECRET_KEY\n    - AUTHENTIK_POSTGRESQL__PASSWORD\n    - AUTHENTIK_REDIS__PASSWORD\napplications:\n  - name: server\n    primary: true\n    image: ghcr.io/goauthentik/server\n    tag: \"2025.10.2\"\n    command: [\"server\"]\n    ports:\n      - container: 9000\n        scheme: http\n    env:\n      AUTHENTIK_BOOTSTRAP_EMAIL: \"{{ .inputs.bootstrap_email }}\"\n      AUTHENTIK_BOOTSTRAP_PASSWORD: \"{{ .inputs.bootstrap_password }}\"\n    secretEnv:\n      - AUTHENTIK_BOOTSTRAP_PASSWORD\n    mounts:\n      - volume: media\n        path: /media\n    healthcheck:\n      type: http\n      path: /-/health/live/\n      port: 9000\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 30\n  - name: worker\n    image: ghcr.io/goauthentik/server\n    tag: \"2025.10.2\"\n    command: [\"worker\"]\n    mounts:\n      - volume: media\n        path: /media\n"
+        }
+      ]
+    },
+    {
+      "name": "registry",
+      "slug": "registry",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:7087476e8c7e8c521de8383ba263b21bce73a4d16db53d65667c30de0aba89ed",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: registry\n  displayName: Docker Registry\n  version: 1.0.0\n  description: Private OCI image registry (CNCF Distribution). Ships without authentication — keep it internal or put access control in front of it.\n  category: Development\n  icon: https://cdn.simpleicons.org/docker\n  homepage: https://distribution.github.io/distribution/\n  tags: [registry, docker, oci, images, development]\ninputs:\n  - key: delete_enabled\n    label: Allow deletes\n    help: Permit DELETE of blobs and manifests, which garbage collection needs.\n    type: select\n    options: [\"true\", \"false\"]\n    default: \"true\"\nvolumes:\n  - name: data\napplications:\n  - name: registry\n    primary: true\n    image: registry\n    tag: \"3.1\"\n    ports:\n      - container: 5000\n        scheme: http\n    env:\n      REGISTRY_STORAGE_DELETE_ENABLED: \"{{ .inputs.delete_enabled }}\"\n      REGISTRY_HTTP_ADDR: \":5000\"\n    mounts:\n      - volume: data\n        path: /var/lib/registry\n    healthcheck:\n      type: http\n      path: /v2/\n      port: 5000\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 10\n"
         }
       ]
     },
@@ -87,6 +111,18 @@
       ]
     },
     {
+      "name": "keycloak",
+      "slug": "keycloak",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:c8b96ffa11bc12935cdb69fecdd613e1bd05ce4bdbcfeb17940c30364c7fc26d",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: keycloak\n  displayName: Keycloak\n  version: 1.0.0\n  description: Identity and access management — OpenID Connect, OAuth 2.0 and SAML, with user federation.\n  category: Security\n  icon: https://cdn.simpleicons.org/keycloak\n  homepage: https://www.keycloak.org\n  tags: [security, sso, identity, oidc, saml, oauth]\ninputs:\n  - key: hostname\n    label: Public URL\n    help: The public base URL Keycloak is served on. It ends up in issuer URLs and every redirect.\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://auth.example.com\n  - key: admin_user\n    label: Admin username\n    help: Temporary admin created on first start; create a permanent account and remove it afterwards.\n    type: string\n    default: admin\n    required: true\n  - key: admin_password\n    label: Admin password\n    help: Password for the bootstrap admin. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 24\n    required: true\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\napplications:\n  - name: keycloak\n    primary: true\n    image: quay.io/keycloak/keycloak\n    tag: \"26.7.1\"\n    # Production mode; the first boot builds the optimized server image itself.\n    command: [\"start\"]\n    ports:\n      - container: 8080\n        scheme: http\n    env:\n      KC_DB: postgres\n      KC_DB_URL_HOST: \"{{ .databases.db.host }}\"\n      KC_DB_URL_PORT: \"{{ .databases.db.port }}\"\n      KC_DB_URL_DATABASE: \"{{ .databases.db.name }}\"\n      KC_DB_USERNAME: \"{{ .databases.db.user }}\"\n      KC_DB_PASSWORD: \"{{ .databases.db.password }}\"\n\n      KC_HOSTNAME: \"{{ .inputs.hostname }}\"\n      # TLS terminates at the gateway, which forwards the original scheme/host.\n      KC_HTTP_ENABLED: \"true\"\n      KC_PROXY_HEADERS: xforwarded\n      KC_HEALTH_ENABLED: \"true\"\n\n      KC_BOOTSTRAP_ADMIN_USERNAME: \"{{ .inputs.admin_user }}\"\n      KC_BOOTSTRAP_ADMIN_PASSWORD: \"{{ .inputs.admin_password }}\"\n    secretEnv:\n      - KC_DB_PASSWORD\n      - KC_BOOTSTRAP_ADMIN_PASSWORD\n    healthcheck:\n      type: command\n      command: \u003e-\n        exec 3\u003c\u003e/dev/tcp/127.0.0.1/9000 \u0026\u0026\n        printf 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' \u003e\u00263 \u0026\u0026\n        cat \u003c\u00263 | grep -q '\"UP\"'\n      intervalSeconds: 30\n      timeoutSeconds: 10\n      retries: 5\n      startPeriodSeconds: 90\n"
+        }
+      ]
+    },
+    {
       "name": "libsql",
       "slug": "libsql",
       "source": "official",
@@ -111,6 +147,18 @@
       ]
     },
     {
+      "name": "mattermost",
+      "slug": "mattermost",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:a70fe8874d9bfaa3e0c3ca21745039397edb4b732f00cd8e5a44069bc202bb71",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: mattermost\n  displayName: Mattermost\n  version: 1.0.0\n  description: Self-hosted team chat with channels, threads, file sharing and integrations.\n  category: Productivity\n  icon: https://cdn.simpleicons.org/mattermost\n  homepage: https://mattermost.com\n  tags: [chat, collaboration, team, messaging]\ninputs:\n  - key: site_url\n    label: Public URL\n    help: The public base URL Mattermost is served on. Clients, invitations and integrations all use it.\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://chat.example.com\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: config\n  - name: data\n  - name: logs\n  - name: plugins\n  - name: client-plugins\napplications:\n  - name: mattermost\n    primary: true\n    image: mattermost/mattermost-team-edition\n    tag: \"11.10.0\"\n    ports:\n      - container: 8065\n        scheme: http\n    env:\n      MM_SERVICESETTINGS_SITEURL: \"{{ .inputs.site_url }}\"\n      MM_SQLSETTINGS_DRIVERNAME: postgres\n      MM_SQLSETTINGS_DATASOURCE: \"postgres://{{ .databases.db.user }}:{{ .databases.db.password }}@{{ .databases.db.host }}:{{ .databases.db.port }}/{{ .databases.db.name }}?sslmode=disable\u0026connect_timeout=10\"\n      MM_BLEVESETTINGS_INDEXDIR: /mattermost/bleve-indexes\n    secretEnv:\n      - MM_SQLSETTINGS_DATASOURCE\n    mounts:\n      - volume: config\n        path: /mattermost/config\n      - volume: data\n        path: /mattermost/data\n      - volume: logs\n        path: /mattermost/logs\n      - volume: plugins\n        path: /mattermost/plugins\n      - volume: client-plugins\n        path: /mattermost/client/plugins\n    # The image ships no shell, so container healthchecks (which run through\n    # /bin/sh) cannot execute at all — readiness is the container being up.\n    healthcheck:\n      type: none\n"
+        }
+      ]
+    },
+    {
       "name": "mealie",
       "slug": "mealie",
       "source": "official",
@@ -119,6 +167,18 @@
           "version": "1.0.0",
           "digest": "sha256:cfe58b620d0c8121405c45f8611b9ab250bcf079b2c14d667eabe402ad50fc32",
           "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: mealie\n  displayName: Mealie\n  version: 1.0.0\n  description: Self-hosted recipe manager and meal planner with a shopping-list, backed by PostgreSQL.\n  category: Productivity\n  icon: https://cdn.simpleicons.org/mealie\n  homepage: https://mealie.io\n  tags: [productivity, recipes, meal-planning, cooking]\ninputs:\n  - key: base_url\n    label: Public URL\n    help: The public URL Mealie is served on (used for links and invitations).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://recipes.example.com\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: data\napplications:\n  - name: mealie\n    primary: true\n    image: ghcr.io/mealie-recipes/mealie\n    tag: \"v2.6.0\"\n    ports:\n      - container: 9000\n        scheme: http\n    env:\n      BASE_URL: \"{{ .inputs.base_url }}\"\n      DB_ENGINE: postgres\n      POSTGRES_SERVER: \"{{ .databases.db.host }}\"\n      POSTGRES_PORT: \"{{ .databases.db.port }}\"\n      POSTGRES_USER: \"{{ .databases.db.user }}\"\n      POSTGRES_PASSWORD: \"{{ .databases.db.password }}\"\n      POSTGRES_DB: \"{{ .databases.db.name }}\"\n    secretEnv:\n      - POSTGRES_PASSWORD\n    mounts:\n      - volume: data\n        path: /app/data\n    healthcheck:\n      type: http\n      path: /api/app/about\n      port: 9000\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 20\n"
+        }
+      ]
+    },
+    {
+      "name": "meilisearch",
+      "slug": "meilisearch",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:38e1150a77b75aa93e26be58d6355292012e6df3474474f40b0ce8ce276ef646",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: meilisearch\n  displayName: Meilisearch\n  version: 1.0.0\n  description: Fast, typo-tolerant search engine with a REST API and a built-in search preview.\n  category: Database\n  icon: https://cdn.simpleicons.org/meilisearch\n  homepage: https://www.meilisearch.com\n  tags: [search, index, api, full-text]\ninputs:\n  - key: master_key\n    label: Master key\n    help: Root API key that protects every endpoint. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 32\n    required: true\nvolumes:\n  - name: data\napplications:\n  - name: meilisearch\n    primary: true\n    image: getmeili/meilisearch\n    tag: \"v1.52\"\n    ports:\n      - container: 7700\n        scheme: http\n    env:\n      MEILI_MASTER_KEY: \"{{ .inputs.master_key }}\"\n      MEILI_ENV: production\n    secretEnv:\n      - MEILI_MASTER_KEY\n    mounts:\n      - volume: data\n        path: /meili_data\n    healthcheck:\n      type: command\n      command: wget -qO- http://127.0.0.1:7700/health | grep -q available\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 15\n"
         }
       ]
     },
@@ -207,6 +267,18 @@
       ]
     },
     {
+      "name": "navidrome",
+      "slug": "navidrome",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:02acb9dbc095877d3717d1a049f03ebdeb4e4c6ecf739120ab0d864d34787f98",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: navidrome\n  displayName: Navidrome\n  version: 1.0.0\n  description: Self-hosted music server and streamer, compatible with every Subsonic client.\n  category: Media\n  icon: https://github.com/navidrome.png\n  homepage: https://www.navidrome.org\n  tags: [music, media, streaming, subsonic]\ninputs:\n  - key: scan_schedule\n    label: Library scan schedule\n    help: 'How often the music folder is rescanned — a cron expression or an interval such as \"@every 24h\". Use \"0\" to scan only on start.'\n    type: string\n    default: \"@every 24h\"\n    required: true\n  - key: log_level\n    label: Log level\n    type: select\n    options: [error, warn, info, debug]\n    default: info\nvolumes:\n  - name: data\n  - name: music\napplications:\n  - name: navidrome\n    primary: true\n    image: deluan/navidrome\n    tag: \"0.63.2\"\n    ports:\n      - container: 4533\n        scheme: http\n    env:\n      ND_MUSICFOLDER: /music\n      ND_DATAFOLDER: /data\n      ND_SCANSCHEDULE: \"{{ .inputs.scan_schedule }}\"\n      ND_LOGLEVEL: \"{{ .inputs.log_level }}\"\n    mounts:\n      - volume: data\n        path: /data\n      # Starts empty — upload your library into this volume, then rescan.\n      - volume: music\n        path: /music\n        readOnly: false\n    healthcheck:\n      type: http\n      path: /ping\n      port: 4533\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 15\n"
+        }
+      ]
+    },
+    {
       "name": "nextcloud",
       "slug": "nextcloud",
       "source": "official",
@@ -227,6 +299,54 @@
           "version": "1.0.0",
           "digest": "sha256:4ed9eabb17eb4a1ad7e7c50c5c10803f246cd3194bdc41d2d92466184f166563",
           "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: nginx\n  displayName: Nginx\n  version: 1.0.0\n  description: Lightweight web server / static site.\n  category: Web\n  icon: https://cdn.simpleicons.org/nginx\n  homepage: https://nginx.org\n  tags: [web, server, static]\napplications:\n  - name: nginx\n    image: nginx\n    tag: 1.30-alpine\n    ports:\n      - container: 80\n        scheme: http\n"
+        }
+      ]
+    },
+    {
+      "name": "nocodb",
+      "slug": "nocodb",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:ba09320d3f7184e88807c8fd626e9704d4ac380922a00c3b83619c13507193e4",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: nocodb\n  displayName: NocoDB\n  version: 1.0.0\n  description: Turn any database into a smart spreadsheet — grid, gallery, kanban and form views over your data.\n  category: Productivity\n  icon: https://github.com/nocodb.png\n  homepage: https://nocodb.com\n  tags: [database, spreadsheet, no-code, airtable]\ninputs:\n  - key: public_url\n    label: Public URL\n    help: The public base URL NocoDB is served on (used for invitation and share links).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://nocodb.example.com\n  - key: jwt_secret\n    label: JWT secret\n    help: Signing key for auth tokens. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 32\n    required: true\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: data\napplications:\n  - name: nocodb\n    primary: true\n    image: nocodb/nocodb\n    tag: \"2026.08.0\"\n    ports:\n      - container: 8080\n        scheme: http\n    env:\n      # NocoDB's own connection string format, not a standard postgres URL.\n      NC_DB: \"pg://{{ .databases.db.host }}:{{ .databases.db.port }}?u={{ .databases.db.user }}\u0026p={{ .databases.db.password }}\u0026d={{ .databases.db.name }}\"\n      NC_AUTH_JWT_SECRET: \"{{ .inputs.jwt_secret }}\"\n      NC_PUBLIC_URL: \"{{ .inputs.public_url }}\"\n    secretEnv:\n      - NC_DB\n      - NC_AUTH_JWT_SECRET\n    mounts:\n      - volume: data\n        path: /usr/app/data\n    healthcheck:\n      type: http\n      path: /api/v1/health\n      port: 8080\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 5\n      startPeriodSeconds: 45\n"
+        }
+      ]
+    },
+    {
+      "name": "ntfy",
+      "slug": "ntfy",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:9a110dd1964546b80fbc47317c289da55e4995d8885c2866aa0f8142382fbca0",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: ntfy\n  displayName: ntfy\n  version: 1.0.0\n  description: Push notifications over HTTP — send alerts to your phone or desktop with a simple PUT/POST.\n  category: Productivity\n  icon: https://cdn.simpleicons.org/ntfy\n  homepage: https://ntfy.sh\n  tags: [notifications, push, alerts, messaging]\ninputs:\n  - key: base_url\n    label: Public URL\n    help: The public base URL ntfy is served on. Clients and the web app build topic links from it.\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://ntfy.example.com\n  - key: default_access\n    label: Default access\n    help: \"Access for anonymous clients. deny-all keeps the server private — create users afterwards with: ntfy user add --role=admin \u003cname\u003e.\"\n    type: select\n    options: [deny-all, read-only, read-write]\n    default: deny-all\nvolumes:\n  - name: data\n  - name: cache\napplications:\n  - name: ntfy\n    primary: true\n    image: binwiederhier/ntfy\n    tag: \"v2.27\"\n    command: [\"serve\"]\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      NTFY_BASE_URL: \"{{ .inputs.base_url }}\"\n      NTFY_LISTEN_HTTP: \":80\"\n      NTFY_BEHIND_PROXY: \"true\"\n      NTFY_AUTH_FILE: /var/lib/ntfy/user.db\n      NTFY_AUTH_DEFAULT_ACCESS: \"{{ .inputs.default_access }}\"\n      NTFY_CACHE_FILE: /var/cache/ntfy/cache.db\n      NTFY_ATTACHMENT_CACHE_DIR: /var/cache/ntfy/attachments\n    mounts:\n      - volume: data\n        path: /var/lib/ntfy\n      - volume: cache\n        path: /var/cache/ntfy\n    healthcheck:\n      type: http\n      path: /v1/health\n      port: 80\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 10\n"
+        }
+      ]
+    },
+    {
+      "name": "open-webui",
+      "slug": "open-webui",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:60334192cad0a9c2e6af05e7517426898db3b6c847288058ae85bc910246bb58",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: open-webui\n  displayName: Open WebUI\n  version: 1.0.0\n  description: Chat interface for local and hosted LLMs — Ollama, OpenAI-compatible APIs, RAG over your own documents.\n  category: Productivity\n  icon: https://github.com/open-webui.png\n  homepage: https://openwebui.com\n  tags: [ai, llm, chat, ollama, rag]\ninputs:\n  - key: secret_key\n    label: Secret key\n    help: Signing key for sessions and JWTs. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 32\n    required: true\n  - key: ollama_base_url\n    label: Ollama URL\n    help: Base URL of an Ollama server, e.g. http://ollama:11434. Leave blank if you only use hosted APIs.\n    type: string\n  - key: openai_api_base_url\n    label: OpenAI-compatible API URL\n    help: Base URL of an OpenAI-compatible endpoint. Leave the default unless you point at another provider.\n    type: string\n    default: https://api.openai.com/v1\n  - key: openai_api_key\n    label: API key\n    help: Key for the OpenAI-compatible endpoint. Leave blank to configure it later in the UI.\n    type: password\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: data\napplications:\n  - name: open-webui\n    primary: true\n    image: ghcr.io/open-webui/open-webui\n    tag: \"v0.11.0\"\n    ports:\n      - container: 8080\n        scheme: http\n    env:\n      # Chats, users and settings live in PostgreSQL; the volume keeps uploads,\n      # the vector store and cached models. The postgres:// URI is rewritten to\n      # postgresql+psycopg:// by Open WebUI itself.\n      DATABASE_URL: \"{{ .databases.db.uri }}\"\n      WEBUI_SECRET_KEY: \"{{ .inputs.secret_key }}\"\n      OLLAMA_BASE_URL: \"{{ .inputs.ollama_base_url }}\"\n      OPENAI_API_BASE_URL: \"{{ .inputs.openai_api_base_url }}\"\n      OPENAI_API_KEY: \"{{ .inputs.openai_api_key }}\"\n    secretEnv:\n      - DATABASE_URL\n      - WEBUI_SECRET_KEY\n      - OPENAI_API_KEY\n    mounts:\n      - volume: data\n        path: /app/backend/data\n    # First boot downloads the default embedding model before binding the port,\n    # which can outlast the readiness window; the model is cached in the volume\n    # afterwards. Left off so a slow first start is not reported as a failure.\n    healthcheck:\n      type: none\n"
+        }
+      ]
+    },
+    {
+      "name": "paperless-ngx",
+      "slug": "paperless-ngx",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:52ec248010b2f410605e6d72a03b51ca879029b8d6ad8a705b61c6242372b11d",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: paperless-ngx\n  displayName: Paperless-ngx\n  version: 1.0.0\n  description: Document management system that scans, OCRs, indexes and archives your paperwork.\n  category: Productivity\n  icon: https://github.com/paperless-ngx.png\n  homepage: https://docs.paperless-ngx.com\n  tags: [documents, ocr, archive, scanning, dms]\ninputs:\n  - key: url\n    label: Public URL\n    help: The public base URL Paperless is served on (used for links and CSRF checks).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://paperless.example.com\n  - key: admin_user\n    label: Admin username\n    help: Superuser created on first start.\n    type: string\n    default: admin\n    required: true\n  - key: admin_password\n    label: Admin password\n    help: Password for the superuser. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 24\n    required: true\n  - key: secret_key\n    label: Secret key\n    help: Django signing key for sessions and tokens. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 50\n  - key: ocr_language\n    label: OCR language\n    help: 'Tesseract language code used when documents are processed, e.g. \"eng\", \"deu\" or \"eng+fra\".'\n    type: string\n    default: eng\n    required: true\n  - key: timezone\n    label: Time zone\n    help: 'IANA time zone used for dates in the UI, e.g. \"Europe/Paris\".'\n    type: string\n    default: UTC\n    required: true\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\n  - name: redis\n    engine: redis\n    version: \"8-alpine\"\n    placement: dedicated\nvolumes:\n  - name: data\n  - name: media\n  - name: consume\n  - name: export\napplications:\n  - name: paperless\n    primary: true\n    image: ghcr.io/paperless-ngx/paperless-ngx\n    tag: \"3.0.5\"\n    ports:\n      - container: 8000\n        scheme: http\n    env:\n      PAPERLESS_URL: \"{{ .inputs.url }}\"\n      PAPERLESS_SECRET_KEY: \"{{ .inputs.secret_key }}\"\n      PAPERLESS_TIME_ZONE: \"{{ .inputs.timezone }}\"\n      PAPERLESS_OCR_LANGUAGE: \"{{ .inputs.ocr_language }}\"\n\n      PAPERLESS_DBENGINE: postgresql\n      PAPERLESS_DBHOST: \"{{ .databases.db.host }}\"\n      PAPERLESS_DBPORT: \"{{ .databases.db.port }}\"\n      PAPERLESS_DBNAME: \"{{ .databases.db.name }}\"\n      PAPERLESS_DBUSER: \"{{ .databases.db.user }}\"\n      PAPERLESS_DBPASS: \"{{ .databases.db.password }}\"\n\n      # The task queue and the websocket channel layer both live in Redis.\n      PAPERLESS_REDIS: \"redis://:{{ .databases.redis.password }}@{{ .databases.redis.host }}:{{ .databases.redis.port }}\"\n\n      PAPERLESS_ADMIN_USER: \"{{ .inputs.admin_user }}\"\n      PAPERLESS_ADMIN_PASSWORD: \"{{ .inputs.admin_password }}\"\n    secretEnv:\n      - PAPERLESS_SECRET_KEY\n      - PAPERLESS_DBPASS\n      - PAPERLESS_REDIS\n      - PAPERLESS_ADMIN_PASSWORD\n    mounts:\n      - volume: data\n        path: /usr/src/paperless/data\n      - volume: media\n        path: /usr/src/paperless/media\n      - volume: consume\n        path: /usr/src/paperless/consume\n      - volume: export\n        path: /usr/src/paperless/export\n    healthcheck:\n      type: http\n      path: /accounts/login/\n      port: 8000\n      intervalSeconds: 30\n      timeoutSeconds: 10\n      retries: 5\n      startPeriodSeconds: 120\n"
         }
       ]
     },
@@ -279,6 +399,30 @@
       ]
     },
     {
+      "name": "qdrant",
+      "slug": "qdrant",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:7f4d75e088b8fffe9ce10f487aff1f98bbd9e212542e419c5c33c7edca6b43c7",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: qdrant\n  displayName: Qdrant\n  version: 1.0.0\n  description: Vector database for similarity search, embeddings and retrieval-augmented generation.\n  category: Database\n  icon: https://cdn.simpleicons.org/qdrant\n  homepage: https://qdrant.tech\n  tags: [database, vector, embeddings, search, ai]\ninputs:\n  - key: api_key\n    label: API key\n    help: Key clients must send in the api-key header. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 32\n    required: true\nvolumes:\n  - name: storage\napplications:\n  - name: qdrant\n    primary: true\n    image: qdrant/qdrant\n    tag: \"v1.19.0\"\n    # 6333 is the REST API (and dashboard); gRPC stays on 6334, reachable over\n    # the workspace network.\n    ports:\n      - container: 6333\n        scheme: http\n    env:\n      QDRANT__SERVICE__API_KEY: \"{{ .inputs.api_key }}\"\n    secretEnv:\n      - QDRANT__SERVICE__API_KEY\n    mounts:\n      - volume: storage\n        path: /qdrant/storage\n    # The image ships neither curl nor wget, so the readiness probe talks to the\n    # REST port through bash's /dev/tcp.\n    healthcheck:\n      type: command\n      command: \u003e-\n        bash -c 'exec 3\u003c\u003e/dev/tcp/127.0.0.1/6333 \u0026\u0026\n        printf \"GET /healthz HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n\" \u003e\u00263 \u0026\u0026\n        cat \u003c\u00263 | grep -q passed'\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 15\n"
+        }
+      ]
+    },
+    {
+      "name": "rabbitmq",
+      "slug": "rabbitmq",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:f618afaac504c566e6476170aabcfdd786c0427b84c7dc3cfa2ea6db87faf5fb",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: rabbitmq\n  displayName: RabbitMQ\n  version: 1.0.0\n  description: Message broker speaking AMQP 0-9-1, with the management UI enabled.\n  category: Development\n  icon: https://cdn.simpleicons.org/rabbitmq\n  homepage: https://www.rabbitmq.com\n  tags: [queue, broker, amqp, messaging]\ninputs:\n  - key: username\n    label: Username\n    help: Initial user, granted administrator rights on the default vhost.\n    type: string\n    default: admin\n    required: true\n  - key: password\n    label: Password\n    help: Password for the initial user. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 24\n    required: true\nvolumes:\n  - name: data\napplications:\n  - name: rabbitmq\n    primary: true\n    image: rabbitmq\n    tag: \"4.3-management-alpine\"\n    # Only the management UI is published; producers and consumers reach AMQP on\n    # port 5672 over the workspace network.\n    ports:\n      - container: 15672\n        scheme: http\n    env:\n      RABBITMQ_DEFAULT_USER: \"{{ .inputs.username }}\"\n      RABBITMQ_DEFAULT_PASS: \"{{ .inputs.password }}\"\n    secretEnv:\n      - RABBITMQ_DEFAULT_PASS\n    mounts:\n      - volume: data\n        path: /var/lib/rabbitmq\n    healthcheck:\n      type: command\n      command: rabbitmq-diagnostics -q ping\n      intervalSeconds: 30\n      timeoutSeconds: 10\n      retries: 5\n      startPeriodSeconds: 40\n"
+        }
+      ]
+    },
+    {
       "name": "redis",
       "slug": "redis",
       "source": "official",
@@ -299,6 +443,18 @@
           "version": "1.0.0",
           "digest": "sha256:4a5516039dd7395ab0e717fd2170c3a5159f8cc7f05286f766cefe58d4ff4eb2",
           "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: roundcube\n  displayName: Roundcube\n  version: 1.0.0\n  description: Browser-based IMAP webmail client, backed by PostgreSQL.\n  category: Email\n  icon: https://cdn.simpleicons.org/roundcube\n  homepage: https://roundcube.net\n  tags: [email, webmail, imap, smtp]\ninputs:\n  - key: imap_host\n    label: IMAP server\n    help: Your mail server's IMAP host. Prefix with ssl:// for implicit TLS (port 993) or tls:// for STARTTLS.\n    type: string\n    required: true\n    placeholder: ssl://imap.example.com\n  - key: imap_port\n    label: IMAP port\n    help: IMAP port — 993 for SSL/TLS, 143 for STARTTLS.\n    type: number\n    default: \"993\"\n  - key: smtp_host\n    label: SMTP server\n    help: Your mail server's outgoing SMTP host. Prefix with tls:// for STARTTLS or ssl:// for implicit TLS.\n    type: string\n    required: true\n    placeholder: tls://smtp.example.com\n  - key: smtp_port\n    label: SMTP port\n    help: SMTP submission port — 587 for STARTTLS, 465 for SSL/TLS.\n    type: number\n    default: \"587\"\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\napplications:\n  - name: roundcube\n    primary: true\n    image: roundcube/roundcubemail\n    tag: \"1.6.11-apache\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      ROUNDCUBEMAIL_DB_TYPE: pgsql\n      ROUNDCUBEMAIL_DB_HOST: \"{{ .databases.db.host }}\"\n      ROUNDCUBEMAIL_DB_PORT: \"{{ .databases.db.port }}\"\n      ROUNDCUBEMAIL_DB_USER: \"{{ .databases.db.user }}\"\n      ROUNDCUBEMAIL_DB_PASSWORD: \"{{ .databases.db.password }}\"\n      ROUNDCUBEMAIL_DB_NAME: \"{{ .databases.db.name }}\"\n      ROUNDCUBEMAIL_DEFAULT_HOST: \"{{ .inputs.imap_host }}\"\n      ROUNDCUBEMAIL_DEFAULT_PORT: \"{{ .inputs.imap_port }}\"\n      ROUNDCUBEMAIL_SMTP_SERVER: \"{{ .inputs.smtp_host }}\"\n      ROUNDCUBEMAIL_SMTP_PORT: \"{{ .inputs.smtp_port }}\"\n    secretEnv:\n      - ROUNDCUBEMAIL_DB_PASSWORD\n    healthcheck:\n      type: http\n      path: /\n      port: 80\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 15\n"
+        }
+      ]
+    },
+    {
+      "name": "stirling-pdf",
+      "slug": "stirling-pdf",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:f83b1703fd707318bf5057118fd5818d9bd5aa77884fbcf8659964f9071140d1",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: stirling-pdf\n  displayName: Stirling PDF\n  version: 1.0.0\n  description: Local-first PDF toolkit — split, merge, convert, OCR, sign and compress, all in the browser.\n  category: Productivity\n  icon: https://github.com/Stirling-Tools.png\n  homepage: https://www.stirlingpdf.com\n  tags: [pdf, documents, ocr, tools, office]\ninputs:\n  - key: enable_login\n    label: Require login\n    help: Protect the instance with an account. Turn this off only on a private network.\n    type: select\n    options: [\"true\", \"false\"]\n    default: \"true\"\n  - key: admin_username\n    label: Admin username\n    help: Account created on first start when login is required.\n    type: string\n    default: admin\n    required: true\n  - key: admin_password\n    label: Admin password\n    help: Password for the initial account. Leave blank to auto-generate.\n    type: password\n    generate: true\n    length: 24\n    required: true\nvolumes:\n  - name: configs\napplications:\n  - name: stirling-pdf\n    primary: true\n    image: stirlingtools/stirling-pdf\n    tag: \"2.14.3\"\n    ports:\n      - container: 8080\n        scheme: http\n    env:\n      SECURITY_ENABLELOGIN: \"{{ .inputs.enable_login }}\"\n      SECURITY_INITIALLOGIN_USERNAME: \"{{ .inputs.admin_username }}\"\n      SECURITY_INITIALLOGIN_PASSWORD: \"{{ .inputs.admin_password }}\"\n      SYSTEM_DEFAULTLOCALE: en-US\n      DOCKER_ENABLE_SECURITY: \"true\"\n    secretEnv:\n      - SECURITY_INITIALLOGIN_PASSWORD\n    mounts:\n      - volume: configs\n        path: /configs\n    healthcheck:\n      type: http\n      path: /api/v1/info/status\n      port: 8080\n      intervalSeconds: 30\n      timeoutSeconds: 10\n      retries: 5\n      startPeriodSeconds: 90\n"
         }
       ]
     },
@@ -371,6 +527,18 @@
           "version": "1.0.0",
           "digest": "sha256:0f7f219e803cff3e66cb5f4a783269807139c781447e1be1a1a3c0e8dc6f1f1c",
           "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: wallabag\n  displayName: Wallabag\n  version: 1.0.0\n  description: Self-hosted read-it-later app that saves and cleans up web articles, backed by PostgreSQL.\n  category: Productivity\n  icon: https://cdn.simpleicons.org/wallabag\n  homepage: https://wallabag.org\n  tags: [productivity, bookmarks, read-later, articles]\ninputs:\n  - key: domain_name\n    label: Public URL\n    help: The public URL Wallabag is served on (used for links and asset URLs).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://read.example.com\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: images\napplications:\n  - name: wallabag\n    primary: true\n    image: wallabag/wallabag\n    tag: \"2.6.10\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      SYMFONY__ENV__DATABASE_DRIVER: pdo_pgsql\n      SYMFONY__ENV__DATABASE_HOST: \"{{ .databases.db.host }}\"\n      SYMFONY__ENV__DATABASE_PORT: \"{{ .databases.db.port }}\"\n      SYMFONY__ENV__DATABASE_NAME: \"{{ .databases.db.name }}\"\n      SYMFONY__ENV__DATABASE_USER: \"{{ .databases.db.user }}\"\n      SYMFONY__ENV__DATABASE_PASSWORD: \"{{ .databases.db.password }}\"\n      SYMFONY__ENV__DOMAIN_NAME: \"{{ .inputs.domain_name }}\"\n    secretEnv:\n      - SYMFONY__ENV__DATABASE_PASSWORD\n    mounts:\n      - volume: images\n        path: /var/www/wallabag/web/assets/images\n"
+        }
+      ]
+    },
+    {
+      "name": "wikijs",
+      "slug": "wikijs",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:3056457851e59e20f381a2e3347d2eb5832a3a8ae6ba20a01dc288369763f280",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: wikijs\n  displayName: Wiki.js\n  version: 1.0.0\n  description: Modern wiki with a Markdown and visual editor, page history and fine-grained permissions.\n  category: Productivity\n  icon: https://cdn.simpleicons.org/wikidotjs\n  homepage: https://js.wiki\n  tags: [wiki, documentation, markdown, knowledge-base]\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: content\napplications:\n  - name: wikijs\n    primary: true\n    image: ghcr.io/requarks/wiki\n    tag: \"2.5.314\"\n    ports:\n      - container: 3000\n        scheme: http\n    env:\n      DB_TYPE: postgres\n      DB_HOST: \"{{ .databases.db.host }}\"\n      DB_PORT: \"{{ .databases.db.port }}\"\n      DB_NAME: \"{{ .databases.db.name }}\"\n      DB_USER: \"{{ .databases.db.user }}\"\n      DB_PASS: \"{{ .databases.db.password }}\"\n    secretEnv:\n      - DB_PASS\n    # Holds page content when a local/git storage target is enabled; the wiki\n    # itself lives in PostgreSQL.\n    mounts:\n      - volume: content\n        path: /wiki/data/content\n    healthcheck:\n      type: http\n      path: /healthz\n      port: 3000\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 5\n      startPeriodSeconds: 45\n"
         }
       ]
     },

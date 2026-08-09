@@ -1,0 +1,52 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: rabbitmq
+  displayName: RabbitMQ
+  version: 1.0.0
+  description: Message broker speaking AMQP 0-9-1, with the management UI enabled.
+  category: Development
+  icon: https://cdn.simpleicons.org/rabbitmq
+  homepage: https://www.rabbitmq.com
+  tags: [queue, broker, amqp, messaging]
+inputs:
+  - key: username
+    label: Username
+    help: Initial user, granted administrator rights on the default vhost.
+    type: string
+    default: admin
+    required: true
+  - key: password
+    label: Password
+    help: Password for the initial user. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 24
+    required: true
+volumes:
+  - name: data
+applications:
+  - name: rabbitmq
+    primary: true
+    image: rabbitmq
+    tag: "4.3-management-alpine"
+    # Only the management UI is published; producers and consumers reach AMQP on
+    # port 5672 over the workspace network.
+    ports:
+      - container: 15672
+        scheme: http
+    env:
+      RABBITMQ_DEFAULT_USER: "{{ .inputs.username }}"
+      RABBITMQ_DEFAULT_PASS: "{{ .inputs.password }}"
+    secretEnv:
+      - RABBITMQ_DEFAULT_PASS
+    mounts:
+      - volume: data
+        path: /var/lib/rabbitmq
+    healthcheck:
+      type: command
+      command: rabbitmq-diagnostics -q ping
+      intervalSeconds: 30
+      timeoutSeconds: 10
+      retries: 5
+      startPeriodSeconds: 40

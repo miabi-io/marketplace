@@ -1,7 +1,20 @@
 {
-  "etag": "\"98a5439f9ff011501bac1f12bcf2e1eb87da23a249e9a34eae7060c2a908a5f0\"",
+  "etag": "\"a69d7283451ab5f503571931dba57766cb675537204f0b41e4ec929a1f44b08a\"",
   "generatedAt": "",
   "templates": [
+    {
+      "name": "adminer",
+      "slug": "adminer",
+      "source": "official",
+      "display_name": "Adminer",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:3d6b3d41eaa19f6ec3b652a2e7260f8b4a4461848194f3745a6b2fa0804e5a4d"
+        }
+      ]
+    },
     {
       "name": "goauthentik",
       "slug": "goauthentik",
@@ -12,6 +25,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:b8469611bd9e928dd1bc457e63ecace31752f02bcaef32cf425c411eb13f2a72"
+        }
+      ]
+    },
+    {
+      "name": "registry",
+      "slug": "registry",
+      "source": "official",
+      "display_name": "Docker Registry",
+      "category": "Development",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:7087476e8c7e8c521de8383ba263b21bce73a4d16db53d65667c30de0aba89ed"
         }
       ]
     },
@@ -94,6 +120,19 @@
       ]
     },
     {
+      "name": "keycloak",
+      "slug": "keycloak",
+      "source": "official",
+      "display_name": "Keycloak",
+      "category": "Security",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:c8b96ffa11bc12935cdb69fecdd613e1bd05ce4bdbcfeb17940c30364c7fc26d"
+        }
+      ]
+    },
+    {
       "name": "libsql",
       "slug": "libsql",
       "source": "official",
@@ -120,6 +159,19 @@
       ]
     },
     {
+      "name": "mattermost",
+      "slug": "mattermost",
+      "source": "official",
+      "display_name": "Mattermost",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:a70fe8874d9bfaa3e0c3ca21745039397edb4b732f00cd8e5a44069bc202bb71"
+        }
+      ]
+    },
+    {
       "name": "mealie",
       "slug": "mealie",
       "source": "official",
@@ -129,6 +181,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:cfe58b620d0c8121405c45f8611b9ab250bcf079b2c14d667eabe402ad50fc32"
+        }
+      ]
+    },
+    {
+      "name": "meilisearch",
+      "slug": "meilisearch",
+      "source": "official",
+      "display_name": "Meilisearch",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:38e1150a77b75aa93e26be58d6355292012e6df3474474f40b0ce8ce276ef646"
         }
       ]
     },
@@ -224,6 +289,19 @@
       ]
     },
     {
+      "name": "navidrome",
+      "slug": "navidrome",
+      "source": "official",
+      "display_name": "Navidrome",
+      "category": "Media",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:02acb9dbc095877d3717d1a049f03ebdeb4e4c6ecf739120ab0d864d34787f98"
+        }
+      ]
+    },
+    {
       "name": "nextcloud",
       "slug": "nextcloud",
       "source": "official",
@@ -246,6 +324,58 @@
         {
           "version": "1.0.0",
           "digest": "sha256:4ed9eabb17eb4a1ad7e7c50c5c10803f246cd3194bdc41d2d92466184f166563"
+        }
+      ]
+    },
+    {
+      "name": "nocodb",
+      "slug": "nocodb",
+      "source": "official",
+      "display_name": "NocoDB",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:ba09320d3f7184e88807c8fd626e9704d4ac380922a00c3b83619c13507193e4"
+        }
+      ]
+    },
+    {
+      "name": "ntfy",
+      "slug": "ntfy",
+      "source": "official",
+      "display_name": "ntfy",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:9a110dd1964546b80fbc47317c289da55e4995d8885c2866aa0f8142382fbca0"
+        }
+      ]
+    },
+    {
+      "name": "open-webui",
+      "slug": "open-webui",
+      "source": "official",
+      "display_name": "Open WebUI",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:60334192cad0a9c2e6af05e7517426898db3b6c847288058ae85bc910246bb58"
+        }
+      ]
+    },
+    {
+      "name": "paperless-ngx",
+      "slug": "paperless-ngx",
+      "source": "official",
+      "display_name": "Paperless-ngx",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:52ec248010b2f410605e6d72a03b51ca879029b8d6ad8a705b61c6242372b11d"
         }
       ]
     },
@@ -302,6 +432,32 @@
       ]
     },
     {
+      "name": "qdrant",
+      "slug": "qdrant",
+      "source": "official",
+      "display_name": "Qdrant",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:7f4d75e088b8fffe9ce10f487aff1f98bbd9e212542e419c5c33c7edca6b43c7"
+        }
+      ]
+    },
+    {
+      "name": "rabbitmq",
+      "slug": "rabbitmq",
+      "source": "official",
+      "display_name": "RabbitMQ",
+      "category": "Development",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:f618afaac504c566e6476170aabcfdd786c0427b84c7dc3cfa2ea6db87faf5fb"
+        }
+      ]
+    },
+    {
       "name": "redis",
       "slug": "redis",
       "source": "official",
@@ -324,6 +480,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:4a5516039dd7395ab0e717fd2170c3a5159f8cc7f05286f766cefe58d4ff4eb2"
+        }
+      ]
+    },
+    {
+      "name": "stirling-pdf",
+      "slug": "stirling-pdf",
+      "source": "official",
+      "display_name": "Stirling PDF",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:f83b1703fd707318bf5057118fd5818d9bd5aa77884fbcf8659964f9071140d1"
         }
       ]
     },
@@ -402,6 +571,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:0f7f219e803cff3e66cb5f4a783269807139c781447e1be1a1a3c0e8dc6f1f1c"
+        }
+      ]
+    },
+    {
+      "name": "wikijs",
+      "slug": "wikijs",
+      "source": "official",
+      "display_name": "Wiki.js",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:3056457851e59e20f381a2e3347d2eb5832a3a8ae6ba20a01dc288369763f280"
         }
       ]
     },
