@@ -1,0 +1,68 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: open-webui
+  displayName: Open WebUI
+  version: 1.0.0
+  description: Chat interface for local and hosted LLMs — Ollama, OpenAI-compatible APIs, RAG over your own documents.
+  category: Productivity
+  icon: https://github.com/open-webui.png
+  homepage: https://openwebui.com
+  tags: [ai, llm, chat, ollama, rag]
+inputs:
+  - key: secret_key
+    label: Secret key
+    help: Signing key for sessions and JWTs. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 32
+    required: true
+  - key: ollama_base_url
+    label: Ollama URL
+    help: Base URL of an Ollama server, e.g. http://ollama:11434. Leave blank if you only use hosted APIs.
+    type: string
+  - key: openai_api_base_url
+    label: OpenAI-compatible API URL
+    help: Base URL of an OpenAI-compatible endpoint. Leave the default unless you point at another provider.
+    type: string
+    default: https://api.openai.com/v1
+  - key: openai_api_key
+    label: API key
+    help: Key for the OpenAI-compatible endpoint. Leave blank to configure it later in the UI.
+    type: password
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+volumes:
+  - name: data
+applications:
+  - name: open-webui
+    primary: true
+    image: ghcr.io/open-webui/open-webui
+    tag: "v0.11.0"
+    ports:
+      - container: 8080
+        scheme: http
+    env:
+      # Chats, users and settings live in PostgreSQL; the volume keeps uploads,
+      # the vector store and cached models. The postgres:// URI is rewritten to
+      # postgresql+psycopg:// by Open WebUI itself.
+      DATABASE_URL: "{{ .databases.db.uri }}"
+      WEBUI_SECRET_KEY: "{{ .inputs.secret_key }}"
+      OLLAMA_BASE_URL: "{{ .inputs.ollama_base_url }}"
+      OPENAI_API_BASE_URL: "{{ .inputs.openai_api_base_url }}"
+      OPENAI_API_KEY: "{{ .inputs.openai_api_key }}"
+    secretEnv:
+      - DATABASE_URL
+      - WEBUI_SECRET_KEY
+      - OPENAI_API_KEY
+    mounts:
+      - volume: data
+        path: /app/backend/data
+    # First boot downloads the default embedding model before binding the port,
+    # which can outlast the readiness window; the model is cached in the volume
+    # afterwards. Left off so a slow first start is not reported as a failure.
+    healthcheck:
+      type: none

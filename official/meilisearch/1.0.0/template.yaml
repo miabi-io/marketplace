@@ -1,0 +1,44 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: meilisearch
+  displayName: Meilisearch
+  version: 1.0.0
+  description: Fast, typo-tolerant search engine with a REST API and a built-in search preview.
+  category: Database
+  icon: https://cdn.simpleicons.org/meilisearch
+  homepage: https://www.meilisearch.com
+  tags: [search, index, api, full-text]
+inputs:
+  - key: master_key
+    label: Master key
+    help: Root API key that protects every endpoint. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 32
+    required: true
+volumes:
+  - name: data
+applications:
+  - name: meilisearch
+    primary: true
+    image: getmeili/meilisearch
+    tag: "v1.52"
+    ports:
+      - container: 7700
+        scheme: http
+    env:
+      MEILI_MASTER_KEY: "{{ .inputs.master_key }}"
+      MEILI_ENV: production
+    secretEnv:
+      - MEILI_MASTER_KEY
+    mounts:
+      - volume: data
+        path: /meili_data
+    healthcheck:
+      type: command
+      command: wget -qO- http://127.0.0.1:7700/health | grep -q available
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 15

@@ -1,0 +1,60 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: nocodb
+  displayName: NocoDB
+  version: 1.0.0
+  description: Turn any database into a smart spreadsheet — grid, gallery, kanban and form views over your data.
+  category: Productivity
+  icon: https://github.com/nocodb.png
+  homepage: https://nocodb.com
+  tags: [database, spreadsheet, no-code, airtable]
+inputs:
+  - key: public_url
+    label: Public URL
+    help: The public base URL NocoDB is served on (used for invitation and share links).
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://nocodb.example.com
+  - key: jwt_secret
+    label: JWT secret
+    help: Signing key for auth tokens. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 32
+    required: true
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+volumes:
+  - name: data
+applications:
+  - name: nocodb
+    primary: true
+    image: nocodb/nocodb
+    tag: "2026.08.0"
+    ports:
+      - container: 8080
+        scheme: http
+    env:
+      # NocoDB's own connection string format, not a standard postgres URL.
+      NC_DB: "pg://{{ .databases.db.host }}:{{ .databases.db.port }}?u={{ .databases.db.user }}&p={{ .databases.db.password }}&d={{ .databases.db.name }}"
+      NC_AUTH_JWT_SECRET: "{{ .inputs.jwt_secret }}"
+      NC_PUBLIC_URL: "{{ .inputs.public_url }}"
+    secretEnv:
+      - NC_DB
+      - NC_AUTH_JWT_SECRET
+    mounts:
+      - volume: data
+        path: /usr/app/data
+    healthcheck:
+      type: http
+      path: /api/v1/health
+      port: 8080
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 5
+      startPeriodSeconds: 45

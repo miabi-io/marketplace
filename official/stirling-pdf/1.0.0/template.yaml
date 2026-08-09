@@ -1,0 +1,60 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: stirling-pdf
+  displayName: Stirling PDF
+  version: 1.0.0
+  description: Local-first PDF toolkit — split, merge, convert, OCR, sign and compress, all in the browser.
+  category: Productivity
+  icon: https://github.com/Stirling-Tools.png
+  homepage: https://www.stirlingpdf.com
+  tags: [pdf, documents, ocr, tools, office]
+inputs:
+  - key: enable_login
+    label: Require login
+    help: Protect the instance with an account. Turn this off only on a private network.
+    type: select
+    options: ["true", "false"]
+    default: "true"
+  - key: admin_username
+    label: Admin username
+    help: Account created on first start when login is required.
+    type: string
+    default: admin
+    required: true
+  - key: admin_password
+    label: Admin password
+    help: Password for the initial account. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 24
+    required: true
+volumes:
+  - name: configs
+applications:
+  - name: stirling-pdf
+    primary: true
+    image: stirlingtools/stirling-pdf
+    tag: "2.14.3"
+    ports:
+      - container: 8080
+        scheme: http
+    env:
+      SECURITY_ENABLELOGIN: "{{ .inputs.enable_login }}"
+      SECURITY_INITIALLOGIN_USERNAME: "{{ .inputs.admin_username }}"
+      SECURITY_INITIALLOGIN_PASSWORD: "{{ .inputs.admin_password }}"
+      SYSTEM_DEFAULTLOCALE: en-US
+      DOCKER_ENABLE_SECURITY: "true"
+    secretEnv:
+      - SECURITY_INITIALLOGIN_PASSWORD
+    mounts:
+      - volume: configs
+        path: /configs
+    healthcheck:
+      type: http
+      path: /api/v1/info/status
+      port: 8080
+      intervalSeconds: 30
+      timeoutSeconds: 10
+      retries: 5
+      startPeriodSeconds: 90
