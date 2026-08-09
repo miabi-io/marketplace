@@ -3,7 +3,10 @@ VERSION ?= dev
 IMAGE   ?= ghcr.io/miabi-io/marketplace
 PORT    ?= 8088
 
-.PHONY: run serve generate lint build test vet check tidy docker help
+WEB_DIR       := web
+EMBED_WEB_DIR := internal/web/dist
+
+.PHONY: run serve generate lint build build-ui build-all dev-ui test vet check tidy docker help
 
 run: ## Serve the API + storefront (MARKETPLACE_PORT to override :8088)
 	MARKETPLACE_PORT=$(PORT) go run ./cmd/marketplace server
@@ -18,6 +21,20 @@ lint: ## Validate every embedded template (catalog drift check)
 
 build: ## Build the marketplace binary into bin/
 	go build -o bin/$(BINARY) ./cmd/marketplace
+
+build-ui: ## Build the storefront (Vue) and stage it for embedding
+	npm --prefix $(WEB_DIR) ci
+	npm --prefix $(WEB_DIR) run build
+	# Stage the build output where `go build` embeds it, keeping the committed
+	# .gitkeep so `go build` still works on a clean tree.
+	rm -rf $(EMBED_WEB_DIR)
+	cp -r $(WEB_DIR)/dist $(EMBED_WEB_DIR)
+	touch $(EMBED_WEB_DIR)/.gitkeep
+
+build-all: build-ui build ## Build the storefront and the server binary
+
+dev-ui: ## Run the Vite dev server (proxies /v1 -> :8088)
+	npm --prefix $(WEB_DIR) run dev
 
 test: ## Run tests
 	go test ./...

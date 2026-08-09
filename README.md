@@ -29,7 +29,8 @@ export.json                               GENERATED full bundle (every manifest 
 registry/index.json                       GENERATED lightweight machine index (CI checks for drift)
 manifest/                                 the miabi.io/v1 manifest module: parse + validate + digest
 schema/template.schema.json               JSON Schema for editors + CI
-internal/{catalog,api,storefront}         the Okapi service
+internal/{catalog,api,web}                the Okapi service (web embeds the built storefront)
+web/                                      the storefront SPA (Vue 3 + Pinia + Vite)
 cmd/marketplace                           server + generate-index + lint
 ```
 
@@ -56,9 +57,16 @@ interactive:
 
 ## Storefront
 
-Server-rendered (no build step): a paginated, searchable home grid and a
-per-template detail page, served from the same catalog at `/` and
-`/templates/{name}`.
+A Vue 3 + Pinia SPA (`web/`) served by the same binary over Okapi's `WebFS`, at
+`/` and `/templates/{name}`. Search is instant — results follow typing, with no
+submit button — and every filter is mirrored into the URL, so any result set is
+a shareable link.
+
+`make build-ui` builds it with Vite and stages the output into
+`internal/web/dist`, where `go build` embeds it; `make dev-ui` runs the Vite dev
+server on :3100 with `/v1` proxied to a local `make run`. Only a `.gitkeep` is
+committed under `internal/web/dist`, so a clean checkout still builds — the API
+serves, and the storefront 404s until the UI is built.
 
 <p align="center">
   <img src="docs/images/storefront.png" alt="Miabi Marketplace storefront — searchable template grid" width="100%">

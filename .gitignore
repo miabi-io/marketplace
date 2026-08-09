@@ -7,3 +7,10 @@
 *.out
 coverage.txt
 .DS_Store
+
+# Storefront build artifacts. internal/web/dist is staged by `make build-ui`;
+# only its .gitkeep is committed so `go build` works on a clean tree.
+web/node_modules/
+web/dist/
+internal/web/dist/*
+!internal/web/dist/.gitkeep
