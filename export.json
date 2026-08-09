@@ -1,5 +1,5 @@
 {
-  "etag": "\"e53cff09325d45624d0f77c0c096be21f5b612f15538b69c02fd2031d4546060\"",
+  "etag": "\"98a5439f9ff011501bac1f12bcf2e1eb87da23a249e9a34eae7060c2a908a5f0\"",
   "generatedAt": "",
   "templates": [
     {
@@ -119,6 +119,18 @@
           "version": "1.0.0",
           "digest": "sha256:cfe58b620d0c8121405c45f8611b9ab250bcf079b2c14d667eabe402ad50fc32",
           "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: mealie\n  displayName: Mealie\n  version: 1.0.0\n  description: Self-hosted recipe manager and meal planner with a shopping-list, backed by PostgreSQL.\n  category: Productivity\n  icon: https://cdn.simpleicons.org/mealie\n  homepage: https://mealie.io\n  tags: [productivity, recipes, meal-planning, cooking]\ninputs:\n  - key: base_url\n    label: Public URL\n    help: The public URL Mealie is served on (used for links and invitations).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://recipes.example.com\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\nvolumes:\n  - name: data\napplications:\n  - name: mealie\n    primary: true\n    image: ghcr.io/mealie-recipes/mealie\n    tag: \"v2.6.0\"\n    ports:\n      - container: 9000\n        scheme: http\n    env:\n      BASE_URL: \"{{ .inputs.base_url }}\"\n      DB_ENGINE: postgres\n      POSTGRES_SERVER: \"{{ .databases.db.host }}\"\n      POSTGRES_PORT: \"{{ .databases.db.port }}\"\n      POSTGRES_USER: \"{{ .databases.db.user }}\"\n      POSTGRES_PASSWORD: \"{{ .databases.db.password }}\"\n      POSTGRES_DB: \"{{ .databases.db.name }}\"\n    secretEnv:\n      - POSTGRES_PASSWORD\n    mounts:\n      - volume: data\n        path: /app/data\n    healthcheck:\n      type: http\n      path: /api/app/about\n      port: 9000\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 20\n"
+        }
+      ]
+    },
+    {
+      "name": "memcached",
+      "slug": "memcached",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:cc0be6fbbb82ef3b37077b2e35ddfc1c2d425694907f56dfdd5dff7efc0bf128",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: memcached\n  displayName: Memcached\n  version: 1.0.0\n  description: Distributed in-memory object cache for speeding up dynamic web applications.\n  category: Database\n  icon: https://github.com/memcached.png\n  homepage: https://memcached.org\n  tags: [cache, key-value, memory, performance]\ninputs:\n  - key: memory_mb\n    label: Cache size (MB)\n    help: Maximum memory the cache may use before it starts evicting items.\n    type: number\n    default: \"64\"\n    required: true\n    pattern: '^[1-9][0-9]{0,5}$'\n  - key: max_connections\n    label: Max connections\n    help: Maximum number of simultaneous client connections.\n    type: number\n    default: \"1024\"\n    required: true\n    pattern: '^[1-9][0-9]{0,5}$'\napplications:\n  - name: memcached\n    primary: true\n    image: memcached\n    tag: \"1.6-alpine\"\n    # Wrapped in a shell so the sizing inputs reach memcached's flags as env\n    # vars; the image already runs as the unprivileged memcache user.\n    command: [\"sh\", \"-c\", \"exec memcached -m \\\"$MEMCACHED_MEMORY_MB\\\" -c \\\"$MEMCACHED_MAX_CONNECTIONS\\\"\"]\n    env:\n      MEMCACHED_MEMORY_MB: \"{{ .inputs.memory_mb }}\"\n      MEMCACHED_MAX_CONNECTIONS: \"{{ .inputs.max_connections }}\"\n    healthcheck:\n      type: command\n      command: printf \"version\\r\\n\" | nc -w 1 127.0.0.1 11211 | grep -q VERSION\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 10\n"
         }
       ]
     },
@@ -311,6 +323,18 @@
           "version": "1.0.0",
           "digest": "sha256:671da17b2eeda73f49c04712706583f72c041513faeff755771aa54ac9bed9b1",
           "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: uptime-kuma\n  displayName: Uptime Kuma\n  version: 1.0.0\n  description: Self-hosted uptime monitoring with status pages and rich notifications.\n  category: Monitoring\n  icon: https://cdn.simpleicons.org/uptimekuma\n  homepage: https://uptime.kuma.pet\n  tags: [monitoring, uptime, status, alerting]\nvolumes:\n  - name: data\napplications:\n  - name: uptime-kuma\n    primary: true\n    image: louislam/uptime-kuma\n    tag: \"1\"\n    ports:\n      - container: 3001\n        scheme: http\n    mounts:\n      - volume: data\n        path: /app/data\n    healthcheck:\n      type: http\n      path: /\n      port: 3001\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 15\n"
+        }
+      ]
+    },
+    {
+      "name": "valkey",
+      "slug": "valkey",
+      "source": "official",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:9f4d2fff51c47fbbdfe35a744aeaa682afba99a3f4fe57748f0bae9f51ffbdd4",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: valkey\n  displayName: Valkey\n  version: 1.0.0\n  description: High-performance key-value store and cache — the community fork of Redis.\n  category: Database\n  icon: https://github.com/valkey-io.png\n  homepage: https://valkey.io\n  tags: [database, cache, key-value, redis]\ninputs:\n  - key: password\n    label: Password\n    help: \"Password clients must authenticate with (requirepass). Leave blank to auto-generate. Letters, digits and - _ . : @ only, no spaces.\"\n    type: password\n    generate: true\n    length: 24\n    required: true\n    pattern: '^[A-Za-z0-9._:@-]{8,}$'\nvolumes:\n  - name: data\napplications:\n  - name: valkey\n    primary: true\n    image: valkey/valkey\n    tag: \"9-alpine\"\n    # The image entrypoint appends $VALKEY_EXTRA_FLAGS to the default\n    # `valkey-server` command, so auth and persistence are set without overriding\n    # the command — which would skip the entrypoint's drop-to-valkey-user step.\n    env:\n      VALKEY_PASSWORD: \"{{ .inputs.password }}\"\n      VALKEY_EXTRA_FLAGS: \"--requirepass {{ .inputs.password }} --appendonly yes\"\n    secretEnv:\n      - VALKEY_PASSWORD\n      - VALKEY_EXTRA_FLAGS\n    mounts:\n      - volume: data\n        path: /data\n    healthcheck:\n      type: command\n      command: valkey-cli -a \"$VALKEY_PASSWORD\" --no-auth-warning ping | grep -q PONG\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 10\n"
         }
       ]
     },

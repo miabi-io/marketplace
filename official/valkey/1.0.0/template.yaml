@@ -1,0 +1,46 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: valkey
+  displayName: Valkey
+  version: 1.0.0
+  description: High-performance key-value store and cache — the community fork of Redis.
+  category: Database
+  icon: https://github.com/valkey-io.png
+  homepage: https://valkey.io
+  tags: [database, cache, key-value, redis]
+inputs:
+  - key: password
+    label: Password
+    help: "Password clients must authenticate with (requirepass). Leave blank to auto-generate. Letters, digits and - _ . : @ only, no spaces."
+    type: password
+    generate: true
+    length: 24
+    required: true
+    pattern: '^[A-Za-z0-9._:@-]{8,}$'
+volumes:
+  - name: data
+applications:
+  - name: valkey
+    primary: true
+    image: valkey/valkey
+    tag: "9-alpine"
+    # The image entrypoint appends $VALKEY_EXTRA_FLAGS to the default
+    # `valkey-server` command, so auth and persistence are set without overriding
+    # the command — which would skip the entrypoint's drop-to-valkey-user step.
+    env:
+      VALKEY_PASSWORD: "{{ .inputs.password }}"
+      VALKEY_EXTRA_FLAGS: "--requirepass {{ .inputs.password }} --appendonly yes"
+    secretEnv:
+      - VALKEY_PASSWORD
+      - VALKEY_EXTRA_FLAGS
+    mounts:
+      - volume: data
+        path: /data
+    healthcheck:
+      type: command
+      command: valkey-cli -a "$VALKEY_PASSWORD" --no-auth-warning ping | grep -q PONG
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 10
