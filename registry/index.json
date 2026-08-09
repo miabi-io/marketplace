@@ -1,5 +1,5 @@
 {
-  "etag": "\"e53cff09325d45624d0f77c0c096be21f5b612f15538b69c02fd2031d4546060\"",
+  "etag": "\"98a5439f9ff011501bac1f12bcf2e1eb87da23a249e9a34eae7060c2a908a5f0\"",
   "generatedAt": "",
   "templates": [
     {
@@ -129,6 +129,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:cfe58b620d0c8121405c45f8611b9ab250bcf079b2c14d667eabe402ad50fc32"
+        }
+      ]
+    },
+    {
+      "name": "memcached",
+      "slug": "memcached",
+      "source": "official",
+      "display_name": "Memcached",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:cc0be6fbbb82ef3b37077b2e35ddfc1c2d425694907f56dfdd5dff7efc0bf128"
         }
       ]
     },
@@ -337,6 +350,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:671da17b2eeda73f49c04712706583f72c041513faeff755771aa54ac9bed9b1"
+        }
+      ]
+    },
+    {
+      "name": "valkey",
+      "slug": "valkey",
+      "source": "official",
+      "display_name": "Valkey",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:9f4d2fff51c47fbbdfe35a744aeaa682afba99a3f4fe57748f0bae9f51ffbdd4"
         }
       ]
     },

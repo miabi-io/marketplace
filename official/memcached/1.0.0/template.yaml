@@ -1,0 +1,44 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: memcached
+  displayName: Memcached
+  version: 1.0.0
+  description: Distributed in-memory object cache for speeding up dynamic web applications.
+  category: Database
+  icon: https://github.com/memcached.png
+  homepage: https://memcached.org
+  tags: [cache, key-value, memory, performance]
+inputs:
+  - key: memory_mb
+    label: Cache size (MB)
+    help: Maximum memory the cache may use before it starts evicting items.
+    type: number
+    default: "64"
+    required: true
+    pattern: '^[1-9][0-9]{0,5}$'
+  - key: max_connections
+    label: Max connections
+    help: Maximum number of simultaneous client connections.
+    type: number
+    default: "1024"
+    required: true
+    pattern: '^[1-9][0-9]{0,5}$'
+applications:
+  - name: memcached
+    primary: true
+    image: memcached
+    tag: "1.6-alpine"
+    # Wrapped in a shell so the sizing inputs reach memcached's flags as env
+    # vars; the image already runs as the unprivileged memcache user.
+    command: ["sh", "-c", "exec memcached -m \"$MEMCACHED_MEMORY_MB\" -c \"$MEMCACHED_MAX_CONNECTIONS\""]
+    env:
+      MEMCACHED_MEMORY_MB: "{{ .inputs.memory_mb }}"
+      MEMCACHED_MAX_CONNECTIONS: "{{ .inputs.max_connections }}"
+    healthcheck:
+      type: command
+      command: printf "version\r\n" | nc -w 1 127.0.0.1 11211 | grep -q VERSION
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 10
