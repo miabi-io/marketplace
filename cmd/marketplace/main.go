@@ -39,7 +39,7 @@ import (
 	"github.com/jkaninda/okapi/okapicli"
 	"github.com/miabi-io/marketplace/internal/api"
 	"github.com/miabi-io/marketplace/internal/catalog"
-	"github.com/miabi-io/marketplace/internal/storefront"
+	"github.com/miabi-io/marketplace/internal/web"
 )
 
 func main() {
@@ -82,7 +82,15 @@ func serve(cli *okapicli.CLI) error {
 		License:     okapi.License{Name: "Apache-2.0", URL: "http://www.apache.org/licenses/LICENSE-2.0"},
 	})
 	api.Register(app, cat)
-	storefront.Register(app, cat)
+	// The storefront is the built Vue SPA. It is registered last so every API
+	// route keeps precedence; unmatched paths fall back to index.html for the
+	// client-side router. Assets are content-hashed by Vite, so they cache hard;
+	// index.html is always served no-cache by Okapi.
+	app.WebFS("/", web.Assets, okapi.WebConfig{
+		Root:    "dist",
+		Exclude: []string{"/v1", "/docs", "/healthz", "/metrics"},
+		MaxAge:  365 * 24 * time.Hour,
+	})
 	return cli.RunServer(&okapicli.RunOptions{
 		ShutdownTimeout: 15 * time.Second,
 		OnStarted: func() {
