@@ -18,11 +18,14 @@
 package api
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/jkaninda/okapi"
+	marketplace "github.com/miabi-io/marketplace"
 	"github.com/miabi-io/marketplace/internal/catalog"
 	"github.com/miabi-io/marketplace/manifest"
 )
@@ -89,6 +92,17 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 		okapi.DocDescription("The category facets (name + count)."),
 		okapi.DocTag("catalog"),
 		okapi.DocResponse(http.StatusOK, &Envelope[[]catalog.CategoryFacet]{}),
+	)
+
+	// Served at exactly the path the schema's own $id names, so an editor's YAML
+	// language server pointed at that URL resolves it.
+	app.Get("/schema/template.schema.json", h.Schema,
+		okapi.DocSummary("Template manifest JSON Schema"),
+		okapi.DocDescription("The JSON Schema describing a miabi.io/v1 Template, for editor validation. Served at its own $id URL; ETag-conditional."),
+		okapi.DocTag("catalog"),
+		okapi.DocResponseHeader("ETag", "string", "Schema digest."),
+		okapi.DocResponse(http.StatusOK, ""),
+		okapi.DocResponse(http.StatusNotModified, nil),
 	)
 
 	app.Get("/healthz", h.Health,
@@ -200,8 +214,9 @@ func (h *Handlers) GetManifest(c *okapi.Context, in *VersionRequest) error {
 	if h.notModified(c, `"`+ver.Digest+`"`) {
 		return c.String(http.StatusNotModified, "")
 	}
-	c.SetHeader("Content-Type", "application/yaml; charset=utf-8")
-	return c.String(http.StatusOK, string(ver.Raw))
+	// Data, not String: String writes text/plain, which would override the
+	// Content-Type this route documents.
+	return c.Data(http.StatusOK, "application/yaml; charset=utf-8", ver.Raw)
 }
 
 // Categories returns the category facets.
@@ -215,6 +230,25 @@ type HealthResponse struct {
 }
 
 // Health is the liveness probe.
+// schemaETag digests the embedded schema once: it is fixed for the life of the
+// binary, so it changes only when a release changes the schema.
+var schemaETag = func() string {
+	sum := sha256.Sum256(marketplace.TemplateSchema)
+	return `"` + hex.EncodeToString(sum[:]) + `"`
+}()
+
+// Schema serves the template manifest JSON Schema. Content-Type is
+// application/json rather than the registered application/schema+json, because
+// editors and schema consumers agree on the former.
+func (h *Handlers) Schema(c *okapi.Context) error {
+	if h.notModified(c, schemaETag) {
+		return c.String(http.StatusNotModified, "")
+	}
+	// Data, not String: String writes text/plain and would override a
+	// Content-Type set beforehand.
+	return c.Data(http.StatusOK, "application/json; charset=utf-8", marketplace.TemplateSchema)
+}
+
 func (h *Handlers) Health(c *okapi.Context) error {
 	return c.JSON(http.StatusOK, HealthResponse{Status: "ok"})
 }
