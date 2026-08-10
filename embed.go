@@ -28,3 +28,10 @@ import "embed"
 //
 //go:embed all:official all:community
 var Content embed.FS
+
+// TemplateSchema is the manifest JSON Schema, embedded so the service can serve
+// it at the absolute URL its own $id advertises — an editor pointed there (as
+// the contributing guide instructs) has to resolve it over HTTP.
+//
+//go:embed schema/template.schema.json
+var TemplateSchema []byte
