@@ -1,5 +1,5 @@
 {
-  "etag": "\"4b6d41d398052d75cdfb6623e71c628ee216319274875bf9074060553802e687\"",
+  "etag": "\"3e55ca0185874c9f4783fcf206c02e8538a641e7db66f2446b114457309c9108\"",
   "generatedAt": "",
   "templates": [
     {
@@ -439,12 +439,8 @@
       "category": "Email",
       "versions": [
         {
-          "version": "1.1.0",
-          "digest": "sha256:604dd991dca342b33fe0e964e479166b8af90b07b27645872ac6365acefd66a8"
-        },
-        {
           "version": "1.0.0",
-          "digest": "sha256:f5048f788799a47ab255a761d8fb99832549ae777a32d22fbc24b4cf51f1db23"
+          "digest": "sha256:21cfb1dedacc006aeaac26bfb80b6609e191d74b29f615f7713b049517dcf15c"
         }
       ]
     },
