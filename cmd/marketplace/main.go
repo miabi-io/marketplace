@@ -23,9 +23,10 @@
 //	marketplace lint     # validate every embedded template, exit non-zero on error
 //
 // The generated export.json is the full bundle (every manifest inline) — the
-// same document GET /v1/export serves. Committed and published via a CDN
-// (jsDelivr) it lets Miabi sync the catalog from static git, no server required;
-// the server stays available for self-hosting the API + storefront.
+// same document GET /v1/export serves. The hosted registry at
+// marketplace.miabi.io is what Miabi installs point MIABI_MARKETPLACE_URL at;
+// the committed export.json additionally lets a fork or an air-gapped install
+// sync from static git with no server at all.
 package main
 
 import (
@@ -100,7 +101,7 @@ func serve(cli *okapicli.CLI) error {
 }
 
 // generate writes the static catalog artifacts: export.json (the full bundle,
-// every manifest inline — what Miabi syncs from the CDN) and registry/index.json
+// every manifest inline — the same document /v1/export serves) and registry/index.json
 // (the lightweight machine index). The time-based generatedAt is omitted from
 // both so they are deterministic and CI can diff them for drift.
 func generate() error {

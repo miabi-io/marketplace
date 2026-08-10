@@ -1,0 +1,168 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: invoiceninja
+  displayName: Invoice Ninja
+  version: 1.0.0
+  description: Self-hosted invoicing, quotes, payments and time tracking for freelancers and small businesses.
+  category: Productivity
+  icon: https://github.com/invoiceninja.png
+  homepage: https://invoiceninja.com
+  tags: [invoicing, billing, payments, accounting, crm]
+inputs:
+  - key: app_url
+    label: Public URL
+    help: The public base URL Invoice Ninja is served on. It ends up in invoice links, payment redirects and emails.
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://invoices.example.com
+  - key: admin_email
+    label: Admin email
+    help: Email of the account created on first start.
+    type: string
+    required: true
+    default: admin@example.com
+    pattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+  - key: admin_password
+    label: Admin password
+    help: Password for the initial account. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 24
+    required: true
+  - key: app_key
+    label: Application key
+    help: Laravel encryption key. Leave blank to auto-generate — changing it later makes stored credentials unreadable.
+    type: password
+    generate: true
+    length: 32
+    required: true
+databases:
+  - name: db
+    engine: mysql
+    version: "8"
+    placement: auto
+  - name: redis
+    engine: redis
+    version: "8-alpine"
+    placement: dedicated
+volumes:
+  # public holds the app's web assets, storage its uploads and generated PDFs.
+  # Both are shared with the web server, which serves the static files directly.
+  - name: public
+  - name: storage
+applications:
+  # The application image is php-fpm only (it exposes 9000 and nothing else), so
+  # it is never routed directly — the nginx sidecar below is the entry point.
+  - name: app
+    image: invoiceninja/invoiceninja-debian
+    tag: "5.13.30"
+    env:
+      APP_URL: "{{ .inputs.app_url }}"
+      APP_KEY: "base64:{{ base64 .inputs.app_key }}"
+      APP_ENV: production
+      APP_DEBUG: "false"
+      # TLS terminates at the gateway, which forwards the original scheme and
+      # host; requiring HTTPS in the app as well would redirect-loop.
+      REQUIRE_HTTPS: "false"
+      TRUSTED_PROXIES: "*"
+
+      DB_CONNECTION: mysql
+      DB_HOST: "{{ .databases.db.host }}"
+      DB_PORT: "{{ .databases.db.port }}"
+      DB_DATABASE: "{{ .databases.db.name }}"
+      DB_USERNAME: "{{ .databases.db.user }}"
+      DB_PASSWORD: "{{ .databases.db.password }}"
+
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      REDIS_HOST: "{{ .databases.redis.host }}"
+      REDIS_PORT: "{{ .databases.redis.port }}"
+      REDIS_PASSWORD: "{{ .databases.redis.password }}"
+
+      # The account seeded on first start; the image skips this once one exists.
+      IN_USER_EMAIL: "{{ .inputs.admin_email }}"
+      IN_PASSWORD: "{{ .inputs.admin_password }}"
+
+      FILESYSTEM_DISK: debian_docker
+      PDF_GENERATOR: snappdf
+      PHANTOMJS_PDF_GENERATION: "false"
+      MAIL_MAILER: log
+    secretEnv:
+      - APP_KEY
+      - DB_PASSWORD
+      - REDIS_PASSWORD
+      - IN_PASSWORD
+    mounts:
+      - volume: public
+        path: /var/www/html/public
+      - volume: storage
+        path: /var/www/html/storage
+    healthcheck:
+      type: none
+  - name: web
+    primary: true
+    image: nginx
+    tag: "1.30-alpine"
+    ports:
+      - container: 80
+        scheme: http
+    # The config is carried in env because env is the only interpolated field, and
+    # it must name the app's network alias. nginx then waits for the application
+    # to publish its assets into the shared volume before serving.
+    command:
+      - sh
+      - -c
+      - |
+        printf '%s\n' "$NGINX_CONF" > /etc/nginx/conf.d/default.conf
+        until [ -f /var/www/html/public/index.php ]; do sleep 2; done
+        exec nginx -g 'daemon off;'
+    env:
+      NGINX_CONF: |
+        client_max_body_size 20M;
+        server_tokens off;
+        fastcgi_buffers 32 16K;
+        gzip on;
+        gzip_types text/css application/javascript application/json image/svg+xml;
+
+        server {
+            listen 80 default_server;
+            server_name _;
+            root /var/www/html/public;
+            index index.php;
+            charset utf-8;
+
+            add_header X-Frame-Options "SAMEORIGIN";
+            add_header X-Content-Type-Options "nosniff";
+
+            location / {
+                try_files $uri $uri/ /index.php?$query_string;
+            }
+            location = /favicon.ico { access_log off; log_not_found off; }
+            location = /robots.txt  { access_log off; log_not_found off; }
+            error_page 404 /index.php;
+
+            location ~ \.php$ {
+                fastcgi_pass {{ .applications.app.alias }}:9000;
+                fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+                include fastcgi_params;
+            }
+            location ~ /\.(?!well-known).* {
+                deny all;
+            }
+        }
+    mounts:
+      - volume: public
+        path: /var/www/html/public
+      - volume: storage
+        path: /var/www/html/storage
+    healthcheck:
+      type: http
+      path: /
+      port: 80
+      intervalSeconds: 30
+      timeoutSeconds: 10
+      retries: 5
+      startPeriodSeconds: 120

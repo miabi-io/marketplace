@@ -72,6 +72,7 @@ type Manifest struct {
 	Inputs       []Input    `yaml:"inputs,omitempty" json:"inputs,omitempty"`
 	Databases    []Database `yaml:"databases,omitempty" json:"databases,omitempty"`
 	Volumes      []Volume   `yaml:"volumes,omitempty" json:"volumes,omitempty"`
+	Configs      []Config   `yaml:"configs,omitempty" json:"configs,omitempty"`
 	Stack        *StackSpec `yaml:"stack,omitempty" json:"stack,omitempty"`
 	Applications []AppSpec  `yaml:"applications,omitempty" json:"applications,omitempty"`
 }
@@ -149,6 +150,21 @@ type Volume struct {
 	Name string `yaml:"name" json:"name"`
 }
 
+// Config is a set of configuration files created before the applications are
+// deployed and mounted into them read-only. File values are interpolated like
+// env, so a config can carry a rendered database password.
+type Config struct {
+	Name  string            `yaml:"name" json:"name"`
+	Files map[string]string `yaml:"files" json:"files"`
+	// Mode is the default octal file mode applied to every file ("0644" when empty).
+	Mode string `yaml:"mode,omitempty" json:"mode,omitempty"`
+	// Sensitive redacts content in API responses and diffs it by digest only.
+	Sensitive bool `yaml:"sensitive,omitempty" json:"sensitive,omitempty"`
+	// Delimiters overrides the interpolation delimiters, so a file whose own
+	// syntax uses {{ }} survives rendering. Exactly two distinct entries.
+	Delimiters []string `yaml:"delimiters,omitempty" json:"delimiters,omitempty"`
+}
+
 // AppSpec is a single application within the template. Two or more applications
 // are grouped into a Stack on install.
 type AppSpec struct {
@@ -171,11 +187,16 @@ type Port struct {
 	Scheme    string `yaml:"scheme,omitempty" json:"scheme,omitempty"` // http | https
 }
 
-// Mount binds a declared template volume into an application. Host binds are not
-// permitted in templates (no host-preset field exists by design).
+// Mount binds a declared template volume or config into an application. Host
+// binds are not permitted in templates (no host-preset field exists by design).
 type Mount struct {
-	Volume   string `yaml:"volume" json:"volume"`
+	Volume string `yaml:"volume,omitempty" json:"volume,omitempty"`
+	Config string `yaml:"config,omitempty" json:"config,omitempty"`
+	// Key selects one file from the config, making Path that file's exact
+	// location; empty projects every file under Path as a directory prefix.
+	Key      string `yaml:"key,omitempty" json:"key,omitempty"`
 	Path     string `yaml:"path" json:"path"`
+	Mode     string `yaml:"mode,omitempty" json:"mode,omitempty"`
 	ReadOnly bool   `yaml:"readOnly,omitempty" json:"readOnly,omitempty"`
 }
 

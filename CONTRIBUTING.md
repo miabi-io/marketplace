@@ -37,6 +37,42 @@ workspace — before adding it here (see the tip under step 2).
      version: 1.0.0        # immutable per version directory
    ```
 
+   A template may also declare **`configs`** — configuration files created and
+   mounted into its applications read-only, for software that is configured by a
+   file rather than by environment variables:
+
+   ```yaml
+   configs:
+     - name: provisioning          # lowercase [a-z0-9-], unique in the template
+       mode: "0644"                # default octal mode (0644 when omitted)
+       sensitive: true             # content carries credentials
+       delimiters: ["<<", ">>"]    # render on these, so the file's own {{ }} survives
+       files:
+         datasources/ds.yml: |     # keys are relative paths — no leading /, no ..
+           apiVersion: 1
+           datasources:
+             - name: Metrics
+               url: << .databases.db.host >>:<< .databases.db.port >>
+
+   applications:
+     - name: grafana
+       image: grafana/grafana
+       mounts:
+         - config: provisioning    # every file, under a directory
+           path: /etc/grafana/provisioning
+         - config: provisioning    # or one file at an exact path
+           key: datasources/ds.yml
+           path: /etc/grafana/provisioning/datasources/ds.yml
+           mode: "0444"
+   ```
+
+   File contents interpolate with the same context as `env` (`{{ .inputs.* }}`,
+   `{{ .databases.* }}`), so a config can carry a rendered password instead of
+   shipping one in the repo. A mount sets **exactly one** of `volume` or
+   `config`; `key` and `mode` are valid only with a `config`. Limits are 256 KB
+   per file and 512 KB per config — the per-file cap is what matters, since
+   Docker caps a config object at 500 KB.
+
 2. Validate locally before opening a PR:
 
    ```sh
