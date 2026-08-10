@@ -1,0 +1,103 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: gitlab
+  displayName: GitLab
+  version: 1.0.0
+  description: Complete DevOps platform — Git hosting, merge requests, issues, CI/CD and a package registry.
+  category: Development
+  icon: https://cdn.simpleicons.org/gitlab
+  homepage: https://about.gitlab.com
+  tags: [git, vcs, devops, ci-cd, code-review, issues]
+inputs:
+  - key: external_url
+    label: Public URL
+    help: The public base URL GitLab is served on. It ends up in clone URLs, emails and every redirect, so set it to the domain you will attach in Miabi.
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://gitlab.example.com
+  - key: root_password
+    label: Root password
+    help: Initial password for the built-in `root` account, applied on first boot only. Leave blank to auto-generate; change it after signing in.
+    type: password
+    generate: true
+    length: 24
+    required: true
+  - key: time_zone
+    label: Time zone
+    help: IANA time zone used for timestamps and scheduled pipelines.
+    type: string
+    default: UTC
+    placeholder: Europe/Brussels
+
+# The omnibus image bundles its own PostgreSQL, Redis, Puma, Sidekiq and Nginx,
+# and GitLab supports an external database only with superuser-created extensions
+# (pg_trgm, btree_gist) — so this template runs the bundled stack rather than a
+# managed Miabi database. Everything stateful lives in the volumes below.
+volumes:
+  - name: config    # /etc/gitlab      — gitlab.rb, secrets, generated certificates
+  - name: logs      # /var/log/gitlab  — per-service logs
+  - name: data      # /var/opt/gitlab  — repositories, uploads, the bundled database
+
+applications:
+  - name: gitlab
+    primary: true
+    image: gitlab/gitlab-ce
+    tag: "19.2.1-ce.0"
+    ports:
+      # TLS terminates at Miabi's gateway, so the container only ever speaks HTTP.
+      - container: 80
+        scheme: http
+    env:
+      TZ: "{{ .inputs.time_zone }}"
+      # Omnibus reads its whole configuration from this variable on every start,
+      # which is what keeps the install declarative — nothing to edit by hand
+      # inside the container.
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url '{{ .inputs.external_url }}'
+        gitlab_rails['time_zone'] = '{{ .inputs.time_zone }}'
+        gitlab_rails['initial_root_password'] = '{{ .inputs.root_password }}'
+
+        # Serve plain HTTP behind the gateway: an https external_url would
+        # otherwise make omnibus listen on 443 and try to issue its own
+        # certificate, which fails in a container that owns no domain.
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+        letsencrypt['enable'] = false
+        nginx['proxy_set_headers'] = {
+          'X-Forwarded-Proto' => 'https',
+          'X-Forwarded-Ssl' => 'on'
+        }
+
+        # SSH is not published by this template (see the README), so point the
+        # shell at HTTPS clone URLs rather than advertising an unreachable port.
+        gitlab_rails['gitlab_shell_ssh_port'] = 22
+
+        # Right-size the bundled stack for a single node: the default worker
+        # counts and the built-in Prometheus suite together cost several GB that
+        # a small install has no use for.
+        puma['worker_processes'] = 2
+        sidekiq['max_concurrency'] = 10
+        prometheus_monitoring['enable'] = false
+    secretEnv:
+      # Carries the initial root password, so it is stored encrypted at rest.
+      - GITLAB_OMNIBUS_CONFIG
+    mounts:
+      - volume: config
+        path: /etc/gitlab
+      - volume: logs
+        path: /var/log/gitlab
+      - volume: data
+        path: /var/opt/gitlab
+    healthcheck:
+      # Reconfigure + migrations make the first boot slow (5–10 minutes on a
+      # modest node), so the start period is generous — a shorter one would kill
+      # the container mid-install.
+      type: http
+      path: /-/health
+      port: 80
+      intervalSeconds: 60
+      timeoutSeconds: 15
+      retries: 5
+      startPeriodSeconds: 600

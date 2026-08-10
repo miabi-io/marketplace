@@ -7,13 +7,13 @@ metadata:
   description: Self-hosted transactional email & SMTP platform — send, receive, and verify email.
   category: Email
   icon: https://github.com/goposta.png
-  homepage: https://github.com/goposta/posta
+  homepage: https://goposta.dev
   author:
     name: Jonas Kaninda
     email: me@jkaninda.dev
-    website: https://goposta.org
+    website: https://jkaninda.dev
   tags: [email, smtp, transactional, mail, self-hosted]
-  minMiabi: "0.5.0"
+  minMiabi: "1.8.0"
 
 inputs:
   - key: web_url
@@ -32,14 +32,17 @@ inputs:
     pattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
   - key: admin_password
     label: Admin password
-    help: Password for the initial admin account. Choose a strong value.
+    help: Password for the initial admin account. At least 12 characters — production refuses to seed the first account with a placeholder.
     type: password
     required: true
+    generate: true
+    length: 12
   - key: jwt_secret
     label: JWT secret
-    help: Signing key for auth tokens. Leave blank to auto-generate.
+    help: Signing key for auth tokens, tracking links, and the email stamper. Leave blank to auto-generate.
     type: password
     generate: true
+    length: 32
   - key: encryption_key
     label: Encryption key
     help: AES-256-GCM key used to encrypt stored SMTP passwords. Leave blank to auto-generate.
@@ -57,39 +60,49 @@ databases:
     version: "8-alpine"
     placement: dedicated
 
+# The server and the worker are two processes over one datastore, so everything
+# they must agree on lives here and is injected into both containers. An
+# app-level variable of the same name wins, which is how each app keeps its own
+# role-specific settings below.
+stack:
+  description: Posta — the API/web server and its dedicated worker, sharing one network and configuration.
+  env:
+    POSTA_ENV: production
+
+    # Database (a managed PostgreSQL database, resolved by placement).
+    POSTA_DB_URL: "{{ .databases.db.uri }}?sslmode=disable"
+
+    # Redis (a dedicated managed instance — Miabi sets a password on it).
+    POSTA_REDIS_URL: "{{ .databases.redis.uri }}"
+
+    # The worker needs both too: it signs outgoing mail with the stamper (JWT
+    # secret) and decrypts stored SMTP passwords (encryption key).
+    POSTA_JWT_SECRET: "{{ .inputs.jwt_secret }}"
+    POSTA_ENCRYPTION_KEY: "{{ .inputs.encryption_key }}"
+  secretEnv:
+    # Both URLs embed their password, so they are stored encrypted like one.
+    - POSTA_DB_URL
+    - POSTA_REDIS_URL
+    - POSTA_JWT_SECRET
+    - POSTA_ENCRYPTION_KEY
+
 applications:
-  - name: posta
+  - name: server
     primary: true
     image: jkaninda/posta
-    tag: "0.11.0"
+    tag: "0.13.1"
     ports:
       - container: 9000
         scheme: http
     env:
-      POSTA_ENV: production
       POSTA_WEB_URL: "{{ .inputs.web_url }}"
-
-      # Database (a managed PostgreSQL database, resolved by placement).
-      POSTA_DB_HOST: "{{ .databases.db.host }}"
-      POSTA_DB_PORT: "{{ .databases.db.port }}"
-      POSTA_DB_USER: "{{ .databases.db.user }}"
-      POSTA_DB_PASSWORD: "{{ .databases.db.password }}"
-      POSTA_DB_NAME: "{{ .databases.db.name }}"
-
-      # Redis (a dedicated managed instance — Miabi sets a password on it).
-      POSTA_REDIS_ADDR: "{{ .databases.redis.host }}:{{ .databases.redis.port }}"
-      POSTA_REDIS_PASSWORD: "{{ .databases.redis.password }}"
-
-      # Security.
-      POSTA_JWT_SECRET: "{{ .inputs.jwt_secret }}"
-      POSTA_ENCRYPTION_KEY: "{{ .inputs.encryption_key }}"
+      POSTA_CORS_ORIGINS: "{{ .inputs.web_url }}"
       POSTA_ADMIN_EMAIL: "{{ .inputs.admin_email }}"
       POSTA_ADMIN_PASSWORD: "{{ .inputs.admin_password }}"
 
-      # Worker (run embedded in the server process).
-      POSTA_EMBEDDED_WORKER: "true"
-      POSTA_WORKER_CONCURRENCY: "10"
-      POSTA_WORKER_MAX_RETRIES: "5"
+      # Background jobs belong to the worker below; running them in-process too
+      # would double every delivery attempt.
+      POSTA_EMBEDDED_WORKER: "false"
 
       # Email verification endpoint (results cached in Redis).
       POSTA_EMAIL_VERIFY_ENABLED: "true"
@@ -97,10 +110,6 @@ applications:
       POSTA_EMAIL_VERIFY_MX_CACHE_TTL_HOURS: "24"
       POSTA_EMAIL_VERIFY_RATE_HOURLY: "1000"
     secretEnv:
-      - POSTA_DB_PASSWORD
-      - POSTA_REDIS_PASSWORD
-      - POSTA_JWT_SECRET
-      - POSTA_ENCRYPTION_KEY
       - POSTA_ADMIN_PASSWORD
     healthcheck:
       type: http
@@ -110,3 +119,17 @@ applications:
       timeoutSeconds: 5
       retries: 3
       startPeriodSeconds: 10
+
+  # Background processing: email delivery, retries of failed messages, and
+  # scheduled tasks. Same image, started with the `worker` command, so it scales
+  # independently of the API.
+  - name: worker
+    image: jkaninda/posta
+    tag: "0.13.1"
+    command: ["worker"]
+    env:
+      POSTA_WORKER_CONCURRENCY: "10"
+      POSTA_WORKER_MAX_RETRIES: "5"
+    healthcheck:
+      # No listener to probe — the worker's liveness is the queue draining.
+      type: none

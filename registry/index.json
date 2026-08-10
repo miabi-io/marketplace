@@ -1,5 +1,5 @@
 {
-  "etag": "\"a69d7283451ab5f503571931dba57766cb675537204f0b41e4ec929a1f44b08a\"",
+  "etag": "\"3e55ca0185874c9f4783fcf206c02e8538a641e7db66f2446b114457309c9108\"",
   "generatedAt": "",
   "templates": [
     {
@@ -94,6 +94,19 @@
       ]
     },
     {
+      "name": "gitlab",
+      "slug": "gitlab",
+      "source": "official",
+      "display_name": "GitLab",
+      "category": "Development",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:8ca4a4965c7ad71d7d8a7b7e7d418cf06ca89c1c226e70e120eea3cf14540cd5"
+        }
+      ]
+    },
+    {
       "name": "grafana",
       "slug": "grafana",
       "source": "official",
@@ -103,6 +116,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:c6d2899814a038e23f2a740f1acc11a1ca8506e13195b8b300d25d96a03975b9"
+        }
+      ]
+    },
+    {
+      "name": "invoiceninja",
+      "slug": "invoiceninja",
+      "source": "official",
+      "display_name": "Invoice Ninja",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:c15ada52216056642dd3724e82e82431b72db52d4cb22198b1d37e83990ecf68"
         }
       ]
     },
@@ -414,7 +440,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:f3c54e0564cf2fa23fc48ddfb5523204425e5259d05ae88193d55516fc204b0f"
+          "digest": "sha256:21cfb1dedacc006aeaac26bfb80b6609e191d74b29f615f7713b049517dcf15c"
         }
       ]
     },

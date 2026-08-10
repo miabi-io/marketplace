@@ -79,6 +79,34 @@
         "properties": { "name": { "type": "string", "minLength": 1 } }
       }
     },
+    "configs": {
+      "type": "array",
+      "description": "Configuration files created before the applications are deployed and mounted into them read-only. File contents are interpolated exactly like env, so a config can carry a rendered database password.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "files"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "files": {
+            "type": "object",
+            "description": "File key -> content. The key is a relative path; 256 KB per file, 512 KB per config.",
+            "minProperties": 1,
+            "propertyNames": { "pattern": "^[A-Za-z0-9]([A-Za-z0-9._-]*)?(/[A-Za-z0-9._-]+)*$" },
+            "additionalProperties": { "type": "string", "maxLength": 262144 }
+          },
+          "mode": { "type": "string", "pattern": "^0?[0-7]{3}$", "description": "Default octal file mode for every file (0644 when omitted)." },
+          "sensitive": { "type": "boolean", "description": "Content carries credentials: redacted in API responses and diffed by digest only." },
+          "delimiters": {
+            "type": "array",
+            "description": "Interpolate on these markers instead of {{ }}, for files whose own syntax uses braces. Exactly two distinct entries.",
+            "items": { "type": "string", "minLength": 1 },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        }
+      }
+    },
     "stack": {
       "type": "object",
       "description": "Configures the Stack the template's applications are grouped into. Present even for a single application forces a stack. Env declared here is shared across every member application (an app-level var with the same key wins).",
@@ -121,10 +149,19 @@
             "items": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["volume", "path"],
+              "required": ["path"],
+              "description": "Mounts exactly one declared volume or config. With a config, omitting `key` projects every file under `path`; setting it pins one file to that exact path.",
+              "oneOf": [
+                { "required": ["volume"], "not": { "required": ["config"] } },
+                { "required": ["config"], "not": { "required": ["volume"] } }
+              ],
+              "dependencies": { "key": ["config"], "mode": ["config"] },
               "properties": {
                 "volume": { "type": "string" },
+                "config": { "type": "string" },
+                "key": { "type": "string", "pattern": "^[A-Za-z0-9]([A-Za-z0-9._-]*)?(/[A-Za-z0-9._-]+)*$" },
                 "path": { "type": "string", "pattern": "^/" },
+                "mode": { "type": "string", "pattern": "^0?[0-7]{3}$" },
                 "readOnly": { "type": "boolean" }
               }
             }

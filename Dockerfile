@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
 #
-# Marketplace server image: serves the catalog API + storefront (the optional
-# self-host mode; the catalog is embedded, so the binary is stateless). Miabi's
-# default sync uses the static export.json release asset — this image is for
-# hosting a live registry (e.g. marketplace.miabi.io).
+# Marketplace server image: serves the catalog API + storefront (the catalog is
+# embedded, so the binary is stateless). This is what runs the hosted registry at
+# marketplace.miabi.io, and what you deploy to self-host a fork or an internal
+# mirror; the committed export.json remains the no-server alternative.
 
 FROM node:26-alpine AS web
 WORKDIR /web
