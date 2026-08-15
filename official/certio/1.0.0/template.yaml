@@ -1,0 +1,126 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: certio
+  displayName: Certio
+  version: 1.0.0
+  description: Self-signed PKI and TLS certificate management — issue, renew, revoke and distribute internal certificates, with ACME and a CRL/OCSP responder.
+  category: Security
+  icon: https://raw.githubusercontent.com/jkaninda/certio/main/branding/logo.svg
+  homepage: https://github.com/jkaninda/certio
+  author:
+    name: Jonas Kaninda
+    email: me@jkaninda.dev
+    website: https://jkaninda.dev
+  tags: [pki, tls, certificates, ca, acme, security, self-hosted]
+  minMiabi: "1.8.0"
+
+inputs:
+  - key: base_url
+    label: Public URL
+    help: The URL Certio is served on. It is baked into the CRL distribution point of every certificate issued from here, so it must be the URL clients can actually reach — changing it later does not fix certificates already issued.
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://certio.example.com
+  - key: admin_email
+    label: Admin email
+    help: The first administrator, created once on an empty database.
+    type: string
+    required: true
+    default: admin@example.com
+    pattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+  - key: admin_password
+    label: Admin password
+    help: Password for the initial administrator. Leave blank to auto-generate, then change it after signing in.
+    type: password
+    required: true
+    generate: true
+    length: 20
+  - key: master_key
+    label: Master key
+    help: "Encrypts every stored private key (AES-256-GCM). Leave blank to auto-generate — then copy it out and back it up somewhere other than this server: lose it, or change it, and every certificate's private key is unreadable. A pasted key must be 64 hex characters, base64 of 32 bytes, or exactly 32 characters."
+    type: password
+    required: true
+    generate: true
+    # Certio accepts a 32-byte key as 64 hex chars, base64, or 32 raw characters.
+    # Miabi generates exactly `length` alphanumerics, so 32 is the only value that
+    # produces a valid key — 16, 24, 48 and 64 all fail to parse at boot.
+    length: 32
+    pattern: "^([0-9a-fA-F]{64}|[A-Za-z0-9+/]{42,43}={0,2}|.{32})$"
+  - key: jwt_secret
+    label: JWT secret
+    help: Signs dashboard sessions. Leave blank to auto-generate; rotating it only signs everyone out.
+    type: password
+    required: true
+    generate: true
+    length: 32
+  - key: organization
+    label: Organization
+    help: Default Organization (O) on issued certificates.
+    type: string
+    default: Example Ltd
+  - key: country
+    label: Country code
+    help: Default two-letter country (C) on issued certificates.
+    type: string
+    default: US
+    pattern: "^[A-Za-z]{2}$"
+
+# The CAs, the issued certificates and their encrypted private keys all live
+# here. No volume: with Postgres, Certio keeps no state on its own filesystem.
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+
+applications:
+  - name: certio
+    primary: true
+    image: jkaninda/certio
+    tag: "0.0.2"
+    ports:
+      - container: 8080
+        scheme: http
+    env:
+      # Refuses to boot without a real master key and JWT secret, and marks
+      # session cookies secure — the right posture for something holding a CA.
+      CERTIO_PRODUCTION: "true"
+      CERTIO_BASE_URL: "{{ .inputs.base_url }}"
+
+      CERTIO_DB_DRIVER: postgres
+      CERTIO_DB_URL: "{{ .databases.db.uri }}"
+
+      CERTIO_MASTER_KEY: "{{ .inputs.master_key }}"
+      CERTIO_JWT_SECRET: "{{ .inputs.jwt_secret }}"
+      CERTIO_ADMIN_EMAIL: "{{ .inputs.admin_email }}"
+      CERTIO_ADMIN_PASSWORD: "{{ .inputs.admin_password }}"
+
+      CERTIO_DEFAULT_ORGANIZATION: "{{ .inputs.organization }}"
+      CERTIO_DEFAULT_COUNTRY: "{{ .inputs.country }}"
+
+      # A private key that stays downloadable forever is a copy waiting to be
+      # made; once lets the issuer collect it and closes the door after.
+      CERTIO_KEY_DOWNLOAD_POLICY: once
+
+      # Renewal and expiry warnings run in-process.
+      CERTIO_SCHEDULER_ENABLED: "true"
+      CERTIO_SCHEDULER_INTERVAL: 1h
+      CERTIO_EXPIRY_WARN_DAYS: "30"
+
+      CERTIO_LOG_LEVEL: info
+      CERTIO_LOG_FORMAT: json
+    secretEnv:
+      - CERTIO_MASTER_KEY
+      - CERTIO_JWT_SECRET
+      - CERTIO_ADMIN_PASSWORD
+      - CERTIO_DB_URL
+    healthcheck:
+      type: http
+      path: /health
+      port: 8080
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 10

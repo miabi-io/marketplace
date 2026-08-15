@@ -1,0 +1,127 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: lldap
+  displayName: LLDAP
+  version: 1.0.0
+  description: A light LDAP server for authentication — a simple web UI over a real LDAP directory, so apps that only speak LDAP get users and groups without running OpenLDAP.
+  category: Security
+  icon: https://github.com/lldap.png
+  homepage: https://github.com/lldap/lldap
+  author:
+    name: LLDAP contributors
+    website: https://github.com/lldap/lldap
+  tags: [ldap, authentication, directory, users, groups, sso, self-hosted]
+  minMiabi: "1.8.0"
+
+inputs:
+  - key: base_dn
+    label: Base DN
+    help: 'The namespace for every user and group, conventionally your domain. You do not need to own it, but you cannot change it after the first start without recreating the directory — every app you connect will be configured with it.'
+    type: string
+    required: true
+    default: dc=example,dc=com
+    placeholder: dc=example,dc=com
+    pattern: "^dc=[A-Za-z0-9-]+(,dc=[A-Za-z0-9-]+)*$"
+  - key: http_url
+    label: Public URL
+    help: The URL the web interface is served on. It is used to build password-reset links, so it must be the URL a user's browser can reach.
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://lldap.example.com
+  - key: admin_username
+    label: Admin username
+    help: 'The first administrator. With the default "admin" and the base DN above, the LDAP bind DN becomes cn=admin,ou=people,dc=example,dc=com — the value other apps bind with.'
+    type: string
+    required: true
+    default: admin
+    pattern: "^[a-zA-Z0-9_.-]{1,32}$"
+  - key: admin_email
+    label: Admin email
+    help: Email for the admin account, used only when the account is first created.
+    type: string
+    required: true
+    default: admin@example.com
+    pattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+  - key: admin_password
+    label: Admin password
+    help: Password for the admin account, for both the LDAP bind and the web interface. Minimum 8 characters. Leave blank to auto-generate, then change it after signing in.
+    type: password
+    required: true
+    generate: true
+    length: 20
+  - key: key_seed
+    label: Key seed
+    help: "Derives the private key that protects every stored password. Leave blank to auto-generate — then back it up somewhere other than this server: change it and every existing password stops working, since the hashes were computed against the key it derives."
+    type: password
+    required: true
+    generate: true
+    length: 32
+  - key: jwt_secret
+    label: JWT secret
+    help: Signs web sessions. Leave blank to auto-generate; rotating it only signs everyone out.
+    type: password
+    required: true
+    generate: true
+    length: 32
+
+# Users, groups and password hashes live in Postgres. The volume holds only the
+# config file the image writes on first start — but it is not optional: the
+# entrypoint exits if /data is missing or unwritable.
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+
+volumes:
+  - name: data
+
+applications:
+  - name: lldap
+    primary: true
+    image: lldap/lldap
+    tag: "v0.6.3"
+    ports:
+      # The web interface. LDAP itself listens on 3890 and is reachable from
+      # other apps in this workspace by this app's network alias — see the README
+      # before exposing it outside.
+      - container: 17170
+        scheme: http
+    env:
+      LLDAP_HTTP_URL: "{{ .inputs.http_url }}"
+      LLDAP_DATABASE_URL: "{{ .databases.db.uri }}"
+
+      LLDAP_LDAP_BASE_DN: "{{ .inputs.base_dn }}"
+      LLDAP_LDAP_USER_DN: "{{ .inputs.admin_username }}"
+      LLDAP_LDAP_USER_EMAIL: "{{ .inputs.admin_email }}"
+      LLDAP_LDAP_USER_PASS: "{{ .inputs.admin_password }}"
+
+      # The image ships a config file with a *published* key_seed. Setting our
+      # own is what makes the password hashes unguessable; env beats that file.
+      LLDAP_KEY_SEED: "{{ .inputs.key_seed }}"
+      LLDAP_JWT_SECRET: "{{ .inputs.jwt_secret }}"
+      # With a seed, the key is derived in memory. An empty key_file keeps LLDAP
+      # from also generating one on disk, which it would refuse to disambiguate.
+      LLDAP_KEY_FILE: ""
+
+      LLDAP_LDAP_PORT: "3890"
+      LLDAP_HTTP_PORT: "17170"
+      LLDAP_VERBOSE: "false"
+    secretEnv:
+      - LLDAP_DATABASE_URL
+      - LLDAP_LDAP_USER_PASS
+      - LLDAP_KEY_SEED
+      - LLDAP_JWT_SECRET
+    mounts:
+      - volume: data
+        path: /data
+    healthcheck:
+      type: http
+      path: /health
+      port: 17170
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 15

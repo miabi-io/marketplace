@@ -50,3 +50,21 @@ jobs:
             miabi/marketplace:${{ env.VERSION }}
             ghcr.io/miabi-io/marketplace:latest
             ghcr.io/miabi-io/marketplace:${{ env.VERSION }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: image
+    if: vars.MIABI_SERVER != ''
+    steps:
+      - name: Set version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+
+      - name: Deploy to Miabi
+        uses: miabi-io/deploy-action@v1
+        with:
+          app: marketplace
+          tag: ${{ env.VERSION }}
+          server: ${{ secrets.MIABI_SERVER }}
+          token: ${{ secrets.MIABI_TOKEN }}
+          wait: true
+          timeout: 10m
