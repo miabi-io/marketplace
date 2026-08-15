@@ -1,5 +1,5 @@
 {
-  "etag": "\"3e55ca0185874c9f4783fcf206c02e8538a641e7db66f2446b114457309c9108\"",
+  "etag": "\"0b231d54bdbbb055aade7964d525fadb4e2fe15f71acaf56380f7c19b5636ab9\"",
   "generatedAt": "",
   "templates": [
     {
@@ -25,6 +25,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:b8469611bd9e928dd1bc457e63ecace31752f02bcaef32cf425c411eb13f2a72"
+        }
+      ]
+    },
+    {
+      "name": "certio",
+      "slug": "certio",
+      "source": "official",
+      "display_name": "Certio",
+      "category": "Security",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:31305dba2975c7c6bb07c8db233ebb0b82281411cf449d669d207aab2ef1832a"
         }
       ]
     },
@@ -168,6 +181,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:b91faf71fb412d2038c100a4a5d50e3b7819bd313846b4068fb4bf078ce5d3c8"
+        }
+      ]
+    },
+    {
+      "name": "lldap",
+      "slug": "lldap",
+      "source": "official",
+      "display_name": "LLDAP",
+      "category": "Security",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:b1907b1254e97d84df898498e52697fc78a3cd54b36b1aa8bceb161bbf34edf4"
         }
       ]
     },
