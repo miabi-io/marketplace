@@ -26,6 +26,8 @@ FROM alpine:3.20
 RUN apk add --no-cache ca-certificates
 COPY --from=build /out/marketplace /usr/local/bin/marketplace
 ENV MARKETPLACE_PORT=8088
+
+ENV MARKETPLACE_BASE_URL=https://marketplace.miabi.io
 EXPOSE 8088
 ENTRYPOINT ["marketplace"]
 CMD ["server"]

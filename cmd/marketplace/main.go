@@ -40,6 +40,7 @@ import (
 	"github.com/jkaninda/okapi/okapicli"
 	"github.com/miabi-io/marketplace/internal/api"
 	"github.com/miabi-io/marketplace/internal/catalog"
+	"github.com/miabi-io/marketplace/internal/seo"
 	"github.com/miabi-io/marketplace/internal/web"
 )
 
@@ -83,6 +84,9 @@ func serve(cli *okapicli.CLI) error {
 		License:     okapi.License{Name: "Apache-2.0", URL: "http://www.apache.org/licenses/LICENSE-2.0"},
 	})
 	api.Register(app, cat)
+	// Crawler surface: robots.txt, the sitemap, and the SPA shell with per-page
+	// head tags. Registered before the file server so those paths reach it.
+	seo.Register(app, cat, os.Getenv("MARKETPLACE_BASE_URL"))
 	// The storefront is the built Vue SPA. It is registered last so every API
 	// route keeps precedence; unmatched paths fall back to index.html for the
 	// client-side router. Assets are content-hashed by Vite, so they cache hard;
