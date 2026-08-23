@@ -31,7 +31,7 @@ export.json                               GENERATED full bundle (every manifest 
 registry/index.json                       GENERATED lightweight machine index (CI checks for drift)
 manifest/                                 the miabi.io/v1 manifest module: parse + validate + digest
 schema/template.schema.json               JSON Schema for editors + CI
-internal/{catalog,api,web}                the Okapi service (web embeds the built storefront)
+internal/{catalog,api,seo,web}            the Okapi service (web embeds the built storefront, seo serves the crawler surface)
 web/                                      the storefront SPA (Vue 3 + Pinia + Vite)
 cmd/marketplace                           server + generate-index + lint
 ```
@@ -56,6 +56,7 @@ interactive:
 | `/docs` | **Interactive API documentation** (browse and try every endpoint). |
 | `/openapi.json` | The raw OpenAPI spec behind `/docs`. |
 | `/healthz` · `/metrics` | Health probe + Prometheus metrics. |
+| `/robots.txt` · `/sitemap.xml` | Crawler surface; the sitemap is generated from the catalog. |
 
 ## Storefront
 
@@ -63,6 +64,19 @@ A Vue 3 + Pinia SPA (`web/`) served by the same binary over Okapi's `WebFS`, at
 `/` and `/templates/{name}`. Search is instant — results follow typing, with no
 submit button — and every filter is mirrored into the URL, so any result set is
 a shareable link.
+
+Because it renders client-side, a crawler that indexes the served HTML would see
+one generic head on every URL — which is how a template page ends up listed as a
+bare link with no title. The shell therefore carries a marked-off block of head
+tags (`<!-- seo:start -->` … `<!-- seo:end -->` in `web/index.html`) that
+`internal/seo` rewrites per request with the page's own title, description,
+canonical URL, Open Graph tags and JSON-LD. Titles are kept identical to the ones
+the SPA sets client-side, so the served HTML and the rendered DOM agree. The same
+package serves `/robots.txt` and a `/sitemap.xml` listing every template.
+
+Canonical URLs and the sitemap need an absolute origin, and a request's `Host`
+header is not trustworthy, so it comes from `MARKETPLACE_BASE_URL` (default
+`https://marketplace.miabi.io`). Set it when hosting a fork.
 
 `make build-ui` builds it with Vite and stages the output into
 `internal/web/dist`, where `go build` embeds it; `make dev-ui` runs the Vite dev
