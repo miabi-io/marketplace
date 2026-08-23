@@ -40,7 +40,7 @@ func TestBuiltShellCarriesTheMarkers(t *testing.T) {
 	if !s.shell {
 		t.Skip("SPA not built into the binary (make build-ui)")
 	}
-	if s.suffix == "" {
+	if !s.markers {
 		t.Fatal("markers missing from the built index.html: the head block would never be replaced")
 	}
 	if strings.Contains(s.prefix, "<title>") || strings.Contains(s.suffix, "<title>") {

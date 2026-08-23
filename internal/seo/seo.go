@@ -37,6 +37,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/jkaninda/logger"
 	"github.com/jkaninda/okapi"
 	"github.com/miabi-io/marketplace/internal/catalog"
 	"github.com/miabi-io/marketplace/internal/web"
@@ -65,6 +66,10 @@ type Server struct {
 
 	prefix, suffix string
 	shell          bool
+	// markers records whether the shell carried both head markers. Without them
+	// it is served untouched: appending a second <title> past </html> is worse
+	// than serving the default one.
+	markers bool
 }
 
 func New(cat *catalog.Catalog, baseURL string) *Server {
@@ -81,10 +86,12 @@ func New(cat *catalog.Catalog, baseURL string) *Server {
 	start := strings.Index(doc, markerStart)
 	end := strings.Index(doc, markerEnd)
 	if start < 0 || end < start {
-		s.prefix, s.suffix = doc, ""
+		logger.Warn("storefront shell has no seo markers: serving its default head on every page",
+			"start", markerStart, "end", markerEnd)
+		s.prefix = doc
 		return s
 	}
-	s.prefix, s.suffix = doc[:start], doc[end+len(markerEnd):]
+	s.prefix, s.suffix, s.markers = doc[:start], doc[end+len(markerEnd):], true
 	return s
 }
 
@@ -258,9 +265,13 @@ func (s *Server) renderStatus(c *okapi.Context, status int, p pageMeta) error {
 	if !s.shell {
 		return c.String(http.StatusNotFound, "not found")
 	}
+	body := s.prefix
+	if s.markers {
+		body += s.head(p) + s.suffix
+	}
 
 	c.SetHeader("Cache-Control", "no-cache")
-	return c.Data(status, "text/html; charset=utf-8", []byte(s.prefix+s.head(p)+s.suffix))
+	return c.Data(status, "text/html; charset=utf-8", []byte(body))
 }
 
 func (s *Server) head(p pageMeta) string {

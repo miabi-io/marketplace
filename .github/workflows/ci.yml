@@ -10,6 +10,15 @@ permissions:
   contents: read
 
 jobs:
+
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: raven-actions/actionlint@v2
+        with:
+          files: '.github/workflows/*.yml'
+
   validate:
     runs-on: ubuntu-latest
     steps:
@@ -18,6 +27,14 @@ jobs:
         with:
           go-version: "1.26"
           cache-dependency-path: go.sum
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Typecheck and build the storefront
+        run: make build-ui
 
       - name: Build
         run: go build ./...
@@ -101,9 +118,14 @@ jobs:
         run: |
           count=$(grep -o '"slug"' export.json | wc -l | tr -d ' ')
           notes="Marketplace catalog bundle for ${GITHUB_REF_NAME} (${count} templates)."
+          # Installs sync from the latest release, and the tag glob matches
+          # v1.2.3-rc.1 too, so a candidate must be flagged rather than becoming
+          # the catalog every Miabi picks up.
+          prerelease=""
+          case "${GITHUB_REF_NAME}" in *-*) prerelease="--prerelease" ;; esac
           if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
             gh release upload "${GITHUB_REF_NAME}" export.json registry/index.json --clobber
           else
-            gh release create "${GITHUB_REF_NAME}" export.json registry/index.json \
+            gh release create "${GITHUB_REF_NAME}" export.json registry/index.json ${prerelease} \
               --title "Catalog ${GITHUB_REF_NAME}" --notes "${notes}"
           fi

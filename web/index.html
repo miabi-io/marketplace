@@ -4,6 +4,14 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Everything between the seo markers is replaced per request by
+         internal/seo, which fills in the page's own title, description,
+         canonical URL and structured data. A crawler that does not run the SPA
+         would otherwise see this one generic head on every URL. The defaults
+         below are what the Vite dev server and any direct file read get.
+         Removing either marker turns per-page tags off — internal/seo has a
+         test that fails if the built shell loses them. -->
+    <!-- seo:start -->
     <title>Miabi Marketplace — official &amp; community app templates</title>
     <meta
       name="description"
