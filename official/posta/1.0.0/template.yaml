@@ -74,7 +74,9 @@ stack:
 
     # Redis (a dedicated managed instance — Miabi sets a password on it).
     POSTA_REDIS_URL: "{{ .databases.redis.uri }}"
-
+    
+    POSTA_WEB_URL: "{{ .inputs.web_url }}"
+    POSTA_CORS_ORIGINS: "{{ .inputs.web_url }}"
     # The worker needs both too: it signs outgoing mail with the stamper (JWT
     # secret) and decrypts stored SMTP passwords (encryption key).
     POSTA_JWT_SECRET: "{{ .inputs.jwt_secret }}"
@@ -95,8 +97,6 @@ applications:
       - container: 9000
         scheme: http
     env:
-      POSTA_WEB_URL: "{{ .inputs.web_url }}"
-      POSTA_CORS_ORIGINS: "{{ .inputs.web_url }}"
       POSTA_ADMIN_EMAIL: "{{ .inputs.admin_email }}"
       POSTA_ADMIN_PASSWORD: "{{ .inputs.admin_password }}"
 

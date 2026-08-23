@@ -1,0 +1,113 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: goma-gateway
+  displayName: Goma Gateway
+  version: 1.0.0
+  description: Lightweight declarative API gateway and reverse proxy — routing, middleware, rate limiting, authentication and TLS.
+  category: Web
+  icon: https://raw.githubusercontent.com/jkaninda/goma-gateway/main/logo.png
+  homepage: https://jkaninda.github.io/goma-gateway
+  author:
+    name: Jonas Kaninda
+    email: me@jkaninda.dev
+    website: https://jkaninda.dev
+  tags: [gateway, api-gateway, reverse-proxy, routing, middleware, tls]
+  minMiabi: "1.8.1"
+
+inputs:
+  - key: log_level
+    label: Log level
+    help: Verbosity of the gateway log.
+    type: select
+    options: [debug, info, warn, error, off]
+    default: info
+  - key: enable_metrics
+    label: Prometheus metrics
+    help: Expose /metrics on the gateway. Put an auth middleware in front of it before routing that path publicly.
+    type: bool
+    default: "true"
+
+volumes:
+  # Everything Goma reads besides its main file: extra/ for the dynamic route and
+  # middleware files it hot-reloads, and certs/ for certificates you bring yourself.
+  - name: data    # /etc/goma
+  - name: acme    # /etc/letsencrypt
+
+configs:
+  # The static configuration. It is a Miabi config rather than a file baked into
+  # the image or written by hand in the container: edit it under Configs, and the
+  # save redeploys the gateway with the new file. Changes to *this* file need the
+  # restart anyway — routes and middlewares you want to change without one belong
+  # in /etc/goma/extra, which Goma watches.
+  - name: config
+    mode: "0644"
+    files:
+      goma.yml: |
+        version: "2"
+        gateway:
+          timeouts:
+            read: 60
+            write: 60
+            idle: 60
+
+          # Match the container ports the template publishes. Goma's own defaults
+          # are the same, but writing them here keeps the file self-describing.
+          entryPoints:
+            web:
+              address: "[::]:8080"
+            webSecure:
+              address: "[::]:8443"
+
+          monitoring:
+            host: ''                                    # any host; set one to pin /healthz and /metrics to it
+            enableMetrics: {{ .inputs.enable_metrics }}
+            metricsPath: /metrics
+            enableLiveness: true                        # /healthz — the app healthcheck depends on it
+            enableReadiness: true                       # /readyz
+
+          log:
+            level: {{ .inputs.log_level }}
+
+          # Dropping a YAML file in here adds routes and middlewares without a
+          # redeploy: the directory is on the volume and Goma watches it.
+          extraConfig:
+            directory: /etc/goma/extra
+            watch: true
+
+          # Routes can live here or in extraConfig. Starting empty means the
+          # gateway answers /healthz and 404s everything else until you add one.
+          routes: []
+
+        middlewares: []
+
+applications:
+  - name: goma-gateway
+    primary: true
+    image: jkaninda/goma-gateway
+    tag: "0.14.0"
+    ports:
+      # Plain HTTP is the entry point to attach a Miabi domain to: TLS already
+      # terminates at the platform gateway. 8443 is Goma's own TLS listener, for
+      # traffic that reaches it directly.
+      - container: 8080
+        scheme: http
+      - container: 8443
+        scheme: https
+    mounts:
+      - volume: data
+        path: /etc/goma
+      - volume: acme
+        path: /etc/letsencrypt
+      # Lands inside the /etc/goma volume, at the path Goma loads by default.
+      - config: config
+        key: goma.yml
+        path: /etc/goma/goma.yml
+    healthcheck:
+      type: http
+      path: /healthz
+      port: 8080
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 10

@@ -29,12 +29,14 @@ stock configuration.
 - One application (`gitlab`, image `gitlab/gitlab-ce:19.2.1-ce.0`) on port 80
 - Three volumes: `config` → `/etc/gitlab`, `logs` → `/var/log/gitlab`,
   `data` → `/var/opt/gitlab`
+- One config (`gitlab-omnibus`) holding `gitlab.rb`, mounted at
+  `/etc/gitlab/gitlab.rb`
 
 ## Inputs
 
 | Input | Notes |
 |---|---|
-| **Public URL** | The domain you attach in Miabi, e.g. `https://gitlab.example.com`. It ends up in clone URLs, notification emails and every redirect — set it correctly before installing, since changing it later means editing the app's environment and redeploying. |
+| **Public URL** | The domain you attach in Miabi, e.g. `https://gitlab.example.com`. It ends up in clone URLs, notification emails and every redirect — set it correctly before installing, since changing it later means editing `external_url` in the `gitlab-omnibus` config and redeploying. |
 | **Root password** | Initial password for the built-in `root` account. Leave it blank to auto-generate one. |
 | **Time zone** | IANA zone for timestamps and scheduled pipelines (default `UTC`). |
 
@@ -59,15 +61,21 @@ Sign-up restrictions**.
 - **SSH clone is not exposed.** A template cannot publish a host port, so port 22
   stays inside the container: clone over HTTPS instead. To enable SSH, publish
   the app's port 22 to a host port after install and set
-  `gitlab_rails['gitlab_shell_ssh_port']` in `GITLAB_OMNIBUS_CONFIG` to match.
+  `gitlab_rails['gitlab_shell_ssh_port']` in `gitlab.rb` to match.
 - **The container registry and Pages are off.** Both need their own hostname and
   certificate; add `registry_external_url` / `pages_external_url` to
-  `GITLAB_OMNIBUS_CONFIG` and route the extra hostnames if you want them.
+  `gitlab.rb` and route the extra hostnames if you want them.
 - **CI runners are separate.** Install a GitLab Runner elsewhere and register it
   against this instance — GitLab CE ships no runner of its own.
-- **Configuration lives in `GITLAB_OMNIBUS_CONFIG`.** Edit that environment
-  variable and redeploy rather than editing `/etc/gitlab/gitlab.rb` inside the
-  container: omnibus rewrites the file from the variable on every start.
+- **Configuration lives in a Miabi config.** The install creates a config named
+  `gitlab-omnibus` whose single file, `gitlab.rb`, is mounted read-only at
+  `/etc/gitlab/gitlab.rb`. Edit it under **Configs** in the workspace sidebar (or
+  with `miabi configs edit gitlab-omnibus gitlab.rb --reveal`) — saving bumps the
+  version and redeploys GitLab, so `gitlab-ctl reconfigure` picks the change up
+  on the next boot. Editing the file inside the container does not survive a
+  redeploy: the mounted copy is written back over it. The config is marked
+  **sensitive** because it carries the initial root password, so reading it needs
+  workspace admin and is audit-logged.
 
 ## Upgrades
 
