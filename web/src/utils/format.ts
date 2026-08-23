@@ -5,12 +5,14 @@ function plural(n: number, word: string) {
 }
 
 // provision summarizes what an install creates — the single most useful thing
-// on a card: "1 app · 2 databases · 4 volumes".
-export function provision(l: Pick<Listing, 'applications' | 'databases' | 'volumes'>): string {
+// on a card: "1 app · 2 databases · 4 volumes · 1 config".
+export function provision(l: Pick<Listing, 'applications' | 'databases' | 'volumes' | 'configs'>): string {
   const parts: string[] = []
   if (l.applications > 0) parts.push(plural(l.applications, 'app'))
   if (l.databases > 0) parts.push(plural(l.databases, 'database'))
   if (l.volumes > 0) parts.push(plural(l.volumes, 'volume'))
+  // ?? 0: a listing from an older marketplace build carries no config count.
+  if ((l.configs ?? 0) > 0) parts.push(plural(l.configs, 'config'))
   return parts.length ? parts.join(' · ') : 'no dependencies'
 }
 

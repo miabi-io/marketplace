@@ -27,6 +27,7 @@ export interface Listing {
   applications: number
   databases: number
   volumes: number
+  configs: number
   db_only: boolean
 }
 
@@ -70,9 +71,20 @@ export interface ManifestPort {
 }
 
 export interface ManifestMount {
-  volume: string
+  volume?: string
+  config?: string
+  key?: string
+  mode?: string
   path: string
   readOnly?: boolean
+}
+
+export interface ManifestConfig {
+  name: string
+  files: Record<string, string>
+  mode?: string
+  sensitive?: boolean
+  delimiters?: string[]
 }
 
 export interface ManifestApp {
@@ -106,6 +118,7 @@ export interface TemplateManifest {
   inputs?: TemplateInput[]
   databases?: ManifestDatabase[]
   volumes?: { name: string }[]
+  configs?: ManifestConfig[]
   stack?: { description?: string; env?: Record<string, string> }
   applications?: ManifestApp[]
 }

@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: gitlab
   displayName: GitLab
-  version: 1.0.0
+  version: 1.1.0
   description: Complete DevOps platform — Git hosting, merge requests, issues, CI/CD and a package registry.
   category: Development
   icon: https://cdn.simpleicons.org/gitlab
   homepage: https://about.gitlab.com
   tags: [git, vcs, devops, ci-cd, code-review, issues]
+  minMiabi: "1.8.1"    # templates may ship configuration files from 1.8.1 on
 inputs:
   - key: external_url
     label: Public URL
@@ -36,25 +37,23 @@ inputs:
 # (pg_trgm, btree_gist) — so this template runs the bundled stack rather than a
 # managed Miabi database. Everything stateful lives in the volumes below.
 volumes:
-  - name: config    # /etc/gitlab      — gitlab.rb, secrets, generated certificates
+  - name: config    # /etc/gitlab      — secrets, generated certificates
   - name: logs      # /var/log/gitlab  — per-service logs
   - name: data      # /var/opt/gitlab  — repositories, uploads, the bundled database
 
-applications:
-  - name: gitlab
-    primary: true
-    image: gitlab/gitlab-ce
-    tag: "19.2.1-ce.0"
-    ports:
-      # TLS terminates at Miabi's gateway, so the container only ever speaks HTTP.
-      - container: 80
-        scheme: http
-    env:
-      TZ: "{{ .inputs.time_zone }}"
-      # Omnibus reads its whole configuration from this variable on every start,
-      # which is what keeps the install declarative — nothing to edit by hand
-      # inside the container.
-      GITLAB_OMNIBUS_CONFIG: |
+configs:
+  # Omnibus' own configuration file, shipped as a Miabi config rather than the
+  # GITLAB_OMNIBUS_CONFIG environment variable: it is edited as a file in the
+  # Configs view, versioned, and every change redeploys GitLab so a
+  # `gitlab-ctl reconfigure` picks it up. gitlab.rb is also read *after*
+  # GITLAB_OMNIBUS_CONFIG, so nothing left in the environment can shadow it.
+  - name: omnibus
+    # Carries the initial root password: keep the content out of apply plans and
+    # behind an audited reveal.
+    sensitive: true
+    mode: "0600"
+    files:
+      gitlab.rb: |
         external_url '{{ .inputs.external_url }}'
         gitlab_rails['time_zone'] = '{{ .inputs.time_zone }}'
         gitlab_rails['initial_root_password'] = '{{ .inputs.root_password }}'
@@ -80,9 +79,18 @@ applications:
         puma['worker_processes'] = 2
         sidekiq['max_concurrency'] = 10
         prometheus_monitoring['enable'] = false
-    secretEnv:
-      # Carries the initial root password, so it is stored encrypted at rest.
-      - GITLAB_OMNIBUS_CONFIG
+
+applications:
+  - name: gitlab
+    primary: true
+    image: gitlab/gitlab-ce
+    tag: "19.2.1-ce.0"
+    ports:
+      # TLS terminates at Miabi's gateway, so the container only ever speaks HTTP.
+      - container: 80
+        scheme: http
+    env:
+      TZ: "{{ .inputs.time_zone }}"
     mounts:
       - volume: config
         path: /etc/gitlab
@@ -90,6 +98,11 @@ applications:
         path: /var/log/gitlab
       - volume: data
         path: /var/opt/gitlab
+      # Lands inside the /etc/gitlab volume, where omnibus expects to find it.
+      - config: omnibus
+        key: gitlab.rb
+        path: /etc/gitlab/gitlab.rb
+        mode: "0600"
     healthcheck:
       # Reconfigure + migrations make the first boot slow (5–10 minutes on a
       # modest node), so the start period is generous — a shorter one would kill

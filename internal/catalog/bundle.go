@@ -115,6 +115,7 @@ type Listing struct {
 	Applications int              `json:"applications"`
 	Databases    int              `json:"databases"`
 	Volumes      int              `json:"volumes"`
+	Configs      int              `json:"configs"`
 	DBOnly       bool             `json:"db_only"`
 }
 
@@ -131,7 +132,8 @@ func (t *Template) Listing() Listing {
 		Homepage: m.Metadata.Homepage, Author: m.Metadata.Author, Source: t.Source,
 		Featured: t.Meta.Featured, Version: m.Metadata.Version, Versions: vers,
 		Applications: len(m.Applications), Databases: len(m.Databases), Volumes: len(m.Volumes),
-		DBOnly: m.IsDatabaseOnly(),
+		Configs: len(m.Configs),
+		DBOnly:  m.IsDatabaseOnly(),
 	}
 }
 
