@@ -1,5 +1,5 @@
 {
-  "etag": "\"503294666978c576a57860e894001936238cf7bc99e9074bef798e90c6cc39ad\"",
+  "etag": "\"b362342f16e49857837bdbe0b8e3164a41a1363014aefef3af18f53cc9a1ff9f\"",
   "generatedAt": "",
   "templates": [
     {
@@ -51,6 +51,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:7087476e8c7e8c521de8383ba263b21bce73a4d16db53d65667c30de0aba89ed"
+        }
+      ]
+    },
+    {
+      "name": "docmost",
+      "slug": "docmost",
+      "source": "official",
+      "display_name": "Docmost",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:be61296062e5ee93c5e7e94da25df2cd604b7cf68a6a27e202a4cceee0195e52"
         }
       ]
     },
