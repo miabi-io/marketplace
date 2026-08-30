@@ -1,0 +1,113 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: docmost
+  displayName: Docmost
+  version: 1.0.0
+  description: Collaborative wiki and documentation workspace with real-time editing, spaces and per-page permissions.
+  category: Productivity
+  icon: https://github.com/docmost.png
+  homepage: https://docmost.com
+  tags: [wiki, documentation, knowledge-base, collaboration, notes]
+inputs:
+  - key: app_url
+    label: Public URL
+    help: The public base URL Docmost is served on. Invitation and password-reset links are built from it, so it must be the address people actually visit.
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://docs.example.com
+  - key: app_secret
+    label: App secret
+    help: Signs sessions and tokens. Leave blank to auto-generate; changing it later signs everyone out.
+    type: password
+    generate: true
+    length: 64
+    required: true
+  - key: mail_from_address
+    label: Sender address
+    help: The From address on invitations and password resets.
+    type: string
+    default: hello@example.com
+  - key: mail_from_name
+    label: Sender name
+    type: string
+    default: Docmost
+  - key: smtp_host
+    label: SMTP host
+    help: Leave blank to run without mail. The first account is created by signing up, but inviting anyone else needs a working sender.
+    type: string
+    placeholder: smtp.example.com
+  - key: smtp_port
+    label: SMTP port
+    type: number
+    default: "587"
+  - key: smtp_username
+    label: SMTP username
+    type: string
+  - key: smtp_password
+    label: SMTP password
+    type: password
+  - key: smtp_secure
+    label: Implicit TLS
+    help: On for port 465, which is TLS from the first byte. Off for 587, which upgrades with STARTTLS.
+    type: bool
+    default: "false"
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+  # Dedicated, not shared: Docmost's background jobs and its collaboration
+  # sessions live in Redis on db 0, under keys another tenant of a shared
+  # instance could collide with.
+  - name: redis
+    engine: redis
+    version: "8-alpine"
+    placement: dedicated
+volumes:
+  - name: storage
+applications:
+  - name: docmost
+    primary: true
+    image: docmost/docmost
+    tag: "0.95.0"
+    ports:
+      - container: 3000
+        scheme: http
+    env:
+      APP_URL: "{{ .inputs.app_url }}"
+      APP_SECRET: "{{ .inputs.app_secret }}"
+      DATABASE_URL: "{{ .databases.db.uri }}"
+      REDIS_URL: "{{ .databases.redis.uri }}"
+      # Attachments and avatars go to the mounted volume. Docmost also speaks S3
+      # and Azure Blob; switch STORAGE_DRIVER and add their credentials to move
+      # them off the node.
+      STORAGE_DRIVER: local
+
+      MAIL_DRIVER: smtp
+      MAIL_FROM_ADDRESS: "{{ .inputs.mail_from_address }}"
+      MAIL_FROM_NAME: "{{ .inputs.mail_from_name }}"
+      SMTP_HOST: "{{ .inputs.smtp_host }}"
+      SMTP_PORT: "{{ .inputs.smtp_port }}"
+      SMTP_USERNAME: "{{ .inputs.smtp_username }}"
+      SMTP_PASSWORD: "{{ .inputs.smtp_password }}"
+      SMTP_SECURE: "{{ .inputs.smtp_secure }}"
+    secretEnv:
+      - APP_SECRET
+      - DATABASE_URL
+      - REDIS_URL
+      - SMTP_PASSWORD
+    mounts:
+      - volume: storage
+        path: /app/data/storage
+    # The API answers under the global "api" prefix and its root needs no
+    # session, so it reports the server being up without authenticating.
+    healthcheck:
+      type: http
+      path: /api
+      port: 3000
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 5
+      startPeriodSeconds: 60
