@@ -1,5 +1,5 @@
 {
-  "etag": "\"e8d5134f514b190a1bafb50020da3bd8920c7889453ab5733f0b5d73c58d4c5a\"",
+  "etag": "\"503294666978c576a57860e894001936238cf7bc99e9074bef798e90c6cc39ad\"",
   "generatedAt": "",
   "templates": [
     {
@@ -36,8 +36,8 @@
       "category": "Security",
       "versions": [
         {
-          "version": "1.0.0",
-          "digest": "sha256:31305dba2975c7c6bb07c8db233ebb0b82281411cf449d669d207aab2ef1832a"
+          "version": "1.1.0",
+          "digest": "sha256:d7a9e43ddcda52df6aa4e07d669395e2865a589dc2fecd751068185a8947cc46"
         }
       ]
     },
@@ -477,6 +477,10 @@
       "display_name": "Posta",
       "category": "Email",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:33de2baf31769f93e50ece6ac1187b9c9862d34971170a68c453df4358c16a69"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:47c6958f07fc9cdfa600d9295b7224ca0c7defcc10b1769e81f524d7056538f5"
