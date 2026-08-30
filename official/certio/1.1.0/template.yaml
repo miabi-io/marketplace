@@ -3,7 +3,7 @@ kind: Template
 metadata:
   name: certio
   displayName: Certio
-  version: 1.0.0
+  version: 1.1.0
   description: Self-signed PKI and TLS certificate management — issue, renew, revoke and distribute internal certificates, with ACME and a CRL/OCSP responder.
   category: Security
   icon: https://raw.githubusercontent.com/jkaninda/certio/main/branding/logo.svg
@@ -79,7 +79,7 @@ applications:
   - name: certio
     primary: true
     image: jkaninda/certio
-    tag: "0.0.2"
+    tag: "0.1.0"
     ports:
       - container: 8080
         scheme: http
