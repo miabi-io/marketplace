@@ -1,5 +1,5 @@
 {
-  "etag": "\"b362342f16e49857837bdbe0b8e3164a41a1363014aefef3af18f53cc9a1ff9f\"",
+  "etag": "\"aa4e2781701aefd88b8d5032e4f91ab044e899545016e51808dfed4b7b6f6d05\"",
   "generatedAt": "",
   "templates": [
     {
@@ -12,6 +12,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:3d6b3d41eaa19f6ec3b652a2e7260f8b4a4461848194f3745a6b2fa0804e5a4d"
+        }
+      ]
+    },
+    {
+      "name": "anubis",
+      "slug": "anubis",
+      "source": "official",
+      "display_name": "Anubis",
+      "category": "Security",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:5a602343de596181fb5c10b684d9a7bc8c5048a5be32b3c2eb20c6463ce1500b"
         }
       ]
     },
@@ -64,6 +77,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:be61296062e5ee93c5e7e94da25df2cd604b7cf68a6a27e202a4cceee0195e52"
+        }
+      ]
+    },
+    {
+      "name": "dragonfly",
+      "slug": "dragonfly",
+      "source": "official",
+      "display_name": "Dragonfly",
+      "category": "Database",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:e0914a0a7f6a6dbade22f545306ebf17b3069442afd28c2a746a2c23394aa8d8"
         }
       ]
     },
