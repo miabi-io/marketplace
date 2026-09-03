@@ -1,0 +1,77 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: dragonfly
+  displayName: Dragonfly
+  version: 1.0.0
+  description: Redis- and Memcached-compatible in-memory datastore built for multi-core machines, with snapshots to disk.
+  category: Database
+  icon: https://github.com/dragonflydb.png
+  homepage: https://www.dragonflydb.io
+  tags: [cache, key-value, redis, memcached, in-memory]
+
+inputs:
+  - key: password
+    label: Password
+    help: Required for AUTH. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 32
+    required: true
+  - key: maxmemory
+    label: Max memory
+    help: Upper bound on memory used by the datastore, e.g. 512mb or 2gb. Leave at 0 to let Dragonfly size itself against the container's limit.
+    type: string
+    default: "0"
+    required: true
+    pattern: '^(0|[1-9][0-9]{0,4}(kb|mb|gb))$'
+  - key: cache_mode
+    label: Cache mode
+    help: Evict the least valuable keys when memory runs out instead of refusing writes. Turn this off when the data must not disappear.
+    type: bool
+    default: "false"
+  - key: snapshot_cron
+    label: Snapshot schedule
+    help: Cron expression for automatic snapshots to the data volume, e.g. "0 * * * *" for hourly. Leave blank to snapshot only on shutdown.
+    type: string
+    default: "0 * * * *"
+    placeholder: 0 * * * *
+
+volumes:
+  - name: data    # /data — snapshots (dump.rdb)
+
+applications:
+  - name: dragonfly
+    primary: true
+    image: docker.dragonflydb.io/dragonflydb/dragonfly
+    tag: "v1.40.2"
+    # No ports block: Dragonfly speaks the Redis protocol, which the gateway does
+    # not route. Clients reach it at mb-app-<name>:6379 on the workspace network.
+    #
+    # Flags come through a shell so the password stays an env var instead of being
+    # interpolated into argv, where docker inspect would show it.
+    command:
+      - sh
+      - -c
+      - >-
+        exec dragonfly --logtostderr --bind 0.0.0.0 --port 6379
+        --requirepass "$DF_PASSWORD" --maxmemory "$DF_MAXMEMORY"
+        --cache_mode="$DF_CACHE_MODE" --dir /data
+        ${DF_SNAPSHOT_CRON:+--snapshot_cron="$DF_SNAPSHOT_CRON"}
+    env:
+      DF_PASSWORD: "{{ .inputs.password }}"
+      DF_MAXMEMORY: "{{ .inputs.maxmemory }}"
+      DF_CACHE_MODE: "{{ .inputs.cache_mode }}"
+      DF_SNAPSHOT_CRON: "{{ .inputs.snapshot_cron }}"
+    secretEnv:
+      - DF_PASSWORD
+    mounts:
+      - volume: data
+        path: /data
+    healthcheck:
+      type: command
+      command: echo PING | nc -q1 localhost 6379
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 15

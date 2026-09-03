@@ -1,0 +1,94 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: anubis
+  displayName: Anubis
+  version: 1.0.0
+  description: Web AI firewall that weighs incoming requests with a proof-of-work challenge, keeping scrapers off an upstream app.
+  category: Security
+  icon: https://github.com/TecharoHQ.png
+  homepage: https://anubis.techaro.lol
+  tags: [security, waf, proof-of-work, anti-scraper, reverse-proxy]
+
+inputs:
+  - key: target
+    label: Upstream URL
+    help: The app Anubis protects, reachable on the workspace network — e.g. http://mb-app-mysite:8080.
+    type: string
+    required: true
+    placeholder: http://mb-app-mysite:8080
+  - key: difficulty
+    label: Challenge difficulty
+    help: Leading zeroes the client must find. 4 is the default; raise it only if scrapers are getting through, since every visitor pays the cost.
+    type: number
+    default: "4"
+    required: true
+    pattern: '^([1-9]|1[0-9]|2[0-9])$'
+  - key: serve_robots_txt
+    label: Serve robots.txt
+    help: Let Anubis answer /robots.txt with a policy asking well-behaved crawlers to stay away.
+    type: bool
+    default: "true"
+  - key: og_passthrough
+    label: Pass through Open Graph tags
+    help: Fetch the upstream's Open Graph tags so link previews keep working for challenged visitors.
+    type: bool
+    default: "true"
+
+configs:
+  # The bot policy. Editing it under Configs redeploys Anubis with the new rules,
+  # which is the point of shipping it as a config rather than baking it into the image.
+  - name: policy
+    mode: "0644"
+    files:
+      botPolicy.yaml: |
+        bots:
+          - name: cloudflare-workers
+            headers_regex:
+              CF-Worker: .*
+            action: DENY
+
+          - name: well-known
+            path_regex: ^/.well-known/.*$
+            action: ALLOW
+          - name: favicon
+            path_regex: ^/favicon.ico$
+            action: ALLOW
+          - name: robots-txt
+            path_regex: ^/robots.txt$
+            action: ALLOW
+
+          # Anything claiming to be a browser is challenged; a request matching no
+          # rule is allowed through, so add ALLOW rules for feed readers and
+          # monitoring before they start failing.
+          - name: generic-browser
+            user_agent_regex: Mozilla
+            action: CHALLENGE
+
+applications:
+  - name: anubis
+    primary: true
+    image: ghcr.io/techarohq/anubis
+    tag: "v1.27.0"
+    ports:
+      - container: 8923
+        scheme: http
+    env:
+      BIND: ":8923"
+      TARGET: "{{ .inputs.target }}"
+      DIFFICULTY: "{{ .inputs.difficulty }}"
+      SERVE_ROBOTS_TXT: "{{ .inputs.serve_robots_txt }}"
+      OG_PASSTHROUGH: "{{ .inputs.og_passthrough }}"
+      OG_EXPIRY_TIME: "24h"
+      POLICY_FNAME: /data/cfg/botPolicy.yaml
+    mounts:
+      - config: policy
+        key: botPolicy.yaml
+        path: /data/cfg/botPolicy.yaml
+    healthcheck:
+      type: command
+      command: anubis --healthcheck
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 10
