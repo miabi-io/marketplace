@@ -1,5 +1,5 @@
 {
-  "etag": "\"aa4e2781701aefd88b8d5032e4f91ab044e899545016e51808dfed4b7b6f6d05\"",
+  "etag": "\"0a0893fd1e6794dacdb86efa1d0adbd9abbb25aa946fc7f99a10c6de3274573b\"",
   "generatedAt": "",
   "templates": [
     {
@@ -49,8 +49,8 @@
       "category": "Security",
       "versions": [
         {
-          "version": "1.1.0",
-          "digest": "sha256:d7a9e43ddcda52df6aa4e07d669395e2865a589dc2fecd751068185a8947cc46"
+          "version": "1.2.0",
+          "digest": "sha256:816ca3ac3a8f1b5e498a2c05e47ea8bba66fee3852839bbc690a9ef8fb3c6964"
         }
       ]
     },
@@ -517,12 +517,12 @@
       "category": "Email",
       "versions": [
         {
-          "version": "1.1.0",
-          "digest": "sha256:33de2baf31769f93e50ece6ac1187b9c9862d34971170a68c453df4358c16a69"
+          "version": "1.2.0",
+          "digest": "sha256:9932e7dec072e978ae672199347f76ac712d6537f728526c2375f5543de41e45"
         },
         {
-          "version": "1.0.0",
-          "digest": "sha256:47c6958f07fc9cdfa600d9295b7224ca0c7defcc10b1769e81f524d7056538f5"
+          "version": "1.1.0",
+          "digest": "sha256:33de2baf31769f93e50ece6ac1187b9c9862d34971170a68c453df4358c16a69"
         }
       ]
     },

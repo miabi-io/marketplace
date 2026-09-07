@@ -3,7 +3,7 @@ kind: Template
 metadata:
   name: posta
   displayName: Posta
-  version: 1.0.0
+  version: 1.2.0
   description: Self-hosted transactional email & SMTP platform — send, receive, and verify email.
   category: Email
   icon: https://github.com/goposta.png
@@ -87,12 +87,13 @@ stack:
     - POSTA_REDIS_URL
     - POSTA_JWT_SECRET
     - POSTA_ENCRYPTION_KEY
-
+volumes:
+  - name: data
 applications:
   - name: server
     primary: true
     image: jkaninda/posta
-    tag: "0.13.1"
+    tag: "0.15.0"
     ports:
       - container: 9000
         scheme: http
@@ -109,8 +110,26 @@ applications:
       POSTA_EMAIL_VERIFY_CACHE_TTL_HOURS: "168"
       POSTA_EMAIL_VERIFY_MX_CACHE_TTL_HOURS: "24"
       POSTA_EMAIL_VERIFY_RATE_HOURLY: "1000"
+      # Web form messages — receive submissions from a website form, then reply from the dashboard
+      # Master toggle — enables the public /api/v1/f/{key} ingest endpoint and the messages routes
+      POSTA_MESSAGES_ENABLED: "true"
+      POSTA_MESSAGES_MAX_BODY_BYTES: "65536"
+      POSTA_MESSAGES_MAX_ATTACH_SIZE: "5242880"
+      # Per-IP submissions allowed per window (0 disables — leaves a public endpoint open to flooding)
+      POSTA_MESSAGES_IP_RATE_LIMIT: "20"
+      # Rate-limit window in seconds
+      POSTA_MESSAGES_IP_RATE_WINDOW: "3600"
+      # Per-form submissions allowed per hour
+      POSTA_MESSAGES_PER_FORM_HOURLY: "200"
+      # Per-sender-address submissions allowed per hour, per form
+      POSTA_MESSAGES_PER_EMAIL_HOURLY: "5"
+      # Per-workspace submissions allowed per day
+      POSTA_MESSAGES_PER_WORKSPACE_DAILY: "1000"
     secretEnv:
       - POSTA_ADMIN_PASSWORD
+    mounts:
+      - volume: data
+        path: /data
     healthcheck:
       type: http
       path: /healthz
@@ -125,11 +144,19 @@ applications:
   # independently of the API.
   - name: worker
     image: jkaninda/posta
-    tag: "0.13.1"
+    tag: "0.15.0"
     command: ["worker"]
     env:
       POSTA_WORKER_CONCURRENCY: "10"
       POSTA_WORKER_MAX_RETRIES: "5"
+    mounts:
+      - volume: data
+        path: /data
     healthcheck:
-      # No listener to probe — the worker's liveness is the queue draining.
-      type: none
+      type: http
+      path: /healthz
+      port: 9000
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 10
