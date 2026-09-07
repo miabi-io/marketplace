@@ -153,10 +153,4 @@ applications:
       - volume: data
         path: /data
     healthcheck:
-      type: http
-      path: /healthz
-      port: 9000
-      intervalSeconds: 30
-      timeoutSeconds: 5
-      retries: 3
-      startPeriodSeconds: 10
+      type: none

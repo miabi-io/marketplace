@@ -1,0 +1,99 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: goauthentik
+  displayName: authentik
+  version: 1.1.0
+  description: >-
+    Self-hosted identity provider — SSO, OAuth2/OIDC, SAML and LDAP — backed by PostgreSQL.
+    Upgrading an existing install: authentik does not support skipping major versions, and
+    storage moved from /media to /data in 2025.12 — step through the releases and move the
+    data by hand rather than jumping straight to this version.
+  category: Security
+  icon: https://cdn.simpleicons.org/authentik
+  homepage: https://goauthentik.io
+  tags: [security, sso, identity, oauth, saml, oidc]
+inputs:
+  - key: secret_key
+    label: Secret key
+    help: Signing key for sessions and tokens. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 50
+    required: true
+  - key: bootstrap_email
+    label: Initial admin email
+    help: Email for the initial akadmin superuser created on first launch.
+    type: string
+    required: true
+    default: admin@example.com
+    pattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+  - key: bootstrap_password
+    label: Initial admin password
+    help: Password for the initial akadmin superuser. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 24
+    required: true
+databases:
+  # PostgreSQL only. authentik dropped Redis in 2025.10 — caching, tasks, the
+  # embedded outpost and websockets all moved here, at the cost of roughly 50%
+  # more connections.
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+volumes:
+  # Mounted at /data, not /media: 2025.12 moved local file storage, and media now
+  # lives under /data/media.
+  - name: data
+# Shared across the server + worker: both processes need the same secret key and
+# the same PostgreSQL connection, so they are declared once here instead of
+# being repeated in every application.
+stack:
+  description: authentik identity provider — a server and a background worker sharing PostgreSQL.
+  env:
+    AUTHENTIK_SECRET_KEY: "{{ .inputs.secret_key }}"
+    AUTHENTIK_POSTGRESQL__HOST: "{{ .databases.db.host }}"
+    AUTHENTIK_POSTGRESQL__PORT: "{{ .databases.db.port }}"
+    AUTHENTIK_POSTGRESQL__USER: "{{ .databases.db.user }}"
+    AUTHENTIK_POSTGRESQL__PASSWORD: "{{ .databases.db.password }}"
+    AUTHENTIK_POSTGRESQL__NAME: "{{ .databases.db.name }}"
+  secretEnv:
+    - AUTHENTIK_SECRET_KEY
+    - AUTHENTIK_POSTGRESQL__PASSWORD
+applications:
+  - name: server
+    primary: true
+    image: ghcr.io/goauthentik/server
+    tag: "2026.8.1"
+    command: ["server"]
+    ports:
+      - container: 9000
+        scheme: http
+    env:
+      AUTHENTIK_BOOTSTRAP_EMAIL: "{{ .inputs.bootstrap_email }}"
+      AUTHENTIK_BOOTSTRAP_PASSWORD: "{{ .inputs.bootstrap_password }}"
+    secretEnv:
+      - AUTHENTIK_BOOTSTRAP_PASSWORD
+    mounts:
+      - volume: data
+        path: /data
+    healthcheck:
+      type: http
+      path: /-/health/live/
+      port: 9000
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 30
+  - name: worker
+    image: ghcr.io/goauthentik/server
+    tag: "2026.8.1"
+    command: ["worker"]
+    mounts:
+      - volume: data
+        path: /data
+    healthcheck:
+      # The worker serves no HTTP; its liveness is the queue draining.
+      type: none

@@ -1,5 +1,5 @@
 {
-  "etag": "\"0a0893fd1e6794dacdb86efa1d0adbd9abbb25aa946fc7f99a10c6de3274573b\"",
+  "etag": "\"6dbab1e54b534ffbbda245a1a79c6b7690bc856ae94cac14ab2ff9ddceba3c1c\"",
   "generatedAt": "",
   "templates": [
     {
@@ -35,6 +35,10 @@
       "display_name": "authentik",
       "category": "Security",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:8498697a323e8f0700127f3b505795e4ff76e1e5176195ef4c45458ee608e8a7"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:b8469611bd9e928dd1bc457e63ecace31752f02bcaef32cf425c411eb13f2a72"
@@ -518,7 +522,7 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:9932e7dec072e978ae672199347f76ac712d6537f728526c2375f5543de41e45"
+          "digest": "sha256:e8e96d118f95cf98ea2b2328d2dfdd3d97c324fe690a72968015c1252b2524eb"
         },
         {
           "version": "1.1.0",
