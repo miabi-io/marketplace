@@ -1,7 +1,11 @@
-BINARY  := marketplace
-VERSION ?= dev
-IMAGE   ?= ghcr.io/miabi-io/marketplace
-PORT    ?= 8088
+BINARY     := marketplace
+PKG        := github.com/miabi-io/marketplace
+VERSION    ?= dev
+COMMIT     := $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
+BUILD_DATE ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+LDFLAGS    := -X $(PKG)/internal/buildinfo.Version=$(VERSION) -X $(PKG)/internal/buildinfo.CommitID=$(COMMIT) -X $(PKG)/internal/buildinfo.BuildDate=$(BUILD_DATE)
+IMAGE      ?= ghcr.io/miabi-io/marketplace
+PORT       ?= 8088
 
 WEB_DIR       := web
 EMBED_WEB_DIR := internal/web/dist
@@ -9,7 +13,7 @@ EMBED_WEB_DIR := internal/web/dist
 .PHONY: run serve generate lint build build-ui build-all dev-ui test vet check tidy docker help
 
 run: ## Serve the API + storefront (MARKETPLACE_PORT to override :8088)
-	MARKETPLACE_PORT=$(PORT) go run ./cmd/marketplace server
+	MARKETPLACE_PORT=$(PORT) go run -ldflags "$(LDFLAGS)" ./cmd/marketplace server
 
 serve: run ## Alias of run
 
@@ -20,7 +24,7 @@ lint: ## Validate every embedded template (catalog drift check)
 	go run ./cmd/marketplace lint
 
 build: ## Build the marketplace binary into bin/
-	go build -o bin/$(BINARY) ./cmd/marketplace
+	go build -ldflags "$(LDFLAGS)" -o bin/$(BINARY) ./cmd/marketplace
 
 build-ui: ## Build the storefront (Vue) and stage it for embedding
 	npm --prefix $(WEB_DIR) ci
@@ -49,7 +53,8 @@ tidy: ## Sync go.mod / go.sum
 	go mod tidy
 
 docker: ## Build the Docker image
-	docker build -t $(IMAGE):$(VERSION) -t $(IMAGE):latest .
+	docker build --build-arg VERSION=$(VERSION) --build-arg COMMIT=$(COMMIT) --build-arg BUILD_DATE=$(BUILD_DATE) \
+		-t $(IMAGE):$(VERSION) -t $(IMAGE):latest .
 
 help: ## List targets
 	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \

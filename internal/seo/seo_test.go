@@ -89,6 +89,21 @@ func TestHeadRendersPageTags(t *testing.T) {
 	}
 }
 
+// The served title has to match the one About.vue sets client-side.
+func TestAboutPageHead(t *testing.T) {
+	s := New(nil, "https://example.test")
+	head := s.head(s.aboutPage())
+	for _, want := range []string{
+		"<title>About — Miabi Marketplace</title>",
+		`<link rel="canonical" href="https://example.test/about" />`,
+		`"@type":"AboutPage"`,
+	} {
+		if !strings.Contains(head, want) {
+			t.Errorf("about head is missing %s\n%s", want, head)
+		}
+	}
+}
+
 func TestHeadNoIndex(t *testing.T) {
 	head := New(nil, "https://example.test").head(pageMeta{NoIndex: true})
 	if !strings.Contains(head, `content="noindex,follow"`) {

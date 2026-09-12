@@ -40,6 +40,9 @@ const repoUrl = 'https://github.com/miabi-io/marketplace'
           href="/docs"
           target="_blank"
         >API</a>
+        <RouterLink to="/about">
+          About
+        </RouterLink>
         <button
           class="btn btn-secondary btn-icon"
           type="button"
@@ -102,7 +105,8 @@ const repoUrl = 'https://github.com/miabi-io/marketplace'
   font-size: 14px;
   font-weight: 500;
 }
-.links a:hover {
+.links a:hover,
+.links a.router-link-exact-active {
   background: var(--bg-hover);
   color: var(--text-primary);
 }

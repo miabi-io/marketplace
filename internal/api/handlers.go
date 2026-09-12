@@ -26,6 +26,7 @@ import (
 
 	"github.com/jkaninda/okapi"
 	marketplace "github.com/miabi-io/marketplace"
+	"github.com/miabi-io/marketplace/internal/buildinfo"
 	"github.com/miabi-io/marketplace/internal/catalog"
 	"github.com/miabi-io/marketplace/manifest"
 )
@@ -92,6 +93,13 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 		okapi.DocDescription("The category facets (name + count)."),
 		okapi.DocTag("catalog"),
 		okapi.DocResponse(http.StatusOK, &Envelope[[]catalog.CategoryFacet]{}),
+	)
+
+	app.Get("/v1/version", h.Version,
+		okapi.DocSummary("Build version"),
+		okapi.DocDescription("The running build: catalog version (the release tag, without its leading v), commit and build date."),
+		okapi.DocTag("ops"),
+		okapi.DocResponse(http.StatusOK, &Envelope[BuildInfo]{}),
 	)
 
 	// Served at exactly the path the schema's own $id names, so an editor's YAML
@@ -253,6 +261,18 @@ func (h *Handlers) Health(c *okapi.Context) error {
 	return c.JSON(http.StatusOK, HealthResponse{Status: "ok"})
 }
 
+// BuildInfo identifies the running build. Version is "dev" outside a release.
+type BuildInfo struct {
+	Version   string `json:"version"`
+	CommitID  string `json:"commit_id"`
+	BuildDate string `json:"build_date"`
+}
+
+// Version reports the running build.
+func (h *Handlers) Version(c *okapi.Context) error {
+	return ok(c, BuildInfo{Version: buildinfo.Version, CommitID: buildinfo.CommitID, BuildDate: buildinfo.BuildDate})
+}
+
 // Metrics exposes a small Prometheus text exposition (dependency-free).
 func (h *Handlers) Metrics(c *okapi.Context) error {
 	counts := map[string]int{}
@@ -262,6 +282,9 @@ func (h *Handlers) Metrics(c *okapi.Context) error {
 		versions += len(t.Versions)
 	}
 	var b strings.Builder
+	b.WriteString("# HELP marketplace_build_info Version and commit of the running build.\n")
+	b.WriteString("# TYPE marketplace_build_info gauge\n")
+	fmt.Fprintf(&b, "marketplace_build_info{version=%q,commit=%q} 1\n", buildinfo.Version, buildinfo.CommitID)
 	b.WriteString("# HELP marketplace_templates_total Number of templates by source.\n")
 	b.WriteString("# TYPE marketplace_templates_total gauge\n")
 	for _, s := range []string{catalog.SourceOfficial, catalog.SourceCommunity} {
