@@ -1,5 +1,5 @@
 {
-  "etag": "\"6dbab1e54b534ffbbda245a1a79c6b7690bc856ae94cac14ab2ff9ddceba3c1c\"",
+  "etag": "\"46e5f6765c3cb7617f70784dc8d18599782cae8304c2ba23b9943a449af2e51b\"",
   "generatedAt": "",
   "templates": [
     {
@@ -170,8 +170,8 @@
       "category": "Web",
       "versions": [
         {
-          "version": "1.0.0",
-          "digest": "sha256:08eb46d2725741679936a70251331e456c1a0c90ca2de4a54ffce01bb576909d"
+          "version": "1.1.0",
+          "digest": "sha256:ad2a75618f32ae2fdec0b938c68ae482a8c368f80ba851929997e6dafb607f0e"
         }
       ]
     },
@@ -237,6 +237,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:b91faf71fb412d2038c100a4a5d50e3b7819bd313846b4068fb4bf078ce5d3c8"
+        }
+      ]
+    },
+    {
+      "name": "linkwarden",
+      "slug": "linkwarden",
+      "source": "official",
+      "display_name": "Linkwarden",
+      "category": "Productivity",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:f851cad4d6f209f8a7fb4ffe6aa41f77a57175dd27f6fe971e34185e973c5626"
         }
       ]
     },

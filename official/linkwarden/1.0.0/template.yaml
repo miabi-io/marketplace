@@ -1,0 +1,126 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: linkwarden
+  displayName: Linkwarden
+  version: 1.0.0
+  description: Collaborative bookmark manager that archives a full copy of every page you save — screenshot, PDF and readable text — so a link outlives the site behind it.
+  category: Productivity
+  icon: https://github.com/linkwarden.png
+  homepage: https://linkwarden.app
+  tags: [bookmarks, archive, read-later, self-hosted, collections]
+inputs:
+  - key: app_url
+    label: Public URL
+    help: The address people actually visit, with no trailing slash and no path. Sign-in callbacks are built from it, so a wrong value breaks login rather than degrading it.
+    type: string
+    required: true
+    pattern: "^https?://[^/]+$"
+    placeholder: https://links.example.com
+  - key: nextauth_secret
+    label: Auth secret
+    help: Signs session cookies. Leave blank to auto-generate; changing it later signs everyone out.
+    type: password
+    generate: true
+    length: 64
+    required: true
+  - key: meili_master_key
+    label: Search master key
+    help: Authenticates Linkwarden to its own search index. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 48
+    required: true
+  - key: disable_registration
+    label: Close public sign-up
+    help: On, only an admin can create accounts. Turn it on after registering yourself — a bookmark manager on the open internet with sign-up left open collects other people's accounts.
+    type: bool
+    default: "false"
+  - key: email_enabled
+    label: Enable email
+    help: Turn on only once the two fields below are filled in. Without mail, password reset and collection invitations do not work; the first account is still created by signing up.
+    type: bool
+    default: "false"
+  - key: email_from
+    label: Sender address
+    help: The From address on invitations and password resets.
+    type: string
+    placeholder: links@example.com
+  - key: email_server
+    label: SMTP URL
+    help: One connection string, e.g. smtp://user:password@smtp.example.com:587. Credentials are embedded, so it is stored as a secret.
+    type: password
+    placeholder: smtp://user:password@smtp.example.com:587
+databases:
+  - name: db
+    engine: postgres
+    version: "16-alpine"
+    placement: auto
+volumes:
+  # Archived pages: a screenshot, a PDF and a single-file HTML copy per link.
+  # This grows faster than the database and is the part that cannot be rebuilt.
+  - name: data
+  - name: meili
+applications:
+  - name: linkwarden
+    primary: true
+    image: ghcr.io/linkwarden/linkwarden
+    tag: "v2.16.3"
+    ports:
+      - container: 3000
+        scheme: http
+    env:
+      # NextAuth needs its own callback prefix, not the site root.
+      NEXTAUTH_URL: "{{ .inputs.app_url }}/api/v1/auth"
+      NEXTAUTH_SECRET: "{{ .inputs.nextauth_secret }}"
+      DATABASE_URL: "{{ .databases.db.uri }}"
+
+      MEILI_HOST: "http://{{ .applications.meilisearch.alias }}:7700"
+      MEILI_MASTER_KEY: "{{ .inputs.meili_master_key }}"
+
+      NEXT_PUBLIC_DISABLE_REGISTRATION: "{{ .inputs.disable_registration }}"
+      NEXT_PUBLIC_EMAIL_PROVIDER: "{{ .inputs.email_enabled }}"
+      EMAIL_FROM: "{{ .inputs.email_from }}"
+      EMAIL_SERVER: "{{ .inputs.email_server }}"
+    secretEnv:
+      - NEXTAUTH_SECRET
+      - DATABASE_URL
+      - MEILI_MASTER_KEY
+      - EMAIL_SERVER
+    mounts:
+      - volume: data
+        path: /data/data
+    # What upstream's own HEALTHCHECK probes. The long start period is Prisma:
+    # the container runs `migrate deploy` before serving, and on a fresh database
+    # that is every migration in the project's history.
+    healthcheck:
+      type: http
+      path: /
+      port: 3000
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 5
+      startPeriodSeconds: 120
+  - name: meilisearch
+    image: getmeili/meilisearch
+    # Pinned to what upstream's compose ships rather than the newest release:
+    # Meilisearch rejects an index built by a different version on startup, so
+    # moving this is a migration, not an upgrade.
+    tag: "v1.13.3"
+    env:
+      MEILI_MASTER_KEY: "{{ .inputs.meili_master_key }}"
+      MEILI_ENV: production
+      MEILI_NO_ANALYTICS: "true"
+    secretEnv:
+      - MEILI_MASTER_KEY
+    mounts:
+      - volume: meili
+        path: /meili_data
+    healthcheck:
+      type: http
+      path: /health
+      port: 7700
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 20
