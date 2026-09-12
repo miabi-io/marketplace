@@ -56,6 +56,7 @@ interactive:
 | `/docs` | **Interactive API documentation** (browse and try every endpoint). |
 | `/openapi.json` | The raw OpenAPI spec behind `/docs`. |
 | `/healthz` · `/metrics` | Health probe + Prometheus metrics. |
+| `/v1/version` | Running build: catalog version (the release tag, without its `v`), commit and build date. |
 | `/robots.txt` · `/sitemap.xml` | Crawler surface; the sitemap is generated from the catalog. |
 
 ## Storefront

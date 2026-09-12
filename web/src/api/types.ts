@@ -143,6 +143,13 @@ export interface TemplateDetail {
   manifest: TemplateManifest
 }
 
+// BuildInfo is the running server build; version is "dev" outside a release.
+export interface BuildInfo {
+  version: string
+  commit_id: string
+  build_date: string
+}
+
 export interface Envelope<T> {
   success: boolean
   data: T

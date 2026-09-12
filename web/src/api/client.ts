@@ -1,4 +1,4 @@
-import type { CategoryFacet, Envelope, Page, TemplateDetail } from './types'
+import type { BuildInfo, CategoryFacet, Envelope, Page, TemplateDetail } from './types'
 
 const BASE = '/v1'
 
@@ -44,6 +44,9 @@ export const api = {
   },
   categories(signal?: AbortSignal) {
     return get<CategoryFacet[]>('/categories', undefined, signal)
+  },
+  version(signal?: AbortSignal) {
+    return get<BuildInfo>('/version', undefined, signal)
   },
   template(name: string, version?: string, signal?: AbortSignal) {
     return get<TemplateDetail>(`/templates/${encodeURIComponent(name)}`, { version }, signal)

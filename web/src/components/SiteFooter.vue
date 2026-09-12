@@ -1,9 +1,34 @@
 <script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { api } from '@/api/client'
+import type { BuildInfo } from '@/api/types'
+
 const year = new Date().getFullYear()
 const siteUrl = 'https://miabi.io'
 const docsUrl = 'https://docs.miabi.io'
 const githubUrl = 'https://github.com/miabi-io/miabi'
 const repoUrl = 'https://github.com/miabi-io/marketplace'
+
+const build = ref<BuildInfo | null>(null)
+const isRelease = computed(() => !!build.value && build.value.version !== 'dev')
+const versionLabel = computed(() => (isRelease.value ? `v${build.value!.version}` : 'dev'))
+const releaseUrl = computed(() => `${repoUrl}/releases/tag/${versionLabel.value}`)
+const buildTitle = computed(() => {
+  const b = build.value
+  if (!b) return ''
+  const parts = [b.commit_id !== 'unknown' ? `Commit ${b.commit_id}` : '']
+  const date = new Date(b.build_date)
+  if (!Number.isNaN(date.getTime())) parts.push(`built ${date.toLocaleDateString()}`)
+  return parts.filter(Boolean).join(', ')
+})
+
+onMounted(async () => {
+  try {
+    build.value = await api.version()
+  } catch {
+    build.value = null
+  }
+})
 </script>
 
 <template>
@@ -73,7 +98,24 @@ const repoUrl = 'https://github.com/miabi-io/marketplace'
       </div>
 
       <div class="bottom">
-        <p>&copy; {{ year }} Miabi. Catalog content is Apache-2.0 licensed.</p>
+        <p class="legal">
+          <span>&copy; {{ year }} Miabi. Catalog content is Apache-2.0 licensed.</span>
+          <template v-if="build">
+            <a
+              v-if="isRelease"
+              :href="releaseUrl"
+              class="version"
+              :title="buildTitle || undefined"
+              target="_blank"
+              rel="noopener"
+            >Catalog {{ versionLabel }}</a>
+            <span
+              v-else
+              class="version"
+              :title="buildTitle || undefined"
+            >Catalog {{ versionLabel }}</span>
+          </template>
+        </p>
         <!-- This storefront runs on Miabi. -->
         <a
           :href="siteUrl"
@@ -165,6 +207,27 @@ const repoUrl = 'https://github.com/miabi-io/marketplace'
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 13px;
   color: #6b7280;
+}
+
+.legal {
+  display: flex;
+  align-items: center;
+  gap: 8px 12px;
+  flex-wrap: wrap;
+}
+
+.version {
+  padding: 2px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+a.version:hover {
+  color: var(--primary-400);
+  border-color: var(--primary-400);
 }
 
 .badge-link {

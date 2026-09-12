@@ -21,6 +21,7 @@
 //	marketplace          # serve the API + storefront
 //	marketplace generate # write export.json + registry/index.json (CI drift check)
 //	marketplace lint     # validate every embedded template, exit non-zero on error
+//	marketplace version  # print the build version, commit and date
 //
 // The generated export.json is the full bundle (every manifest inline) — the
 // same document GET /v1/export serves. The hosted registry at
@@ -31,6 +32,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -39,6 +41,7 @@ import (
 	"github.com/jkaninda/okapi"
 	"github.com/jkaninda/okapi/okapicli"
 	"github.com/miabi-io/marketplace/internal/api"
+	"github.com/miabi-io/marketplace/internal/buildinfo"
 	"github.com/miabi-io/marketplace/internal/catalog"
 	"github.com/miabi-io/marketplace/internal/seo"
 	"github.com/miabi-io/marketplace/internal/web"
@@ -55,6 +58,10 @@ func main() {
 	cli.Command("generate-index", "Alias of generate", generateCmd)
 	cli.Command("lint", "Validate every embedded template (CI drift check)", func(*okapicli.Command) error {
 		return lint()
+	})
+	cli.Command("version", "Print the build version", func(*okapicli.Command) error {
+		fmt.Printf("marketplace %s (commit %s, built %s)\n", buildinfo.Version, buildinfo.CommitID, buildinfo.BuildDate)
+		return nil
 	})
 	cli.DefaultCommand("server")
 
@@ -99,7 +106,7 @@ func serve(cli *okapicli.CLI) error {
 	return cli.RunServer(&okapicli.RunOptions{
 		ShutdownTimeout: 15 * time.Second,
 		OnStarted: func() {
-			logger.Info("marketplace ready", "templates", len(cat.Templates()), "port", port, "docs", "/docs")
+			logger.Info("marketplace ready", "version", buildinfo.Version, "templates", len(cat.Templates()), "port", port, "docs", "/docs")
 		},
 	})
 }
