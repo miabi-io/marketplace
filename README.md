@@ -62,7 +62,7 @@ interactive:
 ## Storefront
 
 A Vue 3 + Pinia SPA (`web/`) served by the same binary over Okapi's `WebFS`, at
-`/` and `/templates/{name}`. Search is instant — results follow typing, with no
+`/`, `/templates/{name}` and `/about`. Search is instant — results follow typing, with no
 submit button — and every filter is mirrored into the URL, so any result set is
 a shareable link.
 

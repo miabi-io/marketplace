@@ -59,6 +59,9 @@ onMounted(async () => {
             <li><RouterLink to="/">
               Browse templates
             </RouterLink></li>
+            <li><RouterLink to="/about">
+              About
+            </RouterLink></li>
             <li><a
               :href="`${repoUrl}/blob/main/CONTRIBUTING.md`"
               target="_blank"

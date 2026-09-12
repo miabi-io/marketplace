@@ -11,6 +11,7 @@ const router = createRouter({
       component: () => import('@/views/TemplateDetail.vue'),
       props: true,
     },
+    { path: '/about', name: 'about', component: () => import('@/views/About.vue') },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('@/views/NotFound.vue') },
   ],
   // Returning to the grid restores where you were; a detail page always opens

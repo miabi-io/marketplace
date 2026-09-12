@@ -54,6 +54,8 @@ const (
 	siteName    = "Miabi Marketplace"
 	homeTitle   = "Miabi Marketplace — official & community app templates"
 	homeDesc    = "Browse official and community Miabi templates: one-click apps, databases and stacks for the open-source PaaS for Docker."
+	aboutTitle  = "About — " + siteName
+	aboutDesc   = "What the Miabi Marketplace is, how official and community templates are reviewed and validated, and how to point Miabi at it."
 	ogImagePath = "/og-image.png"
 	// descMax keeps a meta description inside what a result snippet shows.
 	descMax = 160
@@ -104,6 +106,7 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog, baseURL string) {
 	app.Get("/robots.txt", s.Robots, okapi.DocSummary("robots.txt"), okapi.DocTag("seo"))
 	app.Get("/sitemap.xml", s.Sitemap, okapi.DocSummary("XML sitemap of the catalog"), okapi.DocTag("seo"))
 	app.Get("/", s.Home, okapi.DocSummary("Storefront home"), okapi.DocTag("seo"))
+	app.Get("/about", s.About, okapi.DocSummary("About page"), okapi.DocTag("seo"))
 	app.Get("/templates", s.TemplatesIndex, okapi.DocSummary("Template list (redirects home)"), okapi.DocTag("seo"))
 	app.Get("/templates/{name}", s.Template, okapi.DocSummary("Template page"), okapi.DocTag("seo"))
 }
@@ -131,9 +134,9 @@ func (s *Server) Sitemap(c *okapi.Context) error {
 	templates := s.cat.Templates()
 	set := urlSet{
 		NS:   "http://www.sitemaps.org/schemas/sitemap/0.9",
-		URLs: make([]urlEntry, 0, len(templates)+1),
+		URLs: make([]urlEntry, 0, len(templates)+2),
 	}
-	set.URLs = append(set.URLs, urlEntry{Loc: s.base + "/"})
+	set.URLs = append(set.URLs, urlEntry{Loc: s.base + "/"}, urlEntry{Loc: s.base + "/about"})
 	for i := range templates {
 		set.URLs = append(set.URLs, urlEntry{Loc: s.templateURL(templates[i].Name)})
 	}
@@ -166,6 +169,33 @@ func (s *Server) Home(c *okapi.Context) error {
 		},
 	}
 	return s.render(c, page)
+}
+
+// About serves the shell with the about page's tags.
+func (s *Server) About(c *okapi.Context) error {
+	return s.render(c, s.aboutPage())
+}
+
+func (s *Server) aboutPage() pageMeta {
+	url := s.base + "/about"
+	return pageMeta{
+		Title:       aboutTitle,
+		Description: aboutDesc,
+		Canonical:   url,
+		OGType:      "website",
+		JSONLD: map[string]any{
+			"@context":    "https://schema.org",
+			"@type":       "AboutPage",
+			"name":        aboutTitle,
+			"description": aboutDesc,
+			"url":         url,
+			"isPartOf": map[string]any{
+				"@type": "WebSite",
+				"name":  siteName,
+				"url":   s.base + "/",
+			},
+		},
+	}
 }
 
 // TemplatesIndex redirects the bare list path home: the SPA has no route for it,
