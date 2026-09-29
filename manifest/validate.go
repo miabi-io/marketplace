@@ -149,6 +149,9 @@ func (m *Manifest) Validate() error {
 			return err
 		}
 	}
+	if err := m.validateRoutes(); err != nil {
+		return err
+	}
 
 	// Stack: a stack groups applications, so a database-only template cannot
 	// declare one; secretEnv keys must be present in the shared stack env.
@@ -181,6 +184,11 @@ func (m *Manifest) validateApplications(volNames, cfgNames map[string]bool) erro
 		}
 		if strings.TrimSpace(a.Image) == "" {
 			return fmt.Errorf("application %q: image is required", a.Name)
+		}
+		switch a.RestartPolicy {
+		case "", "no", "always", "unless-stopped", "on-failure":
+		default:
+			return fmt.Errorf("application %q: restartPolicy must be no, always, unless-stopped or on-failure", a.Name)
 		}
 		for _, p := range a.Ports {
 			if p.Container <= 0 || p.Container > 65535 {

@@ -4,7 +4,7 @@ go 1.26.3
 
 require (
 	github.com/jkaninda/logger v0.0.5
-	github.com/jkaninda/okapi v0.11.0
+	github.com/jkaninda/okapi v1.0.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -22,6 +22,6 @@ require (
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	google.golang.org/protobuf v1.36.11 // indirect
+	google.golang.org/protobuf v1.36.12 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )

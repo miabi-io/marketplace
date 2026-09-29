@@ -3,7 +3,7 @@ kind: Template
 metadata:
   name: uptime-kuma
   displayName: Uptime Kuma
-  version: 1.0.0
+  version: 1.1.0
   description: Self-hosted uptime monitoring with status pages and rich notifications.
   category: Monitoring
   icon: https://cdn.simpleicons.org/uptimekuma
@@ -15,7 +15,7 @@ applications:
   - name: uptime-kuma
     primary: true
     image: louislam/uptime-kuma
-    tag: "1"
+    tag: "2"
     ports:
       - container: 3001
         scheme: http

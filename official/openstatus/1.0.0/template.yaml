@@ -1,0 +1,159 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: openstatus
+  displayName: OpenStatus
+  version: 1.0.0
+  description: Open-source status pages for publishing incidents and scheduled maintenance.
+  category: Monitoring
+  icon: https://github.com/openstatusHQ.png
+  homepage: https://www.openstatus.dev
+  # restartPolicy (the one-shot migration runner) and routes need 1.10.10.
+  minMiabi: "1.10.10"
+  tags: [status-page, incidents, maintenance, uptime]
+inputs:
+  - key: dashboard_url
+    label: Dashboard URL
+    help: The public URL of the OpenStatus dashboard. Sign-in links are built from it, so it must be the address you open in the browser.
+    type: string
+    required: true
+    pattern: "^https?://"
+    placeholder: https://status-admin.example.com
+  - key: status_url
+    label: Status page URL
+    help: Optional. The public address of your status page; a route to it is created when its domain belongs to this workspace. Set the same host as the page's custom domain (see the README).
+    type: string
+    pattern: "^https?://"
+    placeholder: https://status.example.com
+  - key: auth_secret
+    label: Auth secret
+    help: Signs sessions. Leave blank to auto-generate; changing it later signs everyone out.
+    type: password
+    generate: true
+    length: 44
+    required: true
+  - key: cron_secret
+    label: Internal secret
+    help: Required by OpenStatus at startup. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 32
+    required: true
+  - key: github_client_id
+    label: GitHub OAuth client ID
+    help: Optional. Adds "Sign in with GitHub". Without any provider, sign in with the magic link printed in the dashboard's logs.
+    type: string
+  - key: github_client_secret
+    label: GitHub OAuth client secret
+    type: password
+  - key: oidc_issuer
+    label: OIDC issuer URL
+    help: Optional. Adds single sign-on through an OIDC provider such as authentik or Keycloak.
+    type: string
+    placeholder: https://auth.example.com/application/o/openstatus/
+  - key: oidc_client_id
+    label: OIDC client ID
+    type: string
+  - key: oidc_client_secret
+    label: OIDC client secret
+    type: password
+  - key: oidc_name
+    label: OIDC button label
+    type: string
+    default: SSO
+  - key: resend_api_key
+    label: Resend API key
+    help: Optional, and rarely useful self-hosted. OpenStatus sends mail from its own openstatus.dev address, which Resend only accepts for that domain's owner. Sign-in does not need it.
+    type: password
+databases:
+  - name: db
+    engine: libsql
+# The migration runner, dashboard and status page all use the same libSQL database.
+stack:
+  description: OpenStatus status pages — a dashboard, the public status page and their libSQL database.
+  env:
+    DATABASE_URL: "http://{{ .databases.db.host }}:{{ .databases.db.port }}"
+    DATABASE_AUTH_TOKEN: "{{ .databases.db.password }}"
+    NODE_ENV: production
+    CRON_SECRET: "{{ .inputs.cron_secret }}"
+  secretEnv:
+    - DATABASE_AUTH_TOKEN
+    - CRON_SECRET
+applications:
+  # Applies pending migrations and exits; on-failure keeps a clean exit from being restarted, and
+  # redeploying the stack after an upgrade runs it again.
+  - name: migrate
+    image: ghcr.io/openstatushq/openstatus-db-migrate
+    tag: "4511a22"
+    restartPolicy: on-failure
+    healthcheck:
+      type: none
+  - name: dashboard
+    primary: true
+    image: ghcr.io/openstatushq/openstatus-dashboard
+    tag: "4511a22"
+    ports:
+      - container: 3000
+        scheme: http
+    env:
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      AUTH_TRUST_HOST: "true"
+      # Self-host mode logs the sign-in magic link instead of emailing it.
+      SELF_HOST: "true"
+      NEXT_PUBLIC_URL: "{{ .inputs.dashboard_url }}"
+      # Without it, sign-in links point at the container's own 0.0.0.0:3000.
+      AUTH_URL: "{{ .inputs.dashboard_url }}"
+      AUTH_SECRET: "{{ .inputs.auth_secret }}"
+      AUTH_GITHUB_ID: "{{ .inputs.github_client_id }}"
+      AUTH_GITHUB_SECRET: "{{ .inputs.github_client_secret }}"
+      AUTH_OIDC_ISSUER: "{{ .inputs.oidc_issuer }}"
+      AUTH_OIDC_ID: "{{ .inputs.oidc_client_id }}"
+      AUTH_OIDC_SECRET: "{{ .inputs.oidc_client_secret }}"
+      AUTH_OIDC_NAME: "{{ .inputs.oidc_name }}"
+      # Validated as non-empty at startup even when no mail is sent.
+      RESEND_API_KEY: '{{ default "disabled" .inputs.resend_api_key }}'
+    secretEnv:
+      - AUTH_SECRET
+      - AUTH_GITHUB_SECRET
+      - AUTH_OIDC_SECRET
+      - RESEND_API_KEY
+    healthcheck:
+      type: http
+      path: /
+      port: 3000
+      intervalSeconds: 30
+      timeoutSeconds: 10
+      retries: 3
+      startPeriodSeconds: 60
+  - name: status-page
+    image: ghcr.io/openstatushq/openstatus-status-page
+    tag: "4511a22"
+    ports:
+      - container: 3000
+        scheme: http
+    env:
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      AUTH_TRUST_HOST: "true"
+      SELF_HOST: "true"
+      NEXT_PUBLIC_URL: "{{ .inputs.dashboard_url }}"
+      AUTH_SECRET: "{{ .inputs.auth_secret }}"
+      RESEND_API_KEY: '{{ default "disabled" .inputs.resend_api_key }}'
+    secretEnv:
+      - AUTH_SECRET
+      - RESEND_API_KEY
+    healthcheck:
+      type: http
+      path: /
+      port: 3000
+      intervalSeconds: 30
+      timeoutSeconds: 10
+      retries: 3
+      startPeriodSeconds: 60
+# Created on install when the URL's domain belongs to this workspace; skipped with a warning otherwise.
+routes:
+  - app: dashboard
+    host: "{{ .inputs.dashboard_url }}"
+  - app: status-page
+    host: "{{ .inputs.status_url }}"

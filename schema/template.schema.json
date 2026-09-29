@@ -118,6 +118,20 @@
         "annotations": { "type": "object", "additionalProperties": { "type": "string" } }
       }
     },
+    "routes": {
+      "type": "array",
+      "description": "Routes created on install for public URLs the installer asked for. Best-effort: a host whose domain is not registered in the workspace is skipped with a warning. Requires minMiabi 1.10.10.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["app", "host"],
+        "properties": {
+          "app": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "description": "Application to route to; it must declare a port." },
+          "host": { "type": "string", "minLength": 1, "description": "A URL or hostname taken from an input, e.g. \"{{ .inputs.public_url }}\"; only its hostname is used." },
+          "port": { "type": "integer", "minimum": 1, "maximum": 65535, "description": "Container port; defaults to the application's first port." }
+        }
+      }
+    },
     "applications": {
       "type": "array",
       "items": {
@@ -130,6 +144,10 @@
           "image": { "type": "string", "minLength": 1 },
           "tag": { "type": "string" },
           "command": { "type": "array", "items": { "type": "string" } },
+          "restartPolicy": {
+            "enum": ["no", "always", "unless-stopped", "on-failure"],
+            "description": "Container restart policy (default unless-stopped). on-failure lets a one-shot app such as a migration runner exit cleanly and stay stopped. Requires minMiabi 1.10.10."
+          },
           "ports": {
             "type": "array",
             "items": {
