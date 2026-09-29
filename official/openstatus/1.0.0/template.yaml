@@ -8,7 +8,7 @@ metadata:
   category: Monitoring
   icon: https://github.com/openstatusHQ.png
   homepage: https://www.openstatus.dev
-  # restartPolicy (the one-shot migration runner) needs 1.11.0.
+  # restartPolicy (the one-shot migration runner) and routes need 1.10.10.
   minMiabi: "1.10.10"
   tags: [status-page, incidents, maintenance, uptime]
 inputs:
@@ -19,6 +19,12 @@ inputs:
     required: true
     pattern: "^https?://"
     placeholder: https://status-admin.example.com
+  - key: status_url
+    label: Status page URL
+    help: Optional. The public address of your status page; a route to it is created when its domain belongs to this workspace. Set the same host as the page's custom domain (see the README).
+    type: string
+    pattern: "^https?://"
+    placeholder: https://status.example.com
   - key: auth_secret
     label: Auth secret
     help: Signs sessions. Leave blank to auto-generate; changing it later signs everyone out.
@@ -145,3 +151,9 @@ applications:
       timeoutSeconds: 10
       retries: 3
       startPeriodSeconds: 60
+# Created on install when the URL's domain belongs to this workspace; skipped with a warning otherwise.
+routes:
+  - app: dashboard
+    host: "{{ .inputs.dashboard_url }}"
+  - app: status-page
+    host: "{{ .inputs.status_url }}"

@@ -149,6 +149,9 @@ func (m *Manifest) Validate() error {
 			return err
 		}
 	}
+	if err := m.validateRoutes(); err != nil {
+		return err
+	}
 
 	// Stack: a stack groups applications, so a database-only template cannot
 	// declare one; secretEnv keys must be present in the shared stack env.

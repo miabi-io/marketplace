@@ -66,15 +66,16 @@ const (
 
 // Manifest is one version of a template.
 type Manifest struct {
-	APIVersion   string     `yaml:"apiVersion" json:"apiVersion"`
-	Kind         string     `yaml:"kind" json:"kind"`
-	Metadata     Metadata   `yaml:"metadata" json:"metadata"`
-	Inputs       []Input    `yaml:"inputs,omitempty" json:"inputs,omitempty"`
-	Databases    []Database `yaml:"databases,omitempty" json:"databases,omitempty"`
-	Volumes      []Volume   `yaml:"volumes,omitempty" json:"volumes,omitempty"`
-	Configs      []Config   `yaml:"configs,omitempty" json:"configs,omitempty"`
-	Stack        *StackSpec `yaml:"stack,omitempty" json:"stack,omitempty"`
-	Applications []AppSpec  `yaml:"applications,omitempty" json:"applications,omitempty"`
+	APIVersion   string      `yaml:"apiVersion" json:"apiVersion"`
+	Kind         string      `yaml:"kind" json:"kind"`
+	Metadata     Metadata    `yaml:"metadata" json:"metadata"`
+	Inputs       []Input     `yaml:"inputs,omitempty" json:"inputs,omitempty"`
+	Databases    []Database  `yaml:"databases,omitempty" json:"databases,omitempty"`
+	Volumes      []Volume    `yaml:"volumes,omitempty" json:"volumes,omitempty"`
+	Configs      []Config    `yaml:"configs,omitempty" json:"configs,omitempty"`
+	Stack        *StackSpec  `yaml:"stack,omitempty" json:"stack,omitempty"`
+	Applications []AppSpec   `yaml:"applications,omitempty" json:"applications,omitempty"`
+	Routes       []RouteSpec `yaml:"routes,omitempty" json:"routes,omitempty"`
 }
 
 // StackSpec optionally configures the Stack a template is grouped into on

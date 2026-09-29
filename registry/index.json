@@ -1,5 +1,5 @@
 {
-  "etag": "\"972b18834503aa22d15505d27ea389f500d8b1619f4e0294f85e8841a611b35d\"",
+  "etag": "\"3b5703dd88fc379add8b9890268b7e86c5a3773d38bf290ec69dfd46c6b72056\"",
   "generatedAt": "",
   "templates": [
     {
@@ -53,6 +53,10 @@
       "category": "Security",
       "versions": [
         {
+          "version": "1.3.0",
+          "digest": "sha256:ddbc7b5e4e99d9662b1e1e48240083581a189b62425195146d3ac233adc96ef2"
+        },
+        {
           "version": "1.2.0",
           "digest": "sha256:816ca3ac3a8f1b5e498a2c05e47ea8bba66fee3852839bbc690a9ef8fb3c6964"
         }
@@ -78,6 +82,10 @@
       "display_name": "Docmost",
       "category": "Productivity",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:9ca5250a011252563f986482f86274831b128c8c3f882e553e568db90dcfe4c7"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:be61296062e5ee93c5e7e94da25df2cd604b7cf68a6a27e202a4cceee0195e52"
@@ -131,6 +139,10 @@
       "category": "CMS",
       "versions": [
         {
+          "version": "1.3.0",
+          "digest": "sha256:2ef3a46174b3e52f7f27ac15891417ef05919e6280db0d32b090d56682de8e8b"
+        },
+        {
           "version": "1.2.0",
           "digest": "sha256:e8fb5cf3e4976792aa5f166742d2e0d6d5a5edf470b466a4b91b673026fec6a3"
         }
@@ -156,6 +168,10 @@
       "display_name": "GitLab",
       "category": "Development",
       "versions": [
+        {
+          "version": "1.2.0",
+          "digest": "sha256:1351e527dd4d0bd298faca422cdd82cea98a924eef445263010e879813f115b2"
+        },
         {
           "version": "1.1.0",
           "digest": "sha256:e4c98d45e6657653ff322f0d4a580e4264b6b4c69627825ab92b20099bbecf36"
@@ -196,6 +212,10 @@
       "category": "Productivity",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:d6a9bfe84902412bba6555c2637d194e1e33f5eda08c2d40afe7dd1a9904c7a2"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:c15ada52216056642dd3724e82e82431b72db52d4cb22198b1d37e83990ecf68"
         }
@@ -221,6 +241,10 @@
       "display_name": "Keycloak",
       "category": "Security",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:84cc97c4017f6eeb2733343b567654d7bd568e68c42774c356715cbb7c705999"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:c8b96ffa11bc12935cdb69fecdd613e1bd05ce4bdbcfeb17940c30364c7fc26d"
@@ -248,6 +272,10 @@
       "category": "Productivity",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:facbe14ce89de2d1a43f0d89e36309ff4e03b7f358e24ec70e84f02f5f442d17"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:f851cad4d6f209f8a7fb4ffe6aa41f77a57175dd27f6fe971e34185e973c5626"
         }
@@ -260,6 +288,10 @@
       "display_name": "LLDAP",
       "category": "Security",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:00623e95fb6ad1ce90f53afbe4b9114a4adb22720b37aa97f0be0ea3537ed236"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:b1907b1254e97d84df898498e52697fc78a3cd54b36b1aa8bceb161bbf34edf4"
@@ -287,6 +319,10 @@
       "category": "Productivity",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:8bbed7bff2eb947b5ad948b9c456f8706c50504d3cdfc2a467c6ead6bf99bc8b"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:a70fe8874d9bfaa3e0c3ca21745039397edb4b732f00cd8e5a44069bc202bb71"
         }
@@ -299,6 +335,10 @@
       "display_name": "Mealie",
       "category": "Productivity",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:ab5cb32a541b5a8f466002d31195f3cfa70a1580a2743668cd497657bfc5d879"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:cfe58b620d0c8121405c45f8611b9ab250bcf079b2c14d667eabe402ad50fc32"
@@ -456,6 +496,10 @@
       "category": "Productivity",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:9288552f6c3fdf86bc9d12252a6e73751d7ba26fc8e3279fde0221a49afc997c"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:ba09320d3f7184e88807c8fd626e9704d4ac380922a00c3b83619c13507193e4"
         }
@@ -468,6 +512,10 @@
       "display_name": "ntfy",
       "category": "Productivity",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:3d4b909abefc18e54928843ee241c291917c65b3d5eb431107aeac33780a00fa"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:9a110dd1964546b80fbc47317c289da55e4995d8885c2866aa0f8142382fbca0"
@@ -496,7 +544,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:62356bb6bbc4690bb7c7cab6271dd759bb86f8fda63dfb7526aabe1baad060e1"
+          "digest": "sha256:0f62d9ca5aff024235a91d1e5a5d012eec455880736ab2267c297d5ac036181d"
         }
       ]
     },
@@ -507,6 +555,10 @@
       "display_name": "Paperless-ngx",
       "category": "Productivity",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:a2c49cbef7ffca3efb803a1cf3c4826c2eb31c14929622ec045088100982f13c"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:52ec248010b2f410605e6d72a03b51ca879029b8d6ad8a705b61c6242372b11d"
@@ -546,6 +598,10 @@
       "display_name": "Posta",
       "category": "Email",
       "versions": [
+        {
+          "version": "1.3.0",
+          "digest": "sha256:8ef0f216877430da616da58c86c79f38627a2c29cce658bffc19f0e935aec96a"
+        },
         {
           "version": "1.2.0",
           "digest": "sha256:e8e96d118f95cf98ea2b2328d2dfdd3d97c324fe690a72968015c1252b2524eb"
@@ -655,8 +711,8 @@
       "category": "Monitoring",
       "versions": [
         {
-          "version": "1.0.0",
-          "digest": "sha256:671da17b2eeda73f49c04712706583f72c041513faeff755771aa54ac9bed9b1"
+          "version": "1.1.0",
+          "digest": "sha256:4c540060c7d77b9d807cc61cb874cd9929bcdd9a98f394a39dd0f960d04fc9dd"
         }
       ]
     },
@@ -681,6 +737,10 @@
       "category": "Security",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:cd55116afab80409e17039b7e3d5a64ae1933c6c0f789ce3997b2247cd85f73f"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:6b41242f9eab0c4ec98979ca9d38fc0564edd7a05c80bfe0512ca9b863b26b09"
         }
@@ -694,6 +754,10 @@
       "category": "Productivity",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:2d165f2d8df9188e3e494c3bb9fc1bda286865df25abf544a89a91f9fbddc37e"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:17cdf435c8f8d0c2589cf1020f36cedfe5aa3720e29a9986ffd462ed7054f161"
         }
@@ -706,6 +770,10 @@
       "display_name": "Wallabag",
       "category": "Productivity",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:a294e3d9ae659449fb6add3ff2cac428a3703b549b80048cc26698f763d8e42b"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:0f7f219e803cff3e66cb5f4a783269807139c781447e1be1a1a3c0e8dc6f1f1c"

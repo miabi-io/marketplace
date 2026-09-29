@@ -11,8 +11,12 @@ here yourself.
 
 ## Before you install
 
-**Dashboard URL** is the address you will open the dashboard on. Sign-in links
-are built from it, so attach that domain to the **dashboard** app after install.
+**Dashboard URL** is the address you will open the dashboard on; sign-in links
+are built from it. **Status page URL** is the public address of your status page.
+
+Register and verify the domain of each URL in **Domains** first, and the install
+creates both routes for you. A URL whose domain isn't in the workspace is skipped
+with a warning: add the domain, then add the route to the app yourself.
 
 Put the status page somewhere that stays up when your product doesn't — another
 provider, or at least another server. A status page that goes down with the
@@ -48,7 +52,8 @@ JSON
 ## Publish a status page
 
 1. In the dashboard, create a status page. Its **slug** is `acme` below.
-2. Attach a domain to the **status-page** app, for example `status.example.com`.
+2. Make sure the **status-page** app has a route for its domain, for example
+   `status.example.com` — the install creates it from **Status page URL**.
 3. Point the page at that domain. The dashboard's domain setting needs a Vercel
    account, so set it from the **dashboard** app's terminal instead (with `q`
    defined as above):
@@ -59,7 +64,8 @@ JSON
    JSON
    ```
 
-Each page is served on its own domain: repeat steps 2 and 3 for another page.
+Each page is served on its own domain: for another page, add a route to the
+**status-page** app and repeat step 3.
 
 ## Upgrades and data
 
