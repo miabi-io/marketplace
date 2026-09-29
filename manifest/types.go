@@ -168,17 +168,18 @@ type Config struct {
 // AppSpec is a single application within the template. Two or more applications
 // are grouped into a Stack on install.
 type AppSpec struct {
-	Name        string            `yaml:"name" json:"name"`
-	Primary     bool              `yaml:"primary,omitempty" json:"primary,omitempty"`
-	Image       string            `yaml:"image" json:"image"`
-	Tag         string            `yaml:"tag,omitempty" json:"tag,omitempty"`
-	Command     []string          `yaml:"command,omitempty" json:"command,omitempty"`
-	Ports       []Port            `yaml:"ports,omitempty" json:"ports,omitempty"`
-	Env         map[string]string `yaml:"env,omitempty" json:"env,omitempty"`
-	SecretEnv   []string          `yaml:"secretEnv,omitempty" json:"secretEnv,omitempty"`
-	Mounts      []Mount           `yaml:"mounts,omitempty" json:"mounts,omitempty"`
-	Resources   *Resources        `yaml:"resources,omitempty" json:"resources,omitempty"`
-	Healthcheck *Healthcheck      `yaml:"healthcheck,omitempty" json:"healthcheck,omitempty"`
+	Name          string            `yaml:"name" json:"name"`
+	Primary       bool              `yaml:"primary,omitempty" json:"primary,omitempty"`
+	Image         string            `yaml:"image" json:"image"`
+	Tag           string            `yaml:"tag,omitempty" json:"tag,omitempty"`
+	Command       []string          `yaml:"command,omitempty" json:"command,omitempty"`
+	RestartPolicy string            `yaml:"restartPolicy,omitempty" json:"restartPolicy,omitempty"`
+	Ports         []Port            `yaml:"ports,omitempty" json:"ports,omitempty"`
+	Env           map[string]string `yaml:"env,omitempty" json:"env,omitempty"`
+	SecretEnv     []string          `yaml:"secretEnv,omitempty" json:"secretEnv,omitempty"`
+	Mounts        []Mount           `yaml:"mounts,omitempty" json:"mounts,omitempty"`
+	Resources     *Resources        `yaml:"resources,omitempty" json:"resources,omitempty"`
+	Healthcheck   *Healthcheck      `yaml:"healthcheck,omitempty" json:"healthcheck,omitempty"`
 }
 
 // Port is a container port the application listens on.

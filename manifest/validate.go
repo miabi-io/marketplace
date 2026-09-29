@@ -182,6 +182,11 @@ func (m *Manifest) validateApplications(volNames, cfgNames map[string]bool) erro
 		if strings.TrimSpace(a.Image) == "" {
 			return fmt.Errorf("application %q: image is required", a.Name)
 		}
+		switch a.RestartPolicy {
+		case "", "no", "always", "unless-stopped", "on-failure":
+		default:
+			return fmt.Errorf("application %q: restartPolicy must be no, always, unless-stopped or on-failure", a.Name)
+		}
 		for _, p := range a.Ports {
 			if p.Container <= 0 || p.Container > 65535 {
 				return fmt.Errorf("application %q: invalid container port %d", a.Name, p.Container)

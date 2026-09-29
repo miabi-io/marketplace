@@ -1,5 +1,5 @@
 {
-  "etag": "\"46e5f6765c3cb7617f70784dc8d18599782cae8304c2ba23b9943a449af2e51b\"",
+  "etag": "\"972b18834503aa22d15505d27ea389f500d8b1619f4e0294f85e8841a611b35d\"",
   "generatedAt": "",
   "templates": [
     {
@@ -484,6 +484,19 @@
         {
           "version": "1.0.0",
           "digest": "sha256:60334192cad0a9c2e6af05e7517426898db3b6c847288058ae85bc910246bb58"
+        }
+      ]
+    },
+    {
+      "name": "openstatus",
+      "slug": "openstatus",
+      "source": "official",
+      "display_name": "OpenStatus",
+      "category": "Monitoring",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:62356bb6bbc4690bb7c7cab6271dd759bb86f8fda63dfb7526aabe1baad060e1"
         }
       ]
     },

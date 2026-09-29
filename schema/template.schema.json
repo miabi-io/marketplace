@@ -130,6 +130,10 @@
           "image": { "type": "string", "minLength": 1 },
           "tag": { "type": "string" },
           "command": { "type": "array", "items": { "type": "string" } },
+          "restartPolicy": {
+            "enum": ["no", "always", "unless-stopped", "on-failure"],
+            "description": "Container restart policy (default unless-stopped). on-failure lets a one-shot app such as a migration runner exit cleanly and stay stopped. Requires minMiabi 1.11.0."
+          },
           "ports": {
             "type": "array",
             "items": {
