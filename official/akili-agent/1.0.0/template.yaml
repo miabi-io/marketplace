@@ -1,0 +1,49 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: akili-agent
+  displayName: Akili Agent
+  version: 1.0.0
+  description: Security-first autonomous AI operator agent. Dials out to an Akili control plane; every action is policy-checked, approved and audited there.
+  category: DevOps
+  icon: https://github.com/goakili.png
+  homepage: https://github.com/goakili/akili
+  author:
+    name: Jonas Kaninda
+    email: me@jkaninda.dev
+    website: https://jkaninda.dev
+  tags: [ai, agent, operations, automation, devops]
+inputs:
+  - key: akili_url
+    label: Control plane URL
+    help: The public URL of your Akili control plane, e.g. https://akili.example.com.
+    type: string
+    required: true
+    placeholder: https://akili.example.com
+  - key: join_token
+    label: Join token
+    help: The one-time join token shown when you create the agent in Akili (Agents → Add agent). It is used once to enroll; the agent then keeps its own key in the volume.
+    type: password
+    required: true
+  - key: ca_cert
+    label: Control plane CA (base64)
+    help: Only for a control plane with a self-signed or private-CA certificate. The CA certificate as PEM, or base64-encoded PEM, e.g. the output of `base64 < ca.pem | tr -d '\n'`.
+    type: string
+volumes:
+  - name: state
+applications:
+  - name: akili-agent
+    primary: true
+    image: jkaninda/akili-agent
+    tag: "0.0.2"
+    env:
+      AKILI_URL: "{{ .inputs.akili_url }}"
+      AKILI_JOIN_TOKEN: "{{ .inputs.join_token }}"
+      AKILI_STATE_DIR: /var/lib/akili-agent
+      AKILI_LOG_FORMAT: json
+      AKILI_CA_CERT_PEM: "{{ .inputs.ca_cert }}"
+    secretEnv:
+      - AKILI_JOIN_TOKEN
+    mounts:
+      - volume: state
+        path: /var/lib/akili-agent
