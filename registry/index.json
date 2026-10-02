@@ -1,5 +1,5 @@
 {
-  "etag": "\"67e5947c66ea742f89121cd2e0fb2c9425957c5228cd82b9a4b30ebb23076063\"",
+  "etag": "\"315c34ed8e3a81af35d37fb1bb0716ea731230511b5d30955bb682268a23f2de\"",
   "generatedAt": "",
   "templates": [
     {
@@ -213,7 +213,7 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:ad2a75618f32ae2fdec0b938c68ae482a8c368f80ba851929997e6dafb607f0e"
+          "digest": "sha256:167bc44549c94d3eb384da5280c73a636088f9ddf5d96539f23dcc66a833aeeb"
         }
       ]
     },

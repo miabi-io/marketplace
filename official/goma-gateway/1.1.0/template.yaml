@@ -85,7 +85,7 @@ applications:
   - name: goma-gateway
     primary: true
     image: jkaninda/goma-gateway
-    tag: "0.15.1"
+    tag: "1.0.0"
     ports:
       # Plain HTTP is the entry point to attach a Miabi domain to: TLS already
       # terminates at the platform gateway. 8443 is Goma's own TLS listener, for
