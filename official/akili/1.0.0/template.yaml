@@ -1,0 +1,120 @@
+apiVersion: miabi.io/v1
+kind: Template
+metadata:
+  name: akili
+  displayName: Akili
+  version: 1.0.0
+  description: Security-first control plane for autonomous AI operator agents. Default deny, explicit allow, always auditable.
+  category: DevOps
+  icon: https://github.com/goakili.png
+  homepage: https://github.com/goakili/akili
+  author:
+    name: Jonas Kaninda
+    email: me@jkaninda.dev
+    website: https://jkaninda.dev
+  tags: [ai, agents, operations, automation, devops, llm]
+  minMiabi: "1.10.10" # routes
+
+inputs:
+  - key: public_url
+    label: Public URL
+    help: The HTTPS URL Akili is served on. Agents connect to it, and it is used in install commands and links.
+    type: string
+    required: true
+    pattern: "^https://"
+    placeholder: https://akili.example.com
+  - key: admin_email
+    label: Admin email
+    help: Email of the first owner account, created on the first start.
+    type: string
+    required: true
+    default: admin@example.com
+    pattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+  - key: admin_password
+    label: Admin password
+    help: Password of the first owner account. Leave blank to auto-generate.
+    type: password
+    required: true
+    generate: true
+    length: 20
+  - key: jwt_secret
+    label: JWT secret
+    help: Signs session and API tokens (at least 32 characters). Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 48
+  - key: encryption_key
+    label: Encryption key
+    help: Encrypts provider keys, integration tokens and the policy-signing key at rest (at least 32 characters). Keep it; without it stored secrets cannot be read. Leave blank to auto-generate.
+    type: password
+    generate: true
+    length: 48
+  - key: anthropic_api_key
+    label: Anthropic API key
+    help: Optional. Seeds Claude as the default model provider on the first start. Without it, Akili starts with a scripted test provider; add a real one under Settings → Model providers.
+    type: password
+  - key: license
+    label: Enterprise license
+    help: Optional. An Akili Enterprise license token (akili-v1.…). Licenses are bound to this deployment's Install ID, shown under Settings → License after install; you can also install the license there later.
+    type: password
+  - key: trusted_proxies
+    label: Trusted proxies
+    help: CIDRs whose X-Forwarded-For header is trusted, so rate limits and the audit log see real client IPs. The default covers Miabi's gateway on a private network.
+    type: string
+    default: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+
+databases:
+  - name: db
+    engine: postgres
+    version: "17-alpine"
+    placement: auto
+  - name: redis
+    engine: redis
+    version: "8-alpine"
+    placement: dedicated
+
+applications:
+  - name: akili
+    primary: true
+    image: jkaninda/akili
+    tag: "0.0.2"
+    ports:
+      - container: 8080
+        scheme: http
+    env:
+      AKILI_ENV: production
+      AKILI_PORT: "8080"
+      AKILI_PUBLIC_URL: "{{ .inputs.public_url }}"
+      AKILI_COOKIE_SECURE: "true"
+      AKILI_TRUSTED_PROXIES: "{{ .inputs.trusted_proxies }}"
+      AKILI_DATABASE_URL: "{{ .databases.db.uri }}?sslmode=disable"
+      AKILI_REDIS_URL: "{{ .databases.redis.uri }}"
+      AKILI_JWT_SECRET: "{{ .inputs.jwt_secret }}"
+      AKILI_ENCRYPTION_KEY: "{{ .inputs.encryption_key }}"
+      AKILI_ADMIN_EMAIL: "{{ .inputs.admin_email }}"
+      AKILI_ADMIN_PASSWORD: "{{ .inputs.admin_password }}"
+      ANTHROPIC_API_KEY: "{{ .inputs.anthropic_api_key }}"
+      AKILI_LICENSE: "{{ .inputs.license }}"
+      AKILI_LOG_LEVEL: info
+    secretEnv:
+      # Both URLs embed their password, so they are stored encrypted like one.
+      - AKILI_DATABASE_URL
+      - AKILI_REDIS_URL
+      - AKILI_JWT_SECRET
+      - AKILI_ENCRYPTION_KEY
+      - AKILI_ADMIN_PASSWORD
+      - ANTHROPIC_API_KEY
+      - AKILI_LICENSE
+    healthcheck:
+      type: http
+      path: /healthz
+      port: 8080
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      retries: 3
+      startPeriodSeconds: 15
+
+# Created on install when the URL's domain belongs to this workspace; skipped with a warning otherwise.
+routes:
+  - app: akili
+    host: "{{ .inputs.public_url }}"

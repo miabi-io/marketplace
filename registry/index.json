@@ -1,5 +1,5 @@
 {
-  "etag": "\"3b5703dd88fc379add8b9890268b7e86c5a3773d38bf290ec69dfd46c6b72056\"",
+  "etag": "\"67e5947c66ea742f89121cd2e0fb2c9425957c5228cd82b9a4b30ebb23076063\"",
   "generatedAt": "",
   "templates": [
     {
@@ -12,6 +12,32 @@
         {
           "version": "1.0.0",
           "digest": "sha256:3d6b3d41eaa19f6ec3b652a2e7260f8b4a4461848194f3745a6b2fa0804e5a4d"
+        }
+      ]
+    },
+    {
+      "name": "akili",
+      "slug": "akili",
+      "source": "official",
+      "display_name": "Akili",
+      "category": "DevOps",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:828ca84fd1688f23754fa3f3f814e31bcfd3ced9d20814f26fa1efdc9eb340b0"
+        }
+      ]
+    },
+    {
+      "name": "akili-agent",
+      "slug": "akili-agent",
+      "source": "official",
+      "display_name": "Akili Agent",
+      "category": "DevOps",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "digest": "sha256:aa07aa814f7d5289763f7778a7100772ae4d8c1f1ac6f55fd65fa756b41dfee8"
         }
       ]
     },
