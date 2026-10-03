@@ -1,5 +1,5 @@
 {
-  "etag": "\"315c34ed8e3a81af35d37fb1bb0716ea731230511b5d30955bb682268a23f2de\"",
+  "etag": "\"8667c0665759efa0f8c84aeed3b920337bf6c7551c5f271378ca1bfc72998303\"",
   "generatedAt": "",
   "templates": [
     {
@@ -23,6 +23,10 @@
       "category": "DevOps",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:5e23032b13b07460e2a928f86eca5724376c42f801b1d27623ac6fc58759dbee"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:828ca84fd1688f23754fa3f3f814e31bcfd3ced9d20814f26fa1efdc9eb340b0"
         }
@@ -35,6 +39,10 @@
       "display_name": "Akili Agent",
       "category": "DevOps",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:45939b355f76cb77257ea2d353d51d285b450394a922ff80614f719212b0dcfe"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:aa07aa814f7d5289763f7778a7100772ae4d8c1f1ac6f55fd65fa756b41dfee8"
