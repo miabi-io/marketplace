@@ -17,7 +17,7 @@ Source: **[github.com/goakili/akili](https://github.com/goakili/akili)**.
 
 ## What gets created
 
-- One application (`akili`, image `jkaninda/akili:0.0.2`) on port 8080, health-checked on `/healthz`
+- One application (`akili`, image `jkaninda/akili:0.1.0`) on port 9000, health-checked on `/healthz`
 - One PostgreSQL 17 database: agents, policies, tasks, encrypted secrets and the audit log
 - One dedicated Redis 8: events, presence, leases and leader election
 - A route from the public URL to the app, when its domain belongs to the workspace
@@ -97,5 +97,5 @@ Enterprise license input.
   key to every secret already stored.
 - **Install agents from the same version.** An agent installed from the control plane's command always
   matches it. With the Akili Agent template, use the template version whose image tag matches this one.
-- **Version `0.0.2`** is what this template runs. Templates are immutable per version, so a newer Akili
+- **Version `0.1.0`** is what this template runs. Templates are immutable per version, so a newer Akili
   ships as a new template version.

@@ -11,7 +11,7 @@ Source: **[github.com/goakili/akili](https://github.com/goakili/akili)**.
 
 ## What gets created
 
-- One application (`akili-agent`, image `jkaninda/akili-agent:0.0.2`). It exposes **no ports**: the
+- One application (`akili-agent`, image `jkaninda/akili-agent:0.1.0`). It exposes **no ports**: the
   agent only opens an outbound connection to the control plane.
 - One volume, `state`, mounted at `/var/lib/akili-agent`. It holds the agent's Ed25519 identity and its
   working directory, so restarts and redeploys reconnect without enrolling again.
@@ -64,10 +64,10 @@ It **cannot** reach the Miabi host or other containers' internals:
 
 ## Notes and limitations
 
-- **Match the control plane's version.** This template pins the agent image to `0.0.2`. When the
+- **Match the control plane's version.** This template pins the agent image to `0.1.0`. When the
   control plane is upgraded, move agents to the template version with the matching tag. An agent
   installed with the control plane's own install command always matches it.
 - **One agent per install.** Each install is one agent with one identity. For several agents, create
   each one in Akili and install the template once per token.
-- **Version `0.0.2`** is what this template runs. Templates are immutable per version, so a newer agent
+- **Version `0.1.0`** is what this template runs. Templates are immutable per version, so a newer agent
   ships as a new template version.

@@ -35,7 +35,7 @@ applications:
   - name: akili-agent
     primary: true
     image: jkaninda/akili-agent
-    tag: "0.0.5"
+    tag: "0.1.0"
     env:
       AKILI_URL: "{{ .inputs.akili_url }}"
       AKILI_JOIN_TOKEN: "{{ .inputs.join_token }}"

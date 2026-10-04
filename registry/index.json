@@ -1,5 +1,5 @@
 {
-  "etag": "\"2823b03089520b9c9eead3558066e30dfbc7c04ddfafc8ef5e8a11f380b781d9\"",
+  "etag": "\"9c028df326d7e51c0f8cd92272f2807f70346fbca71461f20083c65b1e56245c\"",
   "generatedAt": "",
   "templates": [
     {
@@ -24,7 +24,7 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:4d323d022d4cebf1279eb9a41389e952683146202f9c9a08b348ccf00e054eef"
+          "digest": "sha256:934a66877710608df09f44bbca3f34f0a20353c6539988934479f710b1b18262"
         },
         {
           "version": "1.1.0",
@@ -45,7 +45,7 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:785a09c83747f548479ccc6952cf23fa259e1acfbc8487b1b8a1b991255196ad"
+          "digest": "sha256:565c2f3c2460de21a90b5b3f7e9ee8643a4140a219f1e24bab4ce6c5cb1c19f7"
         },
         {
           "version": "1.1.0",
