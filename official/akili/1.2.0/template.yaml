@@ -61,7 +61,7 @@ inputs:
     label: Trusted proxies
     help: CIDRs whose X-Forwarded-For header is trusted, so rate limits and the audit log see real client IPs. The default covers Miabi's gateway on a private network.
     type: string
-    default: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+    default: 10.62.0.0/16
 
 databases:
   - name: db
@@ -77,13 +77,13 @@ applications:
   - name: akili
     primary: true
     image: jkaninda/akili
-    tag: "0.0.5"
+    tag: "0.1.0"
     ports:
-      - container: 8080
+      - container: 9000
         scheme: http
     env:
       AKILI_ENV: production
-      AKILI_PORT: "8080"
+      AKILI_PORT: "9000"
       AKILI_PUBLIC_URL: "{{ .inputs.public_url }}"
       AKILI_COOKIE_SECURE: "true"
       AKILI_TRUSTED_PROXIES: "{{ .inputs.trusted_proxies }}"
@@ -108,7 +108,7 @@ applications:
     healthcheck:
       type: http
       path: /healthz
-      port: 8080
+      port: 9000
       intervalSeconds: 30
       timeoutSeconds: 5
       retries: 3
