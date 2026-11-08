@@ -1,6 +1,6 @@
 module github.com/miabi-io/marketplace
 
-go 1.26.3
+go 1.27.3
 
 require (
 	github.com/jkaninda/logger v0.0.5
