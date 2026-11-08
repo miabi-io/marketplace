@@ -26,7 +26,7 @@ stock configuration.
 
 ## What gets created
 
-- One application (`gitlab`, image `gitlab/gitlab-ce:19.2.1-ce.0`) on port 80
+- One application (`gitlab`, image `gitlab/gitlab-ce:19.5.3-ce.0`) on port 80
 - Three volumes: `config` → `/etc/gitlab`, `logs` → `/var/log/gitlab`,
   `data` → `/var/opt/gitlab`
 - One config (`gitlab-omnibus`) holding `gitlab.rb`, mounted at
