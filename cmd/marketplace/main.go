@@ -126,9 +126,15 @@ func serve(cli *okapicli.CLI) error {
 	app.WithErrorHandler(api.ErrorHandler())
 	app.WithOpenAPIDocs(okapi.OpenAPI{
 		Title:       "Miabi Marketplace API",
-		Version:     "1.0.0",
+		Version:     buildinfo.Version,
 		Description: "Official + community Miabi application & database template registry.",
+		Favicon:     "/favicon.svg",
 		License:     okapi.License{Name: "Apache-2.0", URL: "http://www.apache.org/licenses/LICENSE-2.0"},
+		Contact: okapi.Contact{
+			Name:  "Hello Miabi",
+			Email: " hello@miabi.io",
+		},
+		UI: okapi.ScalarUI,
 	})
 	api.Register(app, cat)
 	// Registered before the file server so these paths reach the SEO handlers.
