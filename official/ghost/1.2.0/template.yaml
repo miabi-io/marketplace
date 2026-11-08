@@ -25,9 +25,7 @@ inputs:
     pattern: "^https?://"
     placeholder: https://blog.example.com
 
-# Logical database dependency. placement: auto -> reuse a compatible MySQL
-# instance if one exists, else provision a dedicated one; either way Ghost gets
-# its own scoped database + user. Tokens resolve identically regardless.
+# placement: auto reuses a compatible MySQL instance or provisions one; Ghost always gets its own database + user.
 databases:
   - name: db
     engine: mysql

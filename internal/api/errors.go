@@ -24,10 +24,7 @@ import (
 	"github.com/jkaninda/okapi"
 )
 
-// ErrorHandler returns an okapi.ErrorHandler that renders every framework error
-// (request binding/validation failures, 404s, panics) as the same
-// {success,data,error} envelope the handlers emit, so the API never leaks
-// Okapi's default error shape.
+// ErrorHandler renders framework errors in the same envelope the handlers emit, never Okapi's default shape.
 func ErrorHandler() okapi.ErrorHandler {
 	return func(c *okapi.Context, code int, message string, err error) error {
 		var errStr string
@@ -41,8 +38,7 @@ func ErrorHandler() okapi.ErrorHandler {
 					errCode = cc
 				}
 			}
-			// Promote the real reason to the user-facing message when the framework
-			// only handed us the generic status text.
+			// Promote the real reason when the framework only handed us the generic status text.
 			if message == "" || message == http.StatusText(code) {
 				message = errStr
 			}

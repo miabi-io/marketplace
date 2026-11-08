@@ -15,9 +15,7 @@
  *
  */
 
-// Package buildinfo identifies the running build. Release images link the git
-// tag in via -ldflags (see the Dockerfile and Makefile); a plain `go build`
-// reports "dev".
+// Package buildinfo identifies the running build; release images set it via -ldflags, a plain go build reports "dev".
 package buildinfo
 
 // Build information, overridable at link time via -ldflags.

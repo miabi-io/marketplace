@@ -54,7 +54,6 @@ applications:
         path: /mattermost/plugins
       - volume: client-plugins
         path: /mattermost/client/plugins
-    # The image ships no shell, so container healthchecks (which run through
-    # /bin/sh) cannot execute at all — readiness is the container being up.
+    # The image has no shell, so container healthchecks (run through /bin/sh) cannot execute.
     healthcheck:
       type: none

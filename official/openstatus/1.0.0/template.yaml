@@ -80,8 +80,7 @@ stack:
     - DATABASE_AUTH_TOKEN
     - CRON_SECRET
 applications:
-  # Applies pending migrations and exits; on-failure keeps a clean exit from being restarted, and
-  # redeploying the stack after an upgrade runs it again.
+  # Runs migrations and exits; on-failure keeps a clean exit from restarting, and a redeploy runs it again.
   - name: migrate
     image: ghcr.io/openstatushq/openstatus-db-migrate
     tag: "4511a22"

@@ -24,9 +24,7 @@ import (
 	"strings"
 )
 
-// RouteSpec exposes an application on the public hostname of a URL the installer asked for. The route
-// is best-effort: a host that is empty, not a public name, or under no domain of the workspace is
-// reported and skipped, never failing the install.
+// RouteSpec is best-effort: a host that is empty, not public or outside the workspace's domains is skipped.
 type RouteSpec struct {
 	// App names the application the route serves; it must declare a port.
 	App string `yaml:"app" json:"app"`
@@ -75,8 +73,7 @@ func hasPort(a AppSpec, port int) bool {
 	return false
 }
 
-// RouteHost reduces a rendered URL or host to the bare, lowercase hostname a route matches. It returns
-// "" for a value that names no public host: empty, localhost, an IP address, or a single label.
+// RouteHost returns "" for a value naming no public host: empty, localhost, an IP address, or a single label.
 func RouteHost(v string) string {
 	v = strings.TrimSpace(v)
 	if v == "" {

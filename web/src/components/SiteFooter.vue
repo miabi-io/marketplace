@@ -140,8 +140,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-/* The footer is dark in both themes — it matches miabi.io, and the badge asset
-   is the white-on-dark variant. */
 .site-footer {
   margin-top: 64px;
   padding: 48px 0 32px;

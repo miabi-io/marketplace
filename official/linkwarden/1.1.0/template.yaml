@@ -58,8 +58,7 @@ databases:
     version: "16-alpine"
     placement: auto
 volumes:
-  # Archived pages: a screenshot, a PDF and a single-file HTML copy per link.
-  # This grows faster than the database and is the part that cannot be rebuilt.
+  # Archived pages grow faster than the database and cannot be rebuilt.
   - name: data
   - name: meili
 applications:
@@ -91,9 +90,7 @@ applications:
     mounts:
       - volume: data
         path: /data/data
-    # What upstream's own HEALTHCHECK probes. The long start period is Prisma:
-    # the container runs `migrate deploy` before serving, and on a fresh database
-    # that is every migration in the project's history.
+    # Long start period: Prisma runs every pending migration before serving.
     healthcheck:
       type: http
       path: /
@@ -104,9 +101,7 @@ applications:
       startPeriodSeconds: 120
   - name: meilisearch
     image: getmeili/meilisearch
-    # Pinned to what upstream's compose ships rather than the newest release:
-    # Meilisearch rejects an index built by a different version on startup, so
-    # moving this is a migration, not an upgrade.
+    # Pinned to upstream compose: Meilisearch rejects an index built by another version, so bumping is a migration.
     tag: "v1.13.3"
     env:
       MEILI_MASTER_KEY: "{{ .inputs.meili_master_key }}"

@@ -15,17 +15,7 @@
  *
  */
 
-// Package seo serves the crawler-facing surface of the storefront: per-page head
-// tags, robots.txt and sitemap.xml.
-//
-// The storefront is a client-rendered SPA, so a crawler that indexes the HTML it
-// is served — before, or instead of, running the JavaScript — sees the same shell
-// with the same generic title for every URL. That is why a template page could be
-// listed as a bare URL with no title. Rather than pre-render the whole site, the
-// shell carries a marked-off block of head tags (see web/index.html) that this
-// package rewrites per request: title, description, canonical, Open Graph and
-// JSON-LD. What the browser ends up rendering is unchanged — the SPA still boots
-// from the same shell and sets the same title client-side.
+// Package seo rewrites the SPA shell's head tags per request so crawlers see per-page titles without pre-rendering.
 package seo
 
 import (
@@ -68,9 +58,7 @@ type Server struct {
 
 	prefix, suffix string
 	shell          bool
-	// markers records whether the shell carried both head markers. Without them
-	// it is served untouched: appending a second <title> past </html> is worse
-	// than serving the default one.
+	// Without both markers the shell is served untouched: a second <title> past </html> is worse than the default.
 	markers bool
 }
 
@@ -97,9 +85,7 @@ func New(cat *catalog.Catalog, baseURL string) *Server {
 	return s
 }
 
-// Register mounts the crawler routes. They are registered before the SPA's file
-// server so they win for the paths they own; every other path still falls through
-// to the shell.
+// Register must run before the SPA's file server so these routes win for the paths they own.
 func Register(app *okapi.Okapi, cat *catalog.Catalog, baseURL string) {
 	s := New(cat, baseURL)
 
@@ -198,8 +184,7 @@ func (s *Server) aboutPage() pageMeta {
 	}
 }
 
-// TemplatesIndex redirects the bare list path home: the SPA has no route for it,
-// and a redirect keeps a crawler that guessed the URL out of a soft 404.
+// TemplatesIndex redirects home: the SPA has no route here, and a redirect avoids a soft 404.
 func (s *Server) TemplatesIndex(c *okapi.Context) error {
 	c.Redirect(http.StatusMovedPermanently, s.base+"/")
 	return nil

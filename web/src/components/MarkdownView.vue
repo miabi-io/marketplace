@@ -5,8 +5,7 @@ import DOMPurify from 'dompurify'
 
 const props = defineProps<{ source: string }>()
 
-// READMEs are community-contributed, so the rendered HTML is sanitized before it
-// reaches the DOM — never trust catalog content with v-html.
+// READMEs are community-contributed: sanitize before v-html.
 const html = computed(() => {
   const raw = marked.parse(props.source, { async: false, gfm: true, breaks: false }) as string
   return DOMPurify.sanitize(raw, { USE_PROFILES: { html: true } })

@@ -66,9 +66,7 @@ inputs:
     generate: true
     length: 32
 
-# Users, groups and password hashes live in Postgres. The volume holds only the
-# config file the image writes on first start — but it is not optional: the
-# entrypoint exits if /data is missing or unwritable.
+# The volume is required even with Postgres: the entrypoint exits if /data is missing or unwritable.
 databases:
   - name: db
     engine: postgres
@@ -84,9 +82,7 @@ applications:
     image: lldap/lldap
     tag: "v0.6.3"
     ports:
-      # The web interface. LDAP itself listens on 3890 and is reachable from
-      # other apps in this workspace by this app's network alias — see the README
-      # before exposing it outside.
+      # The web UI; LDAP listens on 3890 on the workspace network, see the README before exposing it.
       - container: 17170
         scheme: http
     env:
@@ -98,12 +94,10 @@ applications:
       LLDAP_LDAP_USER_EMAIL: "{{ .inputs.admin_email }}"
       LLDAP_LDAP_USER_PASS: "{{ .inputs.admin_password }}"
 
-      # The image ships a config file with a *published* key_seed. Setting our
-      # own is what makes the password hashes unguessable; env beats that file.
+      # The image ships a config with a published key_seed; setting our own makes password hashes unguessable.
       LLDAP_KEY_SEED: "{{ .inputs.key_seed }}"
       LLDAP_JWT_SECRET: "{{ .inputs.jwt_secret }}"
-      # With a seed, the key is derived in memory. An empty key_file keeps LLDAP
-      # from also generating one on disk, which it would refuse to disambiguate.
+      # An empty key_file stops LLDAP from also generating a key on disk next to the seed-derived one.
       LLDAP_KEY_FILE: ""
 
       LLDAP_LDAP_PORT: "3890"

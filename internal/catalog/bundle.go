@@ -24,9 +24,7 @@ import (
 	"github.com/miabi-io/marketplace/manifest"
 )
 
-// Bundle is the GET /v1/export document: the entire catalog (both sources, all
-// versions, manifests inline) in one JSON payload. This shape is the contract
-// the Miabi consumer decodes (its remote.Bundle) — keep the JSON tags in sync.
+// Bundle is the GET /v1/export document; keep the JSON tags in sync with Miabi's remote.Bundle.
 type Bundle struct {
 	ETag        string           `json:"etag"`
 	GeneratedAt string           `json:"generatedAt"`
@@ -35,9 +33,7 @@ type Bundle struct {
 
 type BundleTemplate struct {
 	Name string `json:"name"`
-	// Slug is a deprecated alias of Name, emitted so pre-rename consumers (which
-	// read "slug") keep working during the transition. Remove once all Miabi
-	// instances read "name".
+	// Deprecated: alias of Name for consumers that still read "slug"; remove once all Miabi instances read "name".
 	Slug     string          `json:"slug"`
 	Source   string          `json:"source"`
 	Versions []BundleVersion `json:"versions"`
@@ -62,8 +58,7 @@ func (c *Catalog) Bundle() Bundle {
 	return b
 }
 
-// Index is the lightweight GET /v1/index document: sources, versions, and
-// digests, without manifests — for cheap freshness checks.
+// Index is the GET /v1/index document: versions and digests without manifests, for cheap freshness checks.
 type Index struct {
 	ETag        string          `json:"etag"`
 	GeneratedAt string          `json:"generatedAt"`

@@ -25,8 +25,6 @@ const iconFailed = ref(false)
 const hue = computed(() => hueOf(name.value))
 const entry = computed(() => detail.value?.entry)
 const manifest = computed(() => detail.value?.manifest)
-// Configs are counted in files, not sets: one config holding four files reads as
-// four files to whoever is deciding whether to install this.
 const configFileCount = computed(() =>
   (manifest.value?.configs ?? []).reduce((n, c) => n + Object.keys(c.files ?? {}).length, 0),
 )

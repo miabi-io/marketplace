@@ -42,9 +42,7 @@ databases:
     placement: dedicated
 volumes:
   - name: media
-# Shared across the server + worker: both processes need the same secret key and
-# the same PostgreSQL/Redis connection, so they are declared once here instead of
-# being repeated in every application.
+# The server and worker both need the same secret key and database connection, so they are declared once here.
 stack:
   description: authentik identity provider — a server and a background worker sharing PostgreSQL and Redis.
   env:

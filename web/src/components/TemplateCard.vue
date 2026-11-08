@@ -5,8 +5,7 @@ import { hueOf, isURL, monogram, provision } from '@/utils/format'
 
 const props = defineProps<{ item: Listing }>()
 
-// Icons are third-party URLs (simpleicons, GitHub avatars). When one 404s or the
-// host is unreachable, fall back to the monogram instead of leaving a hole.
+// Icons are third-party URLs; fall back to the monogram when one fails to load.
 const iconFailed = ref(false)
 const iconOk = computed(() => isURL(props.item.icon) && !iconFailed.value)
 const hue = computed(() => hueOf(props.item.name))

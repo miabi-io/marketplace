@@ -32,8 +32,7 @@ applications:
       FORGEJO__database__NAME: "{{ .databases.db.name }}"
       FORGEJO__database__USER: "{{ .databases.db.user }}"
       FORGEJO__database__PASSWD: "{{ .databases.db.password }}"
-      # DB is wired via env, so skip the first-run installer; the first registered
-      # account becomes the site administrator.
+      # DB is wired via env, so skip the first-run installer; the first registered account becomes admin.
       FORGEJO__security__INSTALL_LOCK: "true"
     secretEnv:
       - FORGEJO__database__PASSWD

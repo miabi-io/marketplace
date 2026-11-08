@@ -48,13 +48,11 @@ databases:
     version: "8-alpine"
     placement: dedicated
 volumes:
-  # public holds the app's web assets, storage its uploads and generated PDFs.
-  # Both are shared with the web server, which serves the static files directly.
+  # public holds web assets, storage uploads and PDFs; both are shared with nginx, which serves static files.
   - name: public
   - name: storage
 applications:
-  # The application image is php-fpm only (it exposes 9000 and nothing else), so
-  # it is never routed directly — the nginx sidecar below is the entry point.
+  # The image is php-fpm only (port 9000), so the nginx sidecar below is the entry point.
   - name: app
     image: invoiceninja/invoiceninja-debian
     tag: "5.13.30"
@@ -63,8 +61,7 @@ applications:
       APP_KEY: "base64:{{ base64 .inputs.app_key }}"
       APP_ENV: production
       APP_DEBUG: "false"
-      # TLS terminates at the gateway, which forwards the original scheme and
-      # host; requiring HTTPS in the app as well would redirect-loop.
+      # TLS terminates at the gateway; requiring HTTPS in the app too would redirect-loop.
       REQUIRE_HTTPS: "false"
       TRUSTED_PROXIES: "*"
 
@@ -109,9 +106,7 @@ applications:
     ports:
       - container: 80
         scheme: http
-    # The config is carried in env because env is the only interpolated field, and
-    # it must name the app's network alias. nginx then waits for the application
-    # to publish its assets into the shared volume before serving.
+    # Config is in env because only env is interpolated and it must name the app's network alias.
     command:
       - sh
       - -c

@@ -29,8 +29,7 @@ applications:
     primary: true
     image: memcached
     tag: "1.6-alpine"
-    # Wrapped in a shell so the sizing inputs reach memcached's flags as env
-    # vars; the image already runs as the unprivileged memcache user.
+    # Through a shell so the sizing inputs reach memcached's flags as env vars.
     command: ["sh", "-c", "exec memcached -m \"$MEMCACHED_MEMORY_MB\" -c \"$MEMCACHED_MAX_CONNECTIONS\""]
     env:
       MEMCACHED_MEMORY_MB: "{{ .inputs.memory_mb }}"

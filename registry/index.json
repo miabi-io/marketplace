@@ -1,5 +1,5 @@
 {
-  "etag": "\"315c34ed8e3a81af35d37fb1bb0716ea731230511b5d30955bb682268a23f2de\"",
+  "etag": "\"d91ed452e8afb3daf367734ba0ba6f2b9f48f2730f83ba23aa86e447634b0787\"",
   "generatedAt": "",
   "templates": [
     {
@@ -50,7 +50,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:5a602343de596181fb5c10b684d9a7bc8c5048a5be32b3c2eb20c6463ce1500b"
+          "digest": "sha256:caae9da64289159e16f2d6c03c5268a5fbbd377c9f193c293644f3d5c401a6bd"
         }
       ]
     },
@@ -63,11 +63,11 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:8498697a323e8f0700127f3b505795e4ff76e1e5176195ef4c45458ee608e8a7"
+          "digest": "sha256:89fd0fc0f928bcb688d39901779fe7f25bb17bed5166bed53386e9a61b3808af"
         },
         {
           "version": "1.0.0",
-          "digest": "sha256:b8469611bd9e928dd1bc457e63ecace31752f02bcaef32cf425c411eb13f2a72"
+          "digest": "sha256:6a0455d5154748d6caa3792c8a7ee8e1acc455b4a6483b6d8d8cf6c25884c213"
         }
       ]
     },
@@ -80,11 +80,11 @@
       "versions": [
         {
           "version": "1.3.0",
-          "digest": "sha256:ddbc7b5e4e99d9662b1e1e48240083581a189b62425195146d3ac233adc96ef2"
+          "digest": "sha256:8e1ba5ad945476a20070a039d7131ccce6d406670fffc852ccff034a8307fbc6"
         },
         {
           "version": "1.2.0",
-          "digest": "sha256:816ca3ac3a8f1b5e498a2c05e47ea8bba66fee3852839bbc690a9ef8fb3c6964"
+          "digest": "sha256:04eb092317b13640d42f7a7095187b7fdd38ae01639d0d8706945c4c6bb6f119"
         }
       ]
     },
@@ -110,11 +110,11 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:9ca5250a011252563f986482f86274831b128c8c3f882e553e568db90dcfe4c7"
+          "digest": "sha256:298ee2afebc208f12b63e5c9c24c9f572fe2c00e74bf702daa7783cbba71914d"
         },
         {
           "version": "1.0.0",
-          "digest": "sha256:be61296062e5ee93c5e7e94da25df2cd604b7cf68a6a27e202a4cceee0195e52"
+          "digest": "sha256:b1b5d2c322b9f07db79a27b5f8da7e6b56740e8ff933198caed40cb46faca63a"
         }
       ]
     },
@@ -127,7 +127,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:e0914a0a7f6a6dbade22f545306ebf17b3069442afd28c2a746a2c23394aa8d8"
+          "digest": "sha256:3b8df1be52df1b2f8a03ca935f825a1c82951543ea43ed2a743611bb4feebf31"
         }
       ]
     },
@@ -140,7 +140,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:b6bbfba6f71f8860fdb33265fa9d65068a11375ca717e129836763c1e153335a"
+          "digest": "sha256:a2015bbbc8b417a0894cf084c2c8a3a3175850a3940a42bbbf60e466df0d73a1"
         }
       ]
     },
@@ -166,11 +166,11 @@
       "versions": [
         {
           "version": "1.3.0",
-          "digest": "sha256:2ef3a46174b3e52f7f27ac15891417ef05919e6280db0d32b090d56682de8e8b"
+          "digest": "sha256:3408da29edf0bb868aadadd2117539a9a1d15b2d69fc21a14540613c1645e012"
         },
         {
           "version": "1.2.0",
-          "digest": "sha256:e8fb5cf3e4976792aa5f166742d2e0d6d5a5edf470b466a4b91b673026fec6a3"
+          "digest": "sha256:bc5f28e44b05966c42d782e656caa8c3e849b1e5ed93daae8afa693d006d8bf1"
         }
       ]
     },
@@ -183,7 +183,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:1dabe82853456a16ed32bfb67484f8e7df2369fcdd0796a29cf491587b487f25"
+          "digest": "sha256:755270c0f5e79377e3e91c7895cc608f60b831b2950b3271a61e2177daf50665"
         }
       ]
     },
@@ -196,11 +196,11 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:1351e527dd4d0bd298faca422cdd82cea98a924eef445263010e879813f115b2"
+          "digest": "sha256:62c0743abb4dafaae29bd63486bb6913d88a200d8ad8f73b2246b1dfe6bcc2d0"
         },
         {
           "version": "1.1.0",
-          "digest": "sha256:e4c98d45e6657653ff322f0d4a580e4264b6b4c69627825ab92b20099bbecf36"
+          "digest": "sha256:b17a3f9d55c17b2d72b2f4f0d59adbf066875e5ba24dc63134fd9f918964aabe"
         }
       ]
     },
@@ -213,7 +213,7 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:167bc44549c94d3eb384da5280c73a636088f9ddf5d96539f23dcc66a833aeeb"
+          "digest": "sha256:7a14fc1994e5cf1e569ae3f3cbb247d88a4fc436fcccfa0e3a7c483b74985f29"
         }
       ]
     },
@@ -239,11 +239,11 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:d6a9bfe84902412bba6555c2637d194e1e33f5eda08c2d40afe7dd1a9904c7a2"
+          "digest": "sha256:2b08148e258447ec5090cc877655ac45d988c088cc93accf2897b2567f18c586"
         },
         {
           "version": "1.0.0",
-          "digest": "sha256:c15ada52216056642dd3724e82e82431b72db52d4cb22198b1d37e83990ecf68"
+          "digest": "sha256:8b1a07c3b54ed2059c674bfcbfcfaaaf733f07bcedc9e161a2df0009c4a88e62"
         }
       ]
     },
@@ -299,11 +299,11 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:facbe14ce89de2d1a43f0d89e36309ff4e03b7f358e24ec70e84f02f5f442d17"
+          "digest": "sha256:c086be884e02f9207f875761f4d8ef9e9d041696e713c4fa3d919c0d3885ce29"
         },
         {
           "version": "1.0.0",
-          "digest": "sha256:f851cad4d6f209f8a7fb4ffe6aa41f77a57175dd27f6fe971e34185e973c5626"
+          "digest": "sha256:9eb8c92b17624bef0a9dbc8ec448c57a0baba118d39fd9824e60913eb917d9a2"
         }
       ]
     },
@@ -316,11 +316,11 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:00623e95fb6ad1ce90f53afbe4b9114a4adb22720b37aa97f0be0ea3537ed236"
+          "digest": "sha256:2fb5e75d28636e40787569da376a8f9380214f239abba6f2f34ab369d274b106"
         },
         {
           "version": "1.0.0",
-          "digest": "sha256:b1907b1254e97d84df898498e52697fc78a3cd54b36b1aa8bceb161bbf34edf4"
+          "digest": "sha256:caec0c8ebdfd8ccb60c64a4643b1e8612db9087d4fbf91d9268a580a8d625ab3"
         }
       ]
     },
@@ -346,11 +346,11 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:8bbed7bff2eb947b5ad948b9c456f8706c50504d3cdfc2a467c6ead6bf99bc8b"
+          "digest": "sha256:a7e1e904dce313ecc43f587c56bf91a59f93cd827d0a16ea1f88834404f3d0a5"
         },
         {
           "version": "1.0.0",
-          "digest": "sha256:a70fe8874d9bfaa3e0c3ca21745039397edb4b732f00cd8e5a44069bc202bb71"
+          "digest": "sha256:82aed879bc115a7517690cc14a3b6b1133b8a9080e0857ea9da8b195b2324d5f"
         }
       ]
     },
@@ -393,7 +393,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:cc0be6fbbb82ef3b37077b2e35ddfc1c2d425694907f56dfdd5dff7efc0bf128"
+          "digest": "sha256:8a1698a348e69ab3319498bf107d9dd8de89a0218984ac3a97ec634c7138dd62"
         }
       ]
     },
@@ -432,7 +432,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:e1cdb9c79c10e0ab7b25f98e6d89019b5f2b4f4f7339308f072edb4fe068303f"
+          "digest": "sha256:e5a7524d968febb4a715fe14db2a6d19f80df866c0fdd8a9864d23aa13105014"
         }
       ]
     },
@@ -557,7 +557,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:60334192cad0a9c2e6af05e7517426898db3b6c847288058ae85bc910246bb58"
+          "digest": "sha256:c065bf863bca1abb341bd11083fd4ccd17c53a8148ce7ecff33a6f79f4897c9e"
         }
       ]
     },
@@ -570,7 +570,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:0f62d9ca5aff024235a91d1e5a5d012eec455880736ab2267c297d5ac036181d"
+          "digest": "sha256:44ef773b2e8a72ddddab94c661af6d367b07a6d6a717e2d6406e1cacdfbe1185"
         }
       ]
     },
@@ -613,7 +613,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:9b6b92d6c1cf50fac5c04913a7a773d7d7bb5380c581c991205a3d7725987bd6"
+          "digest": "sha256:e43546e192dab3a81779a798edc33b0f732b83e3aaf3219dd9f913252ba31d1d"
         }
       ]
     },
@@ -626,15 +626,15 @@
       "versions": [
         {
           "version": "1.3.0",
-          "digest": "sha256:8ef0f216877430da616da58c86c79f38627a2c29cce658bffc19f0e935aec96a"
+          "digest": "sha256:ad6d0792291225d25dd160bc8e282cde55b74dcefff1e76fdcfe672e3c87bb5f"
         },
         {
           "version": "1.2.0",
-          "digest": "sha256:e8e96d118f95cf98ea2b2328d2dfdd3d97c324fe690a72968015c1252b2524eb"
+          "digest": "sha256:b495d642e647b59c005be35e39dc328e4787e3e8ab437b8889ae5b81f454fd24"
         },
         {
           "version": "1.1.0",
-          "digest": "sha256:33de2baf31769f93e50ece6ac1187b9c9862d34971170a68c453df4358c16a69"
+          "digest": "sha256:c9ff0be7c50a7998aaa40ba166ce1b32b7dfd32286cee76e6a51e8a52abaa2dc"
         }
       ]
     },
@@ -660,7 +660,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:7f4d75e088b8fffe9ce10f487aff1f98bbd9e212542e419c5c33c7edca6b43c7"
+          "digest": "sha256:4c71d7e7bd6e7c190e5ff3fbcb32f929a1533841e82183abc18770671c1a772a"
         }
       ]
     },
@@ -673,7 +673,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:f618afaac504c566e6476170aabcfdd786c0427b84c7dc3cfa2ea6db87faf5fb"
+          "digest": "sha256:dbd875a136028cf9a18a1a686ab1718aa03c1e9f10b822d191d6b7a7a20eea95"
         }
       ]
     },
@@ -751,7 +751,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:9f4d2fff51c47fbbdfe35a744aeaa682afba99a3f4fe57748f0bae9f51ffbdd4"
+          "digest": "sha256:dbfc575a7ac8936f3a0ad81f3d739e8a23738ab41b01a618e2c72af89054e73d"
         }
       ]
     },
@@ -815,7 +815,7 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:3056457851e59e20f381a2e3347d2eb5832a3a8ae6ba20a01dc288369763f280"
+          "digest": "sha256:af71cf1aac8690c1df455329a4b42c4501b30fdbb0797bcc96979b72af939eac"
         }
       ]
     },

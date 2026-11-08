@@ -24,8 +24,7 @@ applications:
     primary: true
     image: qdrant/qdrant
     tag: "v1.19.0"
-    # 6333 is the REST API (and dashboard); gRPC stays on 6334, reachable over
-    # the workspace network.
+    # gRPC stays on 6334, reachable over the workspace network.
     ports:
       - container: 6333
         scheme: http
@@ -36,8 +35,7 @@ applications:
     mounts:
       - volume: storage
         path: /qdrant/storage
-    # The image ships neither curl nor wget, so the readiness probe talks to the
-    # REST port through bash's /dev/tcp.
+    # The image ships neither curl nor wget, so the probe uses bash's /dev/tcp.
     healthcheck:
       type: command
       command: >-

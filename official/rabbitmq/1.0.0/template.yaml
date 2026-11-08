@@ -30,8 +30,7 @@ applications:
     primary: true
     image: rabbitmq
     tag: "4.3-management-alpine"
-    # Only the management UI is published; producers and consumers reach AMQP on
-    # port 5672 over the workspace network.
+    # Only the management UI is published; AMQP stays on 5672 over the workspace network.
     ports:
       - container: 15672
         scheme: http

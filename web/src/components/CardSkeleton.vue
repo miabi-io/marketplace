@@ -1,6 +1,5 @@
 <template>
-  <!-- Mirrors TemplateCard's box model so the grid does not reflow when real
-       results replace it. -->
+  <!-- Mirrors TemplateCard's box model so the grid does not reflow when real results replace it. -->
   <div
     class="card sk"
     aria-hidden="true"

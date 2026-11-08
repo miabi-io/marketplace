@@ -33,8 +33,7 @@ applications:
       DB_PASS: "{{ .databases.db.password }}"
     secretEnv:
       - DB_PASS
-    # Holds page content when a local/git storage target is enabled; the wiki
-    # itself lives in PostgreSQL.
+    # Used only when a local/git storage target is enabled; the wiki itself lives in PostgreSQL.
     mounts:
       - volume: content
         path: /wiki/data/content

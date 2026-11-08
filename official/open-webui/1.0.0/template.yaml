@@ -46,9 +46,7 @@ applications:
       - container: 8080
         scheme: http
     env:
-      # Chats, users and settings live in PostgreSQL; the volume keeps uploads,
-      # the vector store and cached models. The postgres:// URI is rewritten to
-      # postgresql+psycopg:// by Open WebUI itself.
+      # Open WebUI rewrites the postgres:// URI to postgresql+psycopg:// itself.
       DATABASE_URL: "{{ .databases.db.uri }}"
       WEBUI_SECRET_KEY: "{{ .inputs.secret_key }}"
       OLLAMA_BASE_URL: "{{ .inputs.ollama_base_url }}"
@@ -61,8 +59,6 @@ applications:
     mounts:
       - volume: data
         path: /app/backend/data
-    # First boot downloads the default embedding model before binding the port,
-    # which can outlast the readiness window; the model is cached in the volume
-    # afterwards. Left off so a slow first start is not reported as a failure.
+    # First boot downloads the embedding model before binding the port, which can outlast the readiness window.
     healthcheck:
       type: none

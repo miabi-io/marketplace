@@ -26,9 +26,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// Parse decodes a template manifest from YAML and validates it. Unknown fields
-// are rejected (community manifests are untrusted input — see Validate). The
-// returned manifest is normalized (defaults filled).
+// Parse rejects unknown fields because community manifests are untrusted input.
 func Parse(data []byte) (*Manifest, error) {
 	dec := yaml.NewDecoder(bytes.NewReader(data))
 	dec.KnownFields(true) // reject unknown/misspelled fields rather than ignoring them
@@ -64,8 +62,6 @@ func (m *Manifest) normalize() {
 	}
 }
 
-// Digest returns the sha256 of data, prefixed "sha256:", matching the index.yaml
-// format.
 func Digest(data []byte) string {
 	sum := sha256.Sum256(data)
 	return "sha256:" + hex.EncodeToString(sum[:])

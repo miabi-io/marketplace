@@ -1,8 +1,6 @@
 name: Release image
 
-# The catalog bundle (export.json) is released by ci.yml on tag. This workflow
-# publishes the optional marketplace server image (API + storefront) to Docker
-# Hub and GHCR for anyone self-hosting a live registry.
+# Publishes the optional self-hosted server image; the catalog bundle itself is released by ci.yml.
 on:
   push:
     tags: ["v*.*.*"]
@@ -26,8 +24,7 @@ jobs:
           {
             echo "VERSION=${GITHUB_REF_NAME#v}"
             echo "COMMIT=${GITHUB_SHA::7}"
-            # The commit's own timestamp, not "now", so re-running on the same tag
-            # reproduces the same binary.
+            # The commit's timestamp, not now, so re-running on the same tag reproduces the same binary.
             echo "BUILD_DATE=$(git show -s --format=%cI "$GITHUB_SHA")"
             case "${GITHUB_REF_NAME}" in
               *-*) echo "PRERELEASE=true" ;;

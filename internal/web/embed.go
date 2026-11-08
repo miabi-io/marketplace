@@ -15,17 +15,12 @@
  *
  */
 
-// Package web embeds the built storefront (the Vue SPA) so one binary serves the
-// catalog API and the site. `dist/` is a build artifact staged by `make build-ui`
-// — only a .gitkeep placeholder is committed, so `go build` works on a clean
-// checkout (the API still serves; the site 404s until the UI is built).
+// Package web embeds the built SPA; dist/ holds only a .gitkeep in git, so the site 404s until make build-ui.
 package web
 
 import "embed"
 
-// Assets holds the built SPA under a top-level "dist/" directory, served via
-// Okapi's WebFS with WebConfig{Root: "dist"}. The `all:` prefix keeps dotted
-// files (the .gitkeep placeholder, Vite's occasional dotfiles) in the embed.
+// The all: prefix keeps dotfiles (the .gitkeep placeholder) in the embed.
 //
 //go:embed all:dist
 var Assets embed.FS

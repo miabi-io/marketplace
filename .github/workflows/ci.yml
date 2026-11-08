@@ -48,9 +48,7 @@ jobs:
       - name: Lint catalog (validate every template + digests + unique slugs)
         run: go run ./cmd/marketplace lint
 
-      # On PRs, nudge contributors that the generated artifacts are stale. On main
-      # we regenerate and commit them instead (see the publish job), so this is a
-      # PR-only guard rather than a hard requirement to pre-commit generated files.
+      # On main the publish job regenerates them instead, so this is a PR-only nudge.
       - name: Generated artifacts are up to date
         if: github.event_name == 'pull_request'
         run: |
@@ -58,10 +56,7 @@ jobs:
           git diff --exit-code export.json registry/index.json \
             || (echo "::error::export.json / registry/index.json are stale — run 'go run ./cmd/marketplace generate' and commit, or let the merge-to-main job regenerate them." && exit 1)
 
-  # After merge to main, regenerate export.json + registry/index.json from the
-  # templates and commit them back, so the repo always matches without
-  # contributors having to run generate. (The catalog Miabi syncs is published as
-  # a Release asset on tag — see the release job — not from main directly.)
+  # Regenerate the artifacts on main so contributors never have to; Miabi syncs from release assets, not main.
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: validate
@@ -93,9 +88,7 @@ jobs:
           git commit -m "chore(catalog): regenerate export.json + index [skip ci]"
           git push
 
-  # Miabi syncs the catalog from the
-  # latest release's export.json (a stable, immutable URL — see MIABI_MARKETPLACE_URL),
-  # so cutting a tag is how a new catalog goes live.
+  # Miabi syncs from the latest release's export.json, so cutting a tag is how a new catalog goes live.
   release:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: validate
@@ -118,9 +111,7 @@ jobs:
         run: |
           count=$(grep -o '"slug"' export.json | wc -l | tr -d ' ')
           notes="Marketplace catalog bundle for ${GITHUB_REF_NAME} (${count} templates)."
-          # Installs sync from the latest release, and the tag glob matches
-          # v1.2.3-rc.1 too, so a candidate must be flagged rather than becoming
-          # the catalog every Miabi picks up.
+          # The tag glob matches v1.2.3-rc.1 too; flag it so a candidate never becomes the catalog installs sync.
           prerelease=""
           case "${GITHUB_REF_NAME}" in *-*) prerelease="--prerelease" ;; esac
           if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then

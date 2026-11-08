@@ -102,8 +102,7 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 		okapi.DocResponse(http.StatusOK, &Envelope[BuildInfo]{}),
 	)
 
-	// Served at exactly the path the schema's own $id names, so an editor's YAML
-	// language server pointed at that URL resolves it.
+	// Served at exactly the path the schema's $id names, so an editor's YAML language server resolves it.
 	app.Get("/schema/template.schema.json", h.Schema,
 		okapi.DocSummary("Template manifest JSON Schema"),
 		okapi.DocDescription("The JSON Schema describing a miabi.io/v1 Template, for editor validation. Served at its own $id URL; ETag-conditional."),
@@ -127,8 +126,7 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 	)
 }
 
-// Export returns the full bundle (Miabi's primary sync call). Bare JSON (no
-// envelope) so the consumer decodes it directly; ETag-conditional.
+// Export returns the full bundle as bare JSON (no envelope) so the consumer decodes it directly.
 func (h *Handlers) Export(c *okapi.Context) error {
 	if h.notModified(c, h.cat.ETag()) {
 		return c.String(http.StatusNotModified, "")
@@ -144,8 +142,6 @@ func (h *Handlers) Index(c *okapi.Context) error {
 	return c.JSON(http.StatusOK, h.cat.Index())
 }
 
-// ListTemplatesRequest is the search/filter query for ListTemplates. Okapi binds
-// it from the query string, applies defaults/validation, and documents it.
 type ListTemplatesRequest struct {
 	Q        string `query:"q" description:"Free-text search over name/description/tags."`
 	Source   string `query:"source" enum:"official,community" description:"Filter by source."`
@@ -176,8 +172,6 @@ type TemplateRequest struct {
 	Version string `query:"version" description:"Specific version (default: latest)."`
 }
 
-// GetTemplate returns a template's detail: listing, all versions, README, and
-// the manifest of the requested version (?version, default latest).
 func (h *Handlers) GetTemplate(c *okapi.Context, in *TemplateRequest) error {
 	t, found := h.cat.Get(in.Name)
 	if !found {
@@ -222,8 +216,7 @@ func (h *Handlers) GetManifest(c *okapi.Context, in *VersionRequest) error {
 	if h.notModified(c, `"`+ver.Digest+`"`) {
 		return c.String(http.StatusNotModified, "")
 	}
-	// Data, not String: String writes text/plain, which would override the
-	// Content-Type this route documents.
+	// Data, not String: String writes text/plain, which would override the documented Content-Type.
 	return c.Data(http.StatusOK, "application/yaml; charset=utf-8", ver.Raw)
 }
 
@@ -237,23 +230,18 @@ type HealthResponse struct {
 	Status string `json:"status"`
 }
 
-// Health is the liveness probe.
-// schemaETag digests the embedded schema once: it is fixed for the life of the
-// binary, so it changes only when a release changes the schema.
+// The embedded schema is fixed for the life of the binary, so its ETag is computed once.
 var schemaETag = func() string {
 	sum := sha256.Sum256(marketplace.TemplateSchema)
 	return `"` + hex.EncodeToString(sum[:]) + `"`
 }()
 
-// Schema serves the template manifest JSON Schema. Content-Type is
-// application/json rather than the registered application/schema+json, because
-// editors and schema consumers agree on the former.
+// Schema uses application/json, not application/schema+json, because editors and consumers agree on the former.
 func (h *Handlers) Schema(c *okapi.Context) error {
 	if h.notModified(c, schemaETag) {
 		return c.String(http.StatusNotModified, "")
 	}
-	// Data, not String: String writes text/plain and would override a
-	// Content-Type set beforehand.
+	// Data, not String: String writes text/plain and would override the Content-Type.
 	return c.Data(http.StatusOK, "application/json; charset=utf-8", marketplace.TemplateSchema)
 }
 
@@ -297,8 +285,6 @@ func (h *Handlers) Metrics(c *okapi.Context) error {
 	return c.String(http.StatusOK, b.String())
 }
 
-// notModified sets caching headers and reports whether the client's
-// If-None-Match already matches (a 304 short-circuit).
 func (h *Handlers) notModified(c *okapi.Context, etag string) bool {
 	c.SetHeader("ETag", etag)
 	c.SetHeader("Cache-Control", "public, max-age=300")

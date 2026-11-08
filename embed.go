@@ -15,23 +15,17 @@
  *
  */
 
-// Package marketplace embeds the catalog content (official/ + community/) so the
-// service ships it and is stateless — git is the database. The same directories
-// are the canonical, forkable source contributors edit; merge to main rebuilds
-// the image and the live API matches the repo.
+// Package marketplace embeds the catalog content so the service is stateless: git is the database.
 package marketplace
 
 import "embed"
 
-// Content holds every template's files: <source>/<slug>/<version>/template.yaml
-// plus optional <source>/<slug>/metadata.yaml and README.md.
+// Content holds <source>/<slug>/<version>/template.yaml plus optional metadata.yaml and README.md per slug.
 //
 //go:embed all:official all:community
 var Content embed.FS
 
-// TemplateSchema is the manifest JSON Schema, embedded so the service can serve
-// it at the absolute URL its own $id advertises — an editor pointed there (as
-// the contributing guide instructs) has to resolve it over HTTP.
+// TemplateSchema is embedded so the service can serve it at the URL its own $id advertises.
 //
 //go:embed schema/template.schema.json
 var TemplateSchema []byte

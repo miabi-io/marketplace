@@ -15,10 +15,7 @@
  *
  */
 
-// Package catalog loads the embedded official/ + community/ template content
-// into an in-memory, digest-verified catalog and serves the wire views the API
-// exposes (export bundle, index, listings). It is the service's source of truth;
-// the service is otherwise stateless (git is the database).
+// Package catalog loads the embedded templates into an in-memory, digest-verified catalog served by the API.
 package catalog
 
 import (
@@ -46,8 +43,7 @@ const (
 
 var nameRe = regexp.MustCompile(`^[a-z0-9][a-z0-9-]*$`)
 
-// Metadata is storefront-only enrichment from <name>/metadata.yaml — it never
-// affects an install (the manifest is authoritative for that).
+// Metadata is storefront-only enrichment; it never affects an install.
 type Metadata struct {
 	Featured    bool     `yaml:"featured" json:"featured,omitempty"`
 	Screenshots []string `yaml:"screenshots" json:"screenshots,omitempty"`
@@ -99,9 +95,7 @@ type Catalog struct {
 // Load reads the embedded content into a catalog.
 func Load() (*Catalog, error) { return loadFS(marketplace.Content) }
 
-// loadFS builds a catalog from any fs (embedded in production; a fixture in
-// tests). A malformed manifest, a digest/name/version mismatch, or a name
-// duplicated across sources is a hard error — the build/CI fails closed.
+// Any malformed manifest, digest/name/version mismatch or cross-source duplicate name fails the build closed.
 func loadFS(fsys fs.FS) (*Catalog, error) {
 	c := &Catalog{}
 	seen := map[string]string{} // name -> source, for cross-folder uniqueness
@@ -199,9 +193,7 @@ func loadTemplate(fsys fs.FS, source, name string) (*Template, error) {
 	return t, nil
 }
 
-// computeETag is a strong validator over every version digest — it changes iff
-// the catalog content changes, so conditional GETs on /export and /index are
-// nearly free.
+// computeETag changes iff catalog content changes, so conditional GETs on /export and /index are nearly free.
 func computeETag(ts []Template) string {
 	lines := make([]string, 0, len(ts))
 	for _, t := range ts {
