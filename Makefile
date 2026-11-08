@@ -10,7 +10,7 @@ PORT       ?= 8088
 WEB_DIR       := web
 EMBED_WEB_DIR := internal/web/dist
 
-.PHONY: run serve generate lint build build-ui build-all dev-ui test vet check tidy docker help
+.PHONY: run serve generate lock lint build build-ui build-all dev-ui test vet check tidy docker help
 
 run: ## Serve the API + storefront (MARKETPLACE_PORT to override :8088)
 	MARKETPLACE_PORT=$(PORT) go run -ldflags "$(LDFLAGS)" ./cmd/marketplace server
@@ -19,6 +19,9 @@ serve: run ## Alias of run
 
 generate: ## Rewrite export.json + registry/index.json (CI runs + diffs this)
 	go run ./cmd/marketplace generate
+
+lock: ## Write release.yaml (date + image digests) for new versions: make lock T="posta akili"
+	go run ./cmd/marketplace lock $(T)
 
 lint: ## Validate every embedded template (catalog drift check)
 	go run ./cmd/marketplace lint
