@@ -39,8 +39,8 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 
 	app.Get("/v1/export", h.Export,
 		okapi.DocSummary("Export the full catalog bundle"),
-		okapi.DocDescription("The full bundle (index + every version's manifest, inline) — Miabi's primary sync call. Bare JSON (no envelope); ETag-conditional, returns 304 when If-None-Match matches."),
-		okapi.DocTag("catalog"),
+		okapi.Description("The full bundle (index + every version's manifest, inline) — Miabi's primary sync call. Bare JSON (no envelope); ETag-conditional, returns 304 when If-None-Match matches."),
+		okapi.Tag("catalog"),
 		okapi.DocResponseHeader("ETag", "string", "Catalog digest; echo back as If-None-Match for a conditional GET."),
 		okapi.DocResponse(http.StatusOK, &catalog.Bundle{}),
 		okapi.DocResponse(http.StatusNotModified, nil),
@@ -48,8 +48,8 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 
 	app.Get("/v1/index", h.Index,
 		okapi.DocSummary("Lightweight machine index"),
-		okapi.DocDescription("The lightweight machine index (sources, versions, digests). Bare JSON; ETag-conditional."),
-		okapi.DocTag("catalog"),
+		okapi.Description("The lightweight machine index (sources, versions, digests). Bare JSON; ETag-conditional."),
+		okapi.Tag("catalog"),
 		okapi.DocResponseHeader("ETag", "string", "Catalog digest."),
 		okapi.DocResponse(http.StatusOK, &catalog.Index{}),
 		okapi.DocResponse(http.StatusNotModified, nil),
@@ -57,56 +57,56 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 
 	app.Get("/v1/templates", okapi.H(h.ListTemplates),
 		okapi.DocSummary("Search & list templates"),
-		okapi.DocDescription("Paginated search/filter over the catalog. Offset pagination: page (1-based) + per_page (default 24, max 100)."),
-		okapi.DocTag("templates"),
+		okapi.Description("Paginated search/filter over the catalog. Offset pagination: page (1-based) + per_page (default 24, max 100)."),
+		okapi.Tag("templates"),
 		okapi.DocResponse(http.StatusOK, &Envelope[catalog.Page]{}),
 	).WithInput(&ListTemplatesRequest{})
 
 	app.Get("/v1/templates/{name}", okapi.H(h.GetTemplate),
 		okapi.DocSummary("Template detail"),
-		okapi.DocDescription("A template's detail: listing, all versions, README, and the manifest of the requested version (?version, default latest)."),
-		okapi.DocTag("templates"),
+		okapi.Description("A template's detail: listing, all versions, README, and the manifest of the requested version (?version, default latest)."),
+		okapi.Tag("templates"),
 		okapi.DocResponse(http.StatusOK, &Envelope[Detail]{}),
-		okapi.DocErrorResponse(http.StatusNotFound, &ErrorResponse{}),
+		okapi.DocResponse(http.StatusNotFound, &ErrorResponse{}),
 	).WithInput(&TemplateRequest{})
 
 	app.Get("/v1/templates/{name}/versions/{version}", okapi.H(h.GetVersion),
 		okapi.DocSummary("Version metadata"),
-		okapi.DocDescription("One version's metadata + digest."),
-		okapi.DocTag("templates"),
+		okapi.Description("One version's metadata + digest."),
+		okapi.Tag("templates"),
 		okapi.DocResponse(http.StatusOK, &Envelope[VersionDetail]{}),
-		okapi.DocErrorResponse(http.StatusNotFound, &ErrorResponse{}),
+		okapi.DocResponse(http.StatusNotFound, &ErrorResponse{}),
 	).WithInput(&VersionRequest{})
 
 	app.Get("/v1/templates/{name}/versions/{version}/manifest", okapi.H(h.GetManifest),
 		okapi.DocSummary("Raw template manifest"),
-		okapi.DocDescription("The raw template.yaml to install; the version digest is the ETag. Content-Type application/yaml; ETag-conditional."),
-		okapi.DocTag("templates"),
+		okapi.Description("The raw template.yaml to install; the version digest is the ETag. Content-Type application/yaml; ETag-conditional."),
+		okapi.Tag("templates"),
 		okapi.DocResponseHeader("ETag", "string", "Version digest."),
 		okapi.DocResponse(http.StatusOK, ""),
 		okapi.DocResponse(http.StatusNotModified, nil),
-		okapi.DocErrorResponse(http.StatusNotFound, &ErrorResponse{}),
+		okapi.DocResponse(http.StatusNotFound, &ErrorResponse{}),
 	).WithInput(&VersionRequest{})
 
 	app.Get("/v1/categories", h.Categories,
 		okapi.DocSummary("Category facets"),
-		okapi.DocDescription("The category facets (name + count)."),
-		okapi.DocTag("catalog"),
+		okapi.Description("The category facets (name + count)."),
+		okapi.Tag("catalog"),
 		okapi.DocResponse(http.StatusOK, &Envelope[[]catalog.CategoryFacet]{}),
 	)
 
 	app.Get("/v1/version", h.Version,
 		okapi.DocSummary("Build version"),
-		okapi.DocDescription("The running build: catalog version (the release tag, without its leading v), commit and build date."),
-		okapi.DocTag("ops"),
+		okapi.Description("The running build: catalog version (the release tag, without its leading v), commit and build date."),
+		okapi.Tag("ops"),
 		okapi.DocResponse(http.StatusOK, &Envelope[BuildInfo]{}),
 	)
 
 	// Served at exactly the path the schema's $id names, so an editor's YAML language server resolves it.
 	app.Get("/schema/template.schema.json", h.Schema,
 		okapi.DocSummary("Template manifest JSON Schema"),
-		okapi.DocDescription("The JSON Schema describing a miabi.io/v1 Template, for editor validation. Served at its own $id URL; ETag-conditional."),
-		okapi.DocTag("catalog"),
+		okapi.Description("The JSON Schema describing a miabi.io/v1 Template, for editor validation. Served at its own $id URL; ETag-conditional."),
+		okapi.Tag("catalog"),
 		okapi.DocResponseHeader("ETag", "string", "Schema digest."),
 		okapi.DocResponse(http.StatusOK, ""),
 		okapi.DocResponse(http.StatusNotModified, nil),
@@ -114,14 +114,14 @@ func Register(app *okapi.Okapi, cat *catalog.Catalog) {
 
 	app.Get("/healthz", h.Health,
 		okapi.DocSummary("Liveness probe"),
-		okapi.DocTag("ops"),
+		okapi.Tag("ops"),
 		okapi.DocResponse(http.StatusOK, &HealthResponse{}),
 	)
 
 	app.Get("/metrics", h.Metrics,
 		okapi.DocSummary("Prometheus metrics"),
-		okapi.DocDescription("Prometheus text exposition of catalog gauges."),
-		okapi.DocTag("ops"),
+		okapi.Description("Prometheus text exposition of catalog gauges."),
+		okapi.Tag("ops"),
 		okapi.DocResponse(http.StatusOK, ""),
 	)
 }

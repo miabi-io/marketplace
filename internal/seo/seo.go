@@ -89,12 +89,12 @@ func New(cat *catalog.Catalog, baseURL string) *Server {
 func Register(app *okapi.Okapi, cat *catalog.Catalog, baseURL string) {
 	s := New(cat, baseURL)
 
-	app.Get("/robots.txt", s.Robots, okapi.DocSummary("robots.txt"), okapi.DocTag("seo"))
-	app.Get("/sitemap.xml", s.Sitemap, okapi.DocSummary("XML sitemap of the catalog"), okapi.DocTag("seo"))
-	app.Get("/", s.Home, okapi.DocSummary("Storefront home"), okapi.DocTag("seo"))
-	app.Get("/about", s.About, okapi.DocSummary("About page"), okapi.DocTag("seo"))
-	app.Get("/templates", s.TemplatesIndex, okapi.DocSummary("Template list (redirects home)"), okapi.DocTag("seo"))
-	app.Get("/templates/{name}", s.Template, okapi.DocSummary("Template page"), okapi.DocTag("seo"))
+	app.Get("/robots.txt", s.Robots, okapi.DocSummary("robots.txt"), okapi.Tag("seo"))
+	app.Get("/sitemap.xml", s.Sitemap, okapi.DocSummary("XML sitemap of the catalog"), okapi.Tag("seo"))
+	app.Get("/", s.Home, okapi.DocSummary("Storefront home"), okapi.Tag("seo"))
+	app.Get("/about", s.About, okapi.DocSummary("About page"), okapi.Tag("seo"))
+	app.Get("/templates", s.TemplatesIndex, okapi.DocSummary("Template list (redirects home)"), okapi.Tag("seo"))
+	app.Get("/templates/{name}", s.Template, okapi.DocSummary("Template page"), okapi.Tag("seo"))
 }
 
 func (s *Server) Robots(c *okapi.Context) error {
