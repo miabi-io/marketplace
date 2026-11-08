@@ -1,0 +1,4 @@
+released: "2026-09-29"
+images:
+  linkwarden: sha256:0664c28a039bda8ffa6663389e8536b2fc717219e329f85b83faca7efed3b144
+  meilisearch: sha256:bed3fb650e62da53145777204891159242f6ea4ce69e215b36223af4aa64a0ae

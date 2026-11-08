@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `mattermost`: `mattermost/mattermost-team-edition` 11.10.0 → 11.11.4
+images:
+  mattermost: sha256:80314a833cfc8113bc0be508113cf7a8d91ad1a394a7a74866ac728b29d84762

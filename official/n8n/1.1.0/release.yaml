@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `n8n`: `n8nio/n8n` 1.123.59 → 1.123.92
+images:
+  n8n: sha256:7693a1fade8aea2985e0089cc36f25715e56ea6f3ebb1011f986462d46452f13

@@ -1,0 +1,8 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `meilisearch`: `getmeili/meilisearch` v1.52 → v1.56
+
+  Sets `MEILI_EXPERIMENTAL_DUMPLESS_UPGRADE` so an existing install opens its database on the new version instead of refusing to start.
+images:
+  meilisearch: sha256:b7ba431bf6f9b26cc86132798f3640964147a699cf23f026b74c6c05dbb1d60d

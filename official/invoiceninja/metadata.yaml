@@ -1,0 +1,5 @@
+sourceRepo: https://github.com/miabi-io/marketplace/tree/main/official/invoiceninja
+updates:
+  # Even minors are nginx's stable line; odd ones are mainline.
+  web:
+    match: '^\d+\.\d*[02468]-alpine$'

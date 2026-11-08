@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `rabbitmq`: `rabbitmq` 4.3-management-alpine → 4.4-management-alpine
+images:
+  rabbitmq: sha256:4841f6384ef8313c3594cd3f2e9f40c10805f8a61c45f08a9a5d9ddea8199267

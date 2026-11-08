@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `umami`: `ghcr.io/umami-software/umami` postgresql-v2.15.1 → postgresql-v2.20.2
+images:
+  umami: sha256:950133e4158949061b84fa29ce1a87f734655dca5a49a08e727eb23c4e3582cd

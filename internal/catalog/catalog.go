@@ -49,6 +49,21 @@ type Metadata struct {
 	Screenshots []string `yaml:"screenshots" json:"screenshots,omitempty"`
 	SourceRepo  string   `yaml:"sourceRepo" json:"source_repo,omitempty"`
 	Maintainer  string   `yaml:"maintainer" json:"maintainer,omitempty"`
+	// Deprecated retires the whole template: hidden from browsing and new installs, existing installs keep running.
+	Deprecated      bool   `yaml:"deprecated" json:"deprecated,omitempty"`
+	DeprecationNote string `yaml:"deprecationNote" json:"deprecation_note,omitempty"`
+	// ReplacedBy names the template to suggest instead.
+	ReplacedBy string `yaml:"replacedBy" json:"replaced_by,omitempty"`
+	// Updates steers `outdated`/`bump` per application, keyed by template app name.
+	Updates map[string]UpdatePolicy `yaml:"updates" json:"-"`
+}
+
+// UpdatePolicy records a deliberate pin so the weekly bump doesn't keep proposing it.
+type UpdatePolicy struct {
+	// Hold is the reason the app's tag is frozen.
+	Hold string `yaml:"hold"`
+	// Match restricts candidate tags to a regexp, e.g. to stay on one PHP variant.
+	Match string `yaml:"match"`
 }
 
 // Version is one immutable published version of a template.
@@ -57,6 +72,14 @@ type Version struct {
 	Digest   string // sha256 of Raw, "sha256:…"
 	Raw      []byte // the raw template.yaml
 	Manifest *manifest.Manifest
+	Release  *Release // nil when the version has no release.yaml
+}
+
+func (v Version) Info() Release {
+	if v.Release == nil {
+		return Release{}
+	}
+	return *v.Release
 }
 
 // Template is one catalog entry with all of its versions (newest-first).
@@ -66,10 +89,22 @@ type Template struct {
 	Meta     Metadata
 	Readme   string
 	Versions []Version
+	// Freshness is the latest `outdated` report's entry, nil when none covers the latest version.
+	Freshness *TemplateFreshness
 }
 
 // Latest returns the newest version (Versions is sorted newest-first).
 func (t *Template) Latest() Version { return t.Versions[0] }
+
+// Installable returns the newest version a new install should get: the latest not deprecated, else the latest.
+func (t *Template) Installable() Version {
+	for _, v := range t.Versions {
+		if !v.Info().Deprecated {
+			return v
+		}
+	}
+	return t.Versions[0]
+}
 
 // FindVersion returns a specific version (empty = latest).
 func (t *Template) FindVersion(v string) (Version, bool) {
@@ -93,7 +128,18 @@ type Catalog struct {
 }
 
 // Load reads the embedded content into a catalog.
-func Load() (*Catalog, error) { return loadFS(marketplace.Content) }
+func Load() (*Catalog, error) {
+	c, err := loadFS(marketplace.Content)
+	if err != nil {
+		return nil, err
+	}
+	r, err := ParseFreshness(marketplace.Freshness)
+	if err != nil {
+		return nil, err
+	}
+	c.attachFreshness(r)
+	return c, nil
+}
 
 // Any malformed manifest, digest/name/version mismatch or cross-source duplicate name fails the build closed.
 func loadFS(fsys fs.FS) (*Catalog, error) {
@@ -140,6 +186,9 @@ func loadFS(fsys fs.FS) (*Catalog, error) {
 	for i := range c.templates {
 		c.byName[c.templates[i].Name] = &c.templates[i]
 	}
+	if err := c.crossCheck(); err != nil {
+		return nil, err
+	}
 	c.etag = computeETag(c.templates)
 	c.generatedAt = time.Now().UTC().Format(time.RFC3339)
 	return c, nil
@@ -176,13 +225,19 @@ func loadTemplate(fsys fs.FS, source, name string) (*Template, error) {
 		if err != nil {
 			return nil, fmt.Errorf("version %s: %w", ver, err)
 		}
+		var rel *Release
+		if b, err := fs.ReadFile(fsys, path.Join(base, ver, ReleaseFile)); err == nil {
+			if rel, err = parseRelease(b); err != nil {
+				return nil, fmt.Errorf("version %s: %w", ver, err)
+			}
+		}
 		if m.Metadata.Name != name {
 			return nil, fmt.Errorf("version %s: manifest name %q disagrees with directory %q", ver, m.Metadata.Name, name)
 		}
 		if m.Metadata.Version != ver {
 			return nil, fmt.Errorf("version directory %q disagrees with manifest version %q", ver, m.Metadata.Version)
 		}
-		t.Versions = append(t.Versions, Version{Version: ver, Digest: manifest.Digest(raw), Raw: raw, Manifest: m})
+		t.Versions = append(t.Versions, Version{Version: ver, Digest: manifest.Digest(raw), Raw: raw, Manifest: m, Release: rel})
 	}
 	if len(t.Versions) == 0 {
 		return nil, nil
@@ -193,12 +248,77 @@ func loadTemplate(fsys fs.FS, source, name string) (*Template, error) {
 	return t, nil
 }
 
+// crossCheck validates references that span versions or templates, which a single file can't check.
+func (c *Catalog) crossCheck() error {
+	for _, t := range c.templates {
+		where := t.Source + "/" + t.Name
+		for app, p := range t.Meta.Updates {
+			if p.Match != "" {
+				if _, err := regexp.Compile(p.Match); err != nil {
+					return fmt.Errorf("%s: updates.%s.match: %w", where, app, err)
+				}
+			}
+			if !hasApp(t.Latest().Manifest, app) {
+				return fmt.Errorf("%s: updates names unknown application %q", where, app)
+			}
+		}
+		if r := t.Meta.ReplacedBy; r != "" {
+			if r == t.Name {
+				return fmt.Errorf("%s: replacedBy names the template itself", where)
+			}
+			if _, ok := c.byName[r]; !ok {
+				return fmt.Errorf("%s: replacedBy %q is not a template in this catalog", where, r)
+			}
+		}
+		for _, v := range t.Versions {
+			rel := v.Info()
+			if rf := rel.RequiresFrom; rf != "" {
+				if _, ok := t.FindVersion(rf); !ok {
+					return fmt.Errorf("%s@%s: requiresFrom %q is not a published version", where, v.Version, rf)
+				}
+				if manifest.CompareVersions(rf, v.Version) >= 0 {
+					return fmt.Errorf("%s@%s: requiresFrom %q must be older than the version itself", where, v.Version, rf)
+				}
+			}
+			apps := map[string]bool{}
+			for _, a := range v.Manifest.Applications {
+				apps[a.Name] = true
+			}
+			for app := range rel.Images {
+				if !apps[app] {
+					return fmt.Errorf("%s@%s: %s pins an image for unknown application %q", where, v.Version, ReleaseFile, app)
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func hasApp(m *manifest.Manifest, name string) bool {
+	for _, a := range m.Applications {
+		if a.Name == name {
+			return true
+		}
+	}
+	return false
+}
+
 // computeETag changes iff catalog content changes, so conditional GETs on /export and /index are nearly free.
 func computeETag(ts []Template) string {
 	lines := make([]string, 0, len(ts))
 	for _, t := range ts {
 		for _, v := range t.Versions {
-			lines = append(lines, t.Source+"/"+t.Name+"@"+v.Version+"="+v.Digest)
+			line := t.Source + "/" + t.Name + "@" + v.Version + "=" + v.Digest
+			if v.Release != nil {
+				if b, err := MarshalRelease(v.Release); err == nil {
+					sum := sha256.Sum256(b)
+					line += "+" + hex.EncodeToString(sum[:8])
+				}
+			}
+			lines = append(lines, line)
+		}
+		if t.Meta.Deprecated {
+			lines = append(lines, t.Source+"/"+t.Name+"!deprecated:"+t.Meta.ReplacedBy+":"+t.Meta.DeprecationNote)
 		}
 	}
 	sort.Strings(lines)

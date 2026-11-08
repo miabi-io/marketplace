@@ -29,3 +29,8 @@ var Content embed.FS
 //
 //go:embed schema/template.schema.json
 var TemplateSchema []byte
+
+// Freshness is the generated upstream-tag report; it may be empty before the first `outdated --write`.
+//
+//go:embed registry/freshness.json
+var Freshness []byte

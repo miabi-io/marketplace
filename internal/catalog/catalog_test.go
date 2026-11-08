@@ -125,3 +125,103 @@ func TestDuplicateNameAcrossSourcesFails(t *testing.T) {
 		t.Fatalf("expected a duplicate-template error, got %v", err)
 	}
 }
+
+func fixture(name, version string) []byte {
+	return []byte(strings.NewReplacer("name: dup", "name: "+name, "version: 1.0.0", "version: "+version).Replace(fixtureManifest))
+}
+
+func TestReleaseSidecarRoundTrip(t *testing.T) {
+	fsys := fstest.MapFS{
+		"official/app/1.0.0/template.yaml": {Data: fixture("app", "1.0.0")},
+		"official/app/2.0.0/template.yaml": {Data: fixture("app", "2.0.0")},
+		"official/app/2.0.0/release.yaml": {Data: []byte("released: \"2026-11-01\"\nnotes: Moves to v2.\nbreaking: true\nrequiresFrom: 1.0.0\n" +
+			"images:\n  app: sha256:" + strings.Repeat("a", 64) + "\n")},
+	}
+	c, err := loadFS(fsys)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tpl, _ := c.Get("app")
+	rel := tpl.Latest().Info()
+	if !rel.Breaking || rel.RequiresFrom != "1.0.0" || rel.Images["app"] == "" {
+		t.Fatalf("release not loaded: %+v", rel)
+	}
+	bv := c.Bundle().Templates[0].Versions[0]
+	if bv.Release == nil || bv.Release.Notes != "Moves to v2." {
+		t.Fatalf("bundle lost the release: %+v", bv.Release)
+	}
+	if l := tpl.Listing(); l.Updated != "2026-11-01" {
+		t.Fatalf("listing updated = %q", l.Updated)
+	}
+}
+
+func TestReleaseValidation(t *testing.T) {
+	cases := map[string]string{
+		"unknown field":          "notez: typo\n",
+		"bad date":               "released: yesterday\n",
+		"bad digest":             "images:\n  app: latest\n",
+		"unknown app":            "images:\n  other: sha256:" + strings.Repeat("b", 64) + "\n",
+		"requiresFrom missing":   "requiresFrom: 0.9.0\n",
+		"requiresFrom not older": "requiresFrom: 2.0.0\n",
+	}
+	for name, rel := range cases {
+		t.Run(name, func(t *testing.T) {
+			fsys := fstest.MapFS{
+				"official/app/1.0.0/template.yaml": {Data: fixture("app", "1.0.0")},
+				"official/app/2.0.0/template.yaml": {Data: fixture("app", "2.0.0")},
+				"official/app/2.0.0/release.yaml":  {Data: []byte(rel)},
+			}
+			if _, err := loadFS(fsys); err == nil {
+				t.Fatal("expected a load error")
+			}
+		})
+	}
+}
+
+func TestDeprecatedTemplate(t *testing.T) {
+	fsys := fstest.MapFS{
+		"official/old/1.0.0/template.yaml": {Data: fixture("old", "1.0.0")},
+		"official/old/metadata.yaml":       {Data: []byte("deprecated: true\nreplacedBy: new\n")},
+		"official/new/1.0.0/template.yaml": {Data: fixture("new", "1.0.0")},
+	}
+	c, err := loadFS(fsys)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p := c.Search(Query{}); p.Total != 1 || p.Items[0].Name != "new" {
+		t.Fatalf("deprecated template listed: %+v", p.Items)
+	}
+	if p := c.Search(Query{IncludeDeprecated: true}); p.Total != 2 {
+		t.Fatalf("include_deprecated: %d", p.Total)
+	}
+	var old BundleTemplate
+	for _, bt := range c.Bundle().Templates {
+		if bt.Name == "old" {
+			old = bt
+		}
+	}
+	if !old.Deprecated || old.ReplacedBy != "new" {
+		t.Fatalf("bundle deprecation: %+v", old)
+	}
+
+	fsys["official/old/metadata.yaml"] = &fstest.MapFile{Data: []byte("deprecated: true\nreplacedBy: missing\n")}
+	if _, err := loadFS(fsys); err == nil {
+		t.Fatal("replacedBy naming a missing template should fail")
+	}
+}
+
+func TestDeprecatedVersionIsNotInstallable(t *testing.T) {
+	fsys := fstest.MapFS{
+		"official/app/1.0.0/template.yaml": {Data: fixture("app", "1.0.0")},
+		"official/app/2.0.0/template.yaml": {Data: fixture("app", "2.0.0")},
+		"official/app/2.0.0/release.yaml":  {Data: []byte("deprecated: true\n")},
+	}
+	c, err := loadFS(fsys)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tpl, _ := c.Get("app")
+	if got := tpl.Installable().Version; got != "1.0.0" {
+		t.Fatalf("installable = %s", got)
+	}
+}

@@ -32,6 +32,7 @@ export interface SearchParams {
   source?: string
   category?: string
   tag?: string
+  sort?: string
   page?: number
   per_page?: number
 }

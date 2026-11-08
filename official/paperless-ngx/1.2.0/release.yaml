@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `paperless`: `ghcr.io/paperless-ngx/paperless-ngx` 3.0.5 → 3.4.2
+images:
+  paperless: sha256:d704e84f88300eb6ab001ab15720a2330ff99169cf9f94d6b8fcc44b63a84c84

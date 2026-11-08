@@ -27,6 +27,31 @@ export interface Listing {
   volumes: number
   configs: number
   db_only: boolean
+  updated?: string
+  deprecated?: boolean
+  deprecation_note?: string
+  replaced_by?: string
+  freshness?: Freshness
+}
+
+export type FreshnessStatus = 'current' | 'update' | 'major' | 'held' | 'unknown' | 'error'
+
+export interface AppFreshness {
+  app: string
+  image: string
+  tag: string
+  latest_in_major?: string
+  latest?: string
+  status: FreshnessStatus
+  error?: string
+  hold?: string
+}
+
+export interface Freshness {
+  version: string
+  status: FreshnessStatus
+  checked_at?: string
+  apps: AppFreshness[]
 }
 
 export interface Page {
@@ -121,9 +146,27 @@ export interface TemplateManifest {
   applications?: ManifestApp[]
 }
 
+export interface Release {
+  released?: string
+  notes?: string
+  breaking?: boolean
+  requires_from?: string
+  deprecated?: boolean
+  deprecation_note?: string
+  images?: Record<string, string>
+}
+
+export interface VersionImage {
+  app: string
+  image: string
+  tag: string
+}
+
 export interface VersionRef {
   version: string
   digest: string
+  release?: Release
+  images?: VersionImage[]
 }
 
 export interface TemplateDetail {
@@ -135,6 +178,9 @@ export interface TemplateDetail {
     screenshots?: string[]
     source_repo?: string
     maintainer?: string
+    deprecated?: boolean
+    deprecation_note?: string
+    replaced_by?: string
   }
   readme?: string
   versions: VersionRef[]

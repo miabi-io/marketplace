@@ -1,0 +1,3 @@
+sourceRepo: https://github.com/miabi-io/marketplace/tree/main/official/minio
+deprecated: true
+deprecationNote: MinIO no longer publishes public container images, so new installs can't pull them. Existing installs keep running.

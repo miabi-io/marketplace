@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `qdrant`: `qdrant/qdrant` v1.19.0 → v1.20.0
+images:
+  qdrant: sha256:9bfc89f9914fc14876a88c05270685921a55b8877b254a98bcc1cc2f0a424cd2

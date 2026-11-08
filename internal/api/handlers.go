@@ -143,25 +143,27 @@ func (h *Handlers) Index(c *okapi.Context) error {
 }
 
 type ListTemplatesRequest struct {
-	Q        string `query:"q" description:"Free-text search over name/description/tags."`
-	Source   string `query:"source" enum:"official,community" description:"Filter by source."`
-	Category string `query:"category" description:"Filter by category name."`
-	Tag      string `query:"tag" description:"Filter by tag."`
-	Sort     string `query:"sort" enum:"name,updated,popularity" description:"Sort order (updated/popularity fall back to name today)."`
-	Page     int    `query:"page" default:"1" description:"1-based page number."`
-	PerPage  int    `query:"per_page" default:"24" description:"Items per page (max 100; larger values are clamped)."`
+	Q                 string `query:"q" description:"Free-text search over name/description/tags."`
+	Source            string `query:"source" enum:"official,community" description:"Filter by source."`
+	Category          string `query:"category" description:"Filter by category name."`
+	Tag               string `query:"tag" description:"Filter by tag."`
+	Sort              string `query:"sort" enum:"name,updated,popularity" description:"Sort order (popularity falls back to name today)."`
+	IncludeDeprecated bool   `query:"include_deprecated" description:"Also list deprecated templates (hidden by default)."`
+	Page              int    `query:"page" default:"1" description:"1-based page number."`
+	PerPage           int    `query:"per_page" default:"24" description:"Items per page (max 100; larger values are clamped)."`
 }
 
 // ListTemplates is the paginated search/filter endpoint (storefront + clients).
 func (h *Handlers) ListTemplates(c *okapi.Context, in *ListTemplatesRequest) error {
 	page := h.cat.Search(catalog.Query{
-		Q:        in.Q,
-		Source:   in.Source,
-		Category: in.Category,
-		Tag:      in.Tag,
-		Sort:     in.Sort,
-		Page:     in.Page,
-		PerPage:  in.PerPage,
+		Q:                 in.Q,
+		Source:            in.Source,
+		Category:          in.Category,
+		Tag:               in.Tag,
+		Sort:              in.Sort,
+		IncludeDeprecated: in.IncludeDeprecated,
+		Page:              in.Page,
+		PerPage:           in.PerPage,
 	})
 	return ok(c, page)
 }
@@ -177,7 +179,10 @@ func (h *Handlers) GetTemplate(c *okapi.Context, in *TemplateRequest) error {
 	if !found {
 		return fail(c, http.StatusNotFound, "TEMPLATE_NOT_FOUND", "template not found")
 	}
-	ver, vok := t.FindVersion(in.Version)
+	ver, vok := t.Installable(), true
+	if in.Version != "" {
+		ver, vok = t.FindVersion(in.Version)
+	}
 	if !vok {
 		return fail(c, http.StatusNotFound, "VERSION_NOT_FOUND", "template version not found")
 	}
@@ -200,7 +205,7 @@ func (h *Handlers) GetVersion(c *okapi.Context, in *VersionRequest) error {
 	if !vok {
 		return fail(c, http.StatusNotFound, "VERSION_NOT_FOUND", "template version not found")
 	}
-	return ok(c, VersionDetail{Name: t.Name, Slug: t.Name, Source: t.Source, Version: ver.Version, Digest: ver.Digest, Metadata: ver.Manifest.Metadata})
+	return ok(c, VersionDetail{Name: t.Name, Slug: t.Name, Source: t.Source, Version: ver.Version, Digest: ver.Digest, Metadata: ver.Manifest.Metadata, Release: ver.Release})
 }
 
 // GetManifest returns the raw template.yaml to install; the digest is the ETag.
@@ -302,10 +307,19 @@ type Detail struct {
 	Manifest *manifest.Manifest `json:"manifest"`
 }
 
-// VersionRef is a lightweight version pointer in a detail document.
+// VersionRef is one entry of a template's version history.
 type VersionRef struct {
-	Version string `json:"version"`
-	Digest  string `json:"digest"`
+	Version string           `json:"version"`
+	Digest  string           `json:"digest"`
+	Release *catalog.Release `json:"release,omitempty"`
+	Images  []VersionImage   `json:"images"`
+}
+
+// VersionImage is one application's image in a version, for the changelog's image diff.
+type VersionImage struct {
+	App   string `json:"app"`
+	Image string `json:"image"`
+	Tag   string `json:"tag"`
 }
 
 // VersionDetail is one version's metadata + digest.
@@ -316,12 +330,17 @@ type VersionDetail struct {
 	Version  string            `json:"version"`
 	Digest   string            `json:"digest"`
 	Metadata manifest.Metadata `json:"metadata"`
+	Release  *catalog.Release  `json:"release,omitempty"`
 }
 
 func detailOf(t *catalog.Template, ver catalog.Version) Detail {
 	refs := make([]VersionRef, 0, len(t.Versions))
 	for _, v := range t.Versions {
-		refs = append(refs, VersionRef{Version: v.Version, Digest: v.Digest})
+		imgs := make([]VersionImage, 0, len(v.Manifest.Applications))
+		for _, a := range v.Manifest.Applications {
+			imgs = append(imgs, VersionImage{App: a.Name, Image: a.Image, Tag: a.Tag})
+		}
+		refs = append(refs, VersionRef{Version: v.Version, Digest: v.Digest, Release: v.Release, Images: imgs})
 	}
 	return Detail{
 		Entry:    t.Listing(),

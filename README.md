@@ -24,16 +24,19 @@ catalog into a local cache and serves it in the console).
 
 ```
 official/<name>/<version>/template.yaml   curated, CODEOWNERS-protected (source of truth for official)
+official/<name>/<version>/release.yaml    optional release notes, upgrade rules and pinned image digests
 official/<name>/metadata.yaml             optional storefront metadata (featured, screenshots, …)
 official/<name>/README.md                 optional long description (detail page)
 community/<name>/...                      contributed, same shape; open PRs
 export.json                               GENERATED full bundle (every manifest inline) — what /v1/export serves, also syncable from git
 registry/index.json                       GENERATED lightweight machine index (CI checks for drift)
+registry/freshness.json                   GENERATED weekly upstream-tag report, embedded for the storefront
 manifest/                                 the miabi.io/v1 manifest module: parse + validate + digest
 schema/template.schema.json               JSON Schema for editors + CI
 internal/{catalog,api,seo,web}            the Okapi service (web embeds the built storefront, seo serves the crawler surface)
+internal/registry                         read-only OCI registry client (tags, digests) for outdated/bump/check-images
 web/                                      the storefront SPA (Vue 3 + Pinia + Vite)
-cmd/marketplace                           server + generate-index + lint
+cmd/marketplace                           server + generate, lint, outdated, bump, lock, check-images, e2e
 ```
 
 `<name>` is the template **handle** — lowercase `^[a-z0-9][a-z0-9-]*$`, matching
@@ -95,7 +98,12 @@ serves, and the storefront 404s until the UI is built.
 go run ./cmd/marketplace            # serve on :8088 (MARKETPLACE_PORT to override)
 go run ./cmd/marketplace lint       # validate every embedded template
 go run ./cmd/marketplace generate   # rewrite export.json + registry/index.json (CI runs + diffs this)
+go run ./cmd/marketplace outdated   # templates whose images have newer upstream tags
+go run ./cmd/marketplace bump <name> # publish a new version with newer tags
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md#releasing-a-new-version) for releases,
+upgrade rules, deprecation and the CI checks.
 
 ## How Miabi consumes it
 

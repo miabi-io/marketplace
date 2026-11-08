@@ -1,0 +1,39 @@
+name: Submit a template
+description: Propose a community template for the Miabi marketplace.
+title: "[template] "
+labels: ["template-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing! A maintainer turns accepted submissions into a pull request under `community/`, or you can open that PR yourself by following [CONTRIBUTING.md](https://github.com/miabi-io/marketplace/blob/main/CONTRIBUTING.md).
+  - type: textarea
+    id: template_yaml
+    attributes:
+      label: template.yaml
+      description: The full manifest (apiVersion miabi.io/v1). Remove any real secrets.
+      render: yaml
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What it is
+      description: What the application does and who it is for. This becomes the template's README.
+    validations:
+      required: true
+  - type: input
+    id: upstream
+    attributes:
+      label: Upstream project
+      description: Homepage or source repository of the application.
+      placeholder: https://github.com/owner/project
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I installed this template in Miabi (Marketplace → Import) and it started and was usable.
+          required: true
+        - label: Every image tag is pinned (no `latest`).
+          required: true

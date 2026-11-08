@@ -1,0 +1,825 @@
+{
+  "checked_at": "2026-11-08",
+  "templates": {
+    "adminer": {
+      "version": "1.0.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "adminer",
+          "image": "adminer",
+          "tag": "5.5.1",
+          "latest_in_major": "5.5.1",
+          "latest": "6.3.0",
+          "status": "major"
+        }
+      ]
+    },
+    "akili": {
+      "version": "1.2.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "akili",
+          "image": "jkaninda/akili",
+          "tag": "0.1.0",
+          "latest_in_major": "0.1.0",
+          "latest": "0.4.0",
+          "status": "major"
+        }
+      ]
+    },
+    "akili-agent": {
+      "version": "1.2.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "akili-agent",
+          "image": "jkaninda/akili-agent",
+          "tag": "0.1.0",
+          "latest_in_major": "0.1.0",
+          "latest": "0.4.0",
+          "status": "major"
+        }
+      ]
+    },
+    "anubis": {
+      "version": "1.1.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "anubis",
+          "image": "ghcr.io/techarohq/anubis",
+          "tag": "v1.28.2",
+          "latest_in_major": "v1.28.2",
+          "latest": "v1.28.2",
+          "status": "current"
+        }
+      ]
+    },
+    "certio": {
+      "version": "1.3.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "certio",
+          "image": "jkaninda/certio",
+          "tag": "0.2.1",
+          "latest_in_major": "0.2.1",
+          "latest": "0.2.1",
+          "status": "current"
+        }
+      ]
+    },
+    "docmost": {
+      "version": "1.1.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "docmost",
+          "image": "docmost/docmost",
+          "tag": "0.95.0",
+          "latest_in_major": "0.95.0",
+          "latest": "0.97.0",
+          "status": "major"
+        }
+      ]
+    },
+    "dragonfly": {
+      "version": "1.0.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "dragonfly",
+          "image": "docker.dragonflydb.io/dragonflydb/dragonfly",
+          "tag": "v1.40.2",
+          "latest_in_major": "v1.40.2",
+          "latest": "v2.1.0",
+          "status": "major"
+        }
+      ]
+    },
+    "forgejo": {
+      "version": "1.0.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "forgejo",
+          "image": "codeberg.org/forgejo/forgejo",
+          "tag": "15",
+          "latest_in_major": "15",
+          "latest": "17",
+          "status": "major"
+        }
+      ]
+    },
+    "freshrss": {
+      "version": "1.1.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "freshrss",
+          "image": "freshrss/freshrss",
+          "tag": "1.30.4",
+          "latest_in_major": "1.30.4",
+          "latest": "1.30.4",
+          "status": "current"
+        }
+      ]
+    },
+    "ghost": {
+      "version": "1.4.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "ghost",
+          "image": "ghost",
+          "tag": "6.75-alpine",
+          "latest_in_major": "6.75-alpine",
+          "latest": "6.75-alpine",
+          "status": "current"
+        }
+      ]
+    },
+    "gitea": {
+      "version": "1.1.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "gitea",
+          "image": "gitea/gitea",
+          "tag": "1.27",
+          "latest_in_major": "1.27",
+          "latest": "28.3",
+          "status": "major"
+        }
+      ]
+    },
+    "gitlab": {
+      "version": "1.3.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "gitlab",
+          "image": "gitlab/gitlab-ce",
+          "tag": "19.5.3-ce.0",
+          "latest_in_major": "19.5.3-ce.0",
+          "latest": "19.5.3-ce.0",
+          "status": "current"
+        }
+      ]
+    },
+    "goauthentik": {
+      "version": "1.2.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "server",
+          "image": "ghcr.io/goauthentik/server",
+          "tag": "2026.8.5",
+          "latest_in_major": "2026.8.5",
+          "latest": "2026.8.5",
+          "status": "current"
+        },
+        {
+          "app": "worker",
+          "image": "ghcr.io/goauthentik/server",
+          "tag": "2026.8.5",
+          "latest_in_major": "2026.8.5",
+          "latest": "2026.8.5",
+          "status": "current"
+        }
+      ]
+    },
+    "goma-gateway": {
+      "version": "1.2.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "goma-gateway",
+          "image": "jkaninda/goma-gateway",
+          "tag": "1.2.0",
+          "latest_in_major": "1.2.0",
+          "latest": "1.2.0",
+          "status": "current"
+        }
+      ]
+    },
+    "grafana": {
+      "version": "1.1.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "grafana",
+          "image": "grafana/grafana",
+          "tag": "11.6.16",
+          "latest_in_major": "11.6.16",
+          "latest": "13.3.0",
+          "status": "major"
+        }
+      ]
+    },
+    "guestbook": {
+      "version": "2.0.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "guestbook",
+          "image": "miabi/guestbook",
+          "tag": "2.0.0",
+          "latest_in_major": "2.0.0",
+          "latest": "3.2.0",
+          "status": "major"
+        }
+      ]
+    },
+    "invoiceninja": {
+      "version": "1.2.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "app",
+          "image": "invoiceninja/invoiceninja-debian",
+          "tag": "5.13.53",
+          "latest_in_major": "5.13.53",
+          "latest": "5.13.53",
+          "status": "current"
+        },
+        {
+          "app": "web",
+          "image": "nginx",
+          "tag": "1.30-alpine",
+          "latest_in_major": "1.30-alpine",
+          "latest": "1.30-alpine",
+          "status": "current"
+        }
+      ]
+    },
+    "jellyfin": {
+      "version": "1.1.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "jellyfin",
+          "image": "jellyfin/jellyfin",
+          "tag": "10.11.11",
+          "latest_in_major": "10.11.11",
+          "latest": "10.11.11",
+          "status": "current"
+        }
+      ]
+    },
+    "keycloak": {
+      "version": "1.2.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "keycloak",
+          "image": "quay.io/keycloak/keycloak",
+          "tag": "26.8.2",
+          "latest_in_major": "26.8.2",
+          "latest": "26.8.2",
+          "status": "current"
+        }
+      ]
+    },
+    "libsql": {
+      "version": "1.0.0",
+      "status": "current",
+      "apps": []
+    },
+    "linkwarden": {
+      "version": "1.1.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "linkwarden",
+          "image": "ghcr.io/linkwarden/linkwarden",
+          "tag": "v2.16.3",
+          "latest_in_major": "v2.16.3",
+          "latest": "v2.16.3",
+          "status": "current"
+        },
+        {
+          "app": "meilisearch",
+          "image": "getmeili/meilisearch",
+          "tag": "v1.13.3",
+          "status": "held",
+          "hold": "Pinned to the version Linkwarden's upstream compose ships; Linkwarden's search client tracks it."
+        }
+      ]
+    },
+    "lldap": {
+      "version": "1.1.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "lldap",
+          "image": "lldap/lldap",
+          "tag": "v0.6.3",
+          "latest_in_major": "v0.6.3",
+          "latest": "v0.6.3",
+          "status": "current"
+        }
+      ]
+    },
+    "matomo": {
+      "version": "1.0.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "matomo",
+          "image": "matomo",
+          "tag": "5-apache",
+          "latest_in_major": "5-apache",
+          "latest": "5-apache",
+          "status": "current"
+        }
+      ]
+    },
+    "mattermost": {
+      "version": "1.2.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "mattermost",
+          "image": "mattermost/mattermost-team-edition",
+          "tag": "11.11.4",
+          "latest_in_major": "11.11.4",
+          "latest": "12.1.0",
+          "status": "major"
+        }
+      ]
+    },
+    "mealie": {
+      "version": "1.2.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "mealie",
+          "image": "ghcr.io/mealie-recipes/mealie",
+          "tag": "v2.8.0",
+          "latest_in_major": "v2.8.0",
+          "latest": "v3.30.0",
+          "status": "major"
+        }
+      ]
+    },
+    "meilisearch": {
+      "version": "1.1.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "meilisearch",
+          "image": "getmeili/meilisearch",
+          "tag": "v1.56",
+          "latest_in_major": "v1.56",
+          "latest": "v1.56",
+          "status": "current"
+        }
+      ]
+    },
+    "memcached": {
+      "version": "1.0.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "memcached",
+          "image": "memcached",
+          "tag": "1.6-alpine",
+          "latest_in_major": "1.6-alpine",
+          "latest": "1.6-alpine",
+          "status": "current"
+        }
+      ]
+    },
+    "metabase": {
+      "version": "1.1.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "metabase",
+          "image": "metabase/metabase",
+          "tag": "v0.52.17",
+          "latest_in_major": "v0.52.17",
+          "latest": "v0.65.3",
+          "status": "major"
+        }
+      ]
+    },
+    "mongo-express": {
+      "version": "1.0.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "mongo-express",
+          "image": "mongo-express",
+          "tag": "1.0.2-20",
+          "latest_in_major": "1.0.2-20",
+          "latest": "1.0.2-20",
+          "status": "current"
+        }
+      ]
+    },
+    "mongodb": {
+      "version": "1.0.0",
+      "status": "current",
+      "apps": []
+    },
+    "mysql": {
+      "version": "1.0.0",
+      "status": "current",
+      "apps": []
+    },
+    "n8n": {
+      "version": "1.1.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "n8n",
+          "image": "n8nio/n8n",
+          "tag": "1.123.92",
+          "latest_in_major": "1.123.92",
+          "latest": "3.1.0",
+          "status": "major"
+        }
+      ]
+    },
+    "navidrome": {
+      "version": "1.0.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "navidrome",
+          "image": "deluan/navidrome",
+          "tag": "0.63.2",
+          "latest_in_major": "0.63.2",
+          "latest": "0.64.2",
+          "status": "major"
+        }
+      ]
+    },
+    "nextcloud": {
+      "version": "1.0.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "nextcloud",
+          "image": "nextcloud",
+          "tag": "34-apache",
+          "latest_in_major": "34-apache",
+          "latest": "35-apache",
+          "status": "major"
+        }
+      ]
+    },
+    "nginx": {
+      "version": "1.0.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "nginx",
+          "image": "nginx",
+          "tag": "1.30-alpine",
+          "latest_in_major": "1.30-alpine",
+          "latest": "1.30-alpine",
+          "status": "current"
+        }
+      ]
+    },
+    "nocodb": {
+      "version": "1.2.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "nocodb",
+          "image": "nocodb/nocodb",
+          "tag": "2026.10.1",
+          "latest_in_major": "2026.10.1",
+          "latest": "2026.10.1",
+          "status": "current"
+        }
+      ]
+    },
+    "ntfy": {
+      "version": "1.2.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "ntfy",
+          "image": "binwiederhier/ntfy",
+          "tag": "v2.37",
+          "latest_in_major": "v2.37",
+          "latest": "v2.37",
+          "status": "current"
+        }
+      ]
+    },
+    "okapi-example": {
+      "version": "1.0.0",
+      "status": "unknown",
+      "apps": [
+        {
+          "app": "okapi-example",
+          "image": "jkaninda/okapi-example",
+          "tag": "latest",
+          "status": "unknown"
+        }
+      ]
+    },
+    "open-webui": {
+      "version": "1.1.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "open-webui",
+          "image": "ghcr.io/open-webui/open-webui",
+          "tag": "v0.11.4",
+          "latest_in_major": "v0.11.4",
+          "latest": "v0.13.0",
+          "status": "major"
+        }
+      ]
+    },
+    "openstatus": {
+      "version": "1.0.0",
+      "status": "unknown",
+      "apps": [
+        {
+          "app": "migrate",
+          "image": "ghcr.io/openstatushq/openstatus-db-migrate",
+          "tag": "4511a22",
+          "status": "unknown"
+        },
+        {
+          "app": "dashboard",
+          "image": "ghcr.io/openstatushq/openstatus-dashboard",
+          "tag": "4511a22",
+          "status": "unknown"
+        },
+        {
+          "app": "status-page",
+          "image": "ghcr.io/openstatushq/openstatus-status-page",
+          "tag": "4511a22",
+          "status": "unknown"
+        }
+      ]
+    },
+    "paperless-ngx": {
+      "version": "1.2.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "paperless",
+          "image": "ghcr.io/paperless-ngx/paperless-ngx",
+          "tag": "3.4.2",
+          "latest_in_major": "3.4.2",
+          "latest": "3.4.2",
+          "status": "current"
+        }
+      ]
+    },
+    "pgadmin4": {
+      "version": "1.0.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "pgadmin",
+          "image": "dpage/pgadmin4",
+          "tag": "8.14",
+          "latest_in_major": "8.14",
+          "latest": "9.19",
+          "status": "major"
+        }
+      ]
+    },
+    "phpmyadmin": {
+      "version": "1.0.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "phpmyadmin",
+          "image": "phpmyadmin",
+          "tag": "5.2-apache",
+          "latest_in_major": "5.2-apache",
+          "latest": "5.2-apache",
+          "status": "current"
+        }
+      ]
+    },
+    "posta": {
+      "version": "1.4.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "server",
+          "image": "jkaninda/posta",
+          "tag": "0.15.1",
+          "latest_in_major": "0.15.1",
+          "latest": "0.19.0",
+          "status": "major"
+        },
+        {
+          "app": "worker",
+          "image": "jkaninda/posta",
+          "tag": "0.15.1",
+          "latest_in_major": "0.15.1",
+          "latest": "0.19.0",
+          "status": "major"
+        }
+      ]
+    },
+    "postgresql": {
+      "version": "1.0.0",
+      "status": "current",
+      "apps": []
+    },
+    "qdrant": {
+      "version": "1.1.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "qdrant",
+          "image": "qdrant/qdrant",
+          "tag": "v1.20.0",
+          "latest_in_major": "v1.20.0",
+          "latest": "v1.20.0",
+          "status": "current"
+        }
+      ]
+    },
+    "rabbitmq": {
+      "version": "1.1.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "rabbitmq",
+          "image": "rabbitmq",
+          "tag": "4.4-management-alpine",
+          "latest_in_major": "4.4-management-alpine",
+          "latest": "4.4-management-alpine",
+          "status": "current"
+        }
+      ]
+    },
+    "redis": {
+      "version": "1.0.0",
+      "status": "current",
+      "apps": []
+    },
+    "registry": {
+      "version": "1.0.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "registry",
+          "image": "registry",
+          "tag": "3.1",
+          "latest_in_major": "3.1",
+          "latest": "3.1",
+          "status": "current"
+        }
+      ]
+    },
+    "roundcube": {
+      "version": "1.1.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "roundcube",
+          "image": "roundcube/roundcubemail",
+          "tag": "1.7.5-apache",
+          "latest_in_major": "1.7.5-apache",
+          "latest": "1.7.5-apache",
+          "status": "current"
+        }
+      ]
+    },
+    "stirling-pdf": {
+      "version": "1.0.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "stirling-pdf",
+          "image": "stirlingtools/stirling-pdf",
+          "tag": "2.14.3",
+          "latest_in_major": "2.14.3",
+          "latest": "3.3.0",
+          "status": "major"
+        }
+      ]
+    },
+    "umami": {
+      "version": "1.1.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "umami",
+          "image": "ghcr.io/umami-software/umami",
+          "tag": "postgresql-v2.20.2",
+          "latest_in_major": "postgresql-v2.20.2",
+          "latest": "postgresql-v2.20.2",
+          "status": "current"
+        }
+      ]
+    },
+    "uptime-kuma": {
+      "version": "1.1.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "uptime-kuma",
+          "image": "louislam/uptime-kuma",
+          "tag": "2",
+          "latest_in_major": "2",
+          "latest": "2",
+          "status": "current"
+        }
+      ]
+    },
+    "valkey": {
+      "version": "1.0.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "valkey",
+          "image": "valkey/valkey",
+          "tag": "9-alpine",
+          "latest_in_major": "9-alpine",
+          "latest": "9-alpine",
+          "status": "current"
+        }
+      ]
+    },
+    "vaultwarden": {
+      "version": "1.2.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "vaultwarden",
+          "image": "vaultwarden/server",
+          "tag": "1.37.5-alpine",
+          "latest_in_major": "1.37.5-alpine",
+          "latest": "1.37.5-alpine",
+          "status": "current"
+        }
+      ]
+    },
+    "vikunja": {
+      "version": "1.1.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "vikunja",
+          "image": "vikunja/vikunja",
+          "tag": "0.24.6",
+          "latest_in_major": "0.24.6",
+          "latest": "2.8.0",
+          "status": "major"
+        }
+      ]
+    },
+    "wallabag": {
+      "version": "1.2.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "wallabag",
+          "image": "wallabag/wallabag",
+          "tag": "2.6.15",
+          "latest_in_major": "2.6.15",
+          "latest": "2.6.15",
+          "status": "current"
+        }
+      ]
+    },
+    "wikijs": {
+      "version": "1.1.0",
+      "status": "major",
+      "apps": [
+        {
+          "app": "wikijs",
+          "image": "ghcr.io/requarks/wiki",
+          "tag": "2.5.317",
+          "latest_in_major": "2.5.317",
+          "latest": "3.1.1",
+          "status": "major"
+        }
+      ]
+    },
+    "wordpress": {
+      "version": "1.1.0",
+      "status": "current",
+      "apps": [
+        {
+          "app": "wordpress",
+          "image": "wordpress",
+          "tag": "7.1-php8.3-apache",
+          "latest_in_major": "7.1-php8.3-apache",
+          "latest": "7.1-php8.3-apache",
+          "status": "current"
+        }
+      ]
+    }
+  }
+}

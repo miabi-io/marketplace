@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import type { Listing } from '@/api/types'
-import { hueOf, isURL, monogram, provision } from '@/utils/format'
+import { hueOf, isURL, monogram, provision, relativeDay, shortDate } from '@/utils/format'
 
 const props = defineProps<{ item: Listing }>()
 
@@ -33,10 +33,16 @@ const summary = computed(() => provision(props.item))
         >
         <template v-else>{{ monogram(item.display_name) }}</template>
       </span>
-      <span
-        class="badge"
-        :class="item.source === 'community' ? 'badge-community' : 'badge-official'"
-      >{{ item.source }}</span>
+      <div class="head-badges">
+        <span
+          v-if="item.deprecated"
+          class="badge badge-warning"
+        >deprecated</span>
+        <span
+          class="badge"
+          :class="item.source === 'community' ? 'badge-community' : 'badge-official'"
+        >{{ item.source }}</span>
+      </div>
     </div>
 
     <h3 class="name">{{ item.display_name }}</h3>
@@ -44,7 +50,13 @@ const summary = computed(() => provision(props.item))
 
     <div class="foot">
       <span class="provision">{{ summary }}</span>
-      <span class="version">v{{ item.version }}</span>
+      <span class="version">
+        <span
+          v-if="item.updated"
+          class="updated"
+          :title="`Updated ${shortDate(item.updated)}`"
+        >{{ relativeDay(item.updated) }} · </span>v{{ item.version }}
+      </span>
     </div>
   </RouterLink>
 </template>
@@ -73,6 +85,13 @@ const summary = computed(() => provision(props.item))
   align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
+}
+
+.head-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .tile {
@@ -112,5 +131,9 @@ const summary = computed(() => provision(props.item))
 }
 .version {
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.updated {
+  color: var(--text-muted);
 }
 </style>

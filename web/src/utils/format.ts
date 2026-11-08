@@ -39,3 +39,26 @@ export function engineLabel(engine: string): string {
   }
   return map[engine] ?? engine
 }
+
+// Dates are calendar days (YYYY-MM-DD); parsing them as UTC avoids an off-by-one in negative offsets.
+function parseDay(day: string): Date | null {
+  const d = new Date(`${day}T00:00:00Z`)
+  return Number.isNaN(d.getTime()) ? null : d
+}
+
+export function shortDate(day?: string): string {
+  const d = day ? parseDay(day) : null
+  if (!d) return ''
+  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })
+}
+
+export function relativeDay(day?: string, now = new Date()): string {
+  const d = day ? parseDay(day) : null
+  if (!d) return ''
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+  const days = Math.round((today - d.getTime()) / 86_400_000)
+  if (days <= 0) return 'today'
+  if (days === 1) return 'yesterday'
+  if (days < 30) return `${days} days ago`
+  return shortDate(day)
+}

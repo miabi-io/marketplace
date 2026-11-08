@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `nocodb`: `nocodb/nocodb` 2026.08.0 → 2026.10.1
+images:
+  nocodb: sha256:8c2dd06896d95e750d55010e529972c22c1ee73b22dce321b1d2de2e7d5cd6ae

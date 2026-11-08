@@ -1,0 +1,8 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `server`: `ghcr.io/goauthentik/server` 2026.8.1 → 2026.8.5
+  - `worker`: `ghcr.io/goauthentik/server` 2026.8.1 → 2026.8.5
+images:
+  server: sha256:602227a86455d6772e3d16b7d852713c4f864f40df5df894abd1285bb53979a5
+  worker: sha256:602227a86455d6772e3d16b7d852713c4f864f40df5df894abd1285bb53979a5
