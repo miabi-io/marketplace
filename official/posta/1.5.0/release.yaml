@@ -1,0 +1,8 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `server`: `jkaninda/posta` 0.15.1 → 0.19.0
+  - `worker`: `jkaninda/posta` 0.15.1 → 0.19.0
+images:
+  server: sha256:b811fa2b6983436719630551826f98091b7ca515f5eaa6e5dd27ad0987b35dc4
+  worker: sha256:b811fa2b6983436719630551826f98091b7ca515f5eaa6e5dd27ad0987b35dc4
