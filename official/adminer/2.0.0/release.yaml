@@ -1,0 +1,9 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `adminer`: `adminer` 5.5.1 → 6.3.0
+
+  Major upstream release: review the upstream upgrade notes and describe any manual steps here before merging.
+breaking: true
+images:
+  adminer: sha256:3a07decd833c2375ea749aa8018250c1db4859a78bd55354f797bfb591733233

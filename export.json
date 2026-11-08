@@ -1,5 +1,5 @@
 {
-  "etag": "\"7b525d1a96be89eac2f2c420003aeec17955012cf76f69a2c77e074090bdc4e0\"",
+  "etag": "\"145855286dc4aa524b05366dd0d89c57f12611bbb95901ae132e843a11cc265d\"",
   "generatedAt": "",
   "templates": [
     {
@@ -7,6 +7,19 @@
       "slug": "adminer",
       "source": "official",
       "versions": [
+        {
+          "version": "2.0.0",
+          "digest": "sha256:eaf58820b13b34a22d38651b1e0681c01c8e9dc08fbe38d32345d1329eba8f98",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: adminer\n  displayName: Adminer\n  version: 2.0.0\n  description: Single-file database management UI for PostgreSQL, MySQL, MariaDB, SQLite and MongoDB.\n  category: Database\n  icon: https://cdn.simpleicons.org/adminer\n  homepage: https://www.adminer.org\n  tags: [database, admin, sql, tools]\ninputs:\n  - key: default_server\n    label: Default server\n    help: Host prefilled on the login form — the network alias of a managed database, for example. Leave blank to type it every time.\n    type: string\n  - key: design\n    label: Theme\n    help: Adminer skin used for the UI.\n    type: select\n    options: [pepa-linha, hydra, nette, price, flat, brade]\n    default: pepa-linha\napplications:\n  - name: adminer\n    primary: true\n    image: adminer\n    tag: \"6.3.0\"\n    ports:\n      - container: 8080\n        scheme: http\n    env:\n      ADMINER_DEFAULT_SERVER: \"{{ .inputs.default_server }}\"\n      ADMINER_DESIGN: \"{{ .inputs.design }}\"\n    healthcheck:\n      type: http\n      path: /\n      port: 8080\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 10\n",
+          "release": {
+            "released": "2026-11-08",
+            "notes": "Image updates:\n- `adminer`: `adminer` 5.5.1 → 6.3.0\n\nMajor upstream release: review the upstream upgrade notes and describe any manual steps here before merging.\n",
+            "breaking": true,
+            "images": {
+              "adminer": "sha256:3a07decd833c2375ea749aa8018250c1db4859a78bd55354f797bfb591733233"
+            }
+          }
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:3d6b3d41eaa19f6ec3b652a2e7260f8b4a4461848194f3745a6b2fa0804e5a4d",
