@@ -1,5 +1,5 @@
 {
-  "etag": "\"d91ed452e8afb3daf367734ba0ba6f2b9f48f2730f83ba23aa86e447634b0787\"",
+  "etag": "\"1483a5b446412071f313998658b7209a9b4e03a964f853218798bad0a6e43325\"",
   "generatedAt": "",
   "templates": [
     {
@@ -65,6 +65,10 @@
       "category": "Security",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:87ef18bc36218b1780d963428385694a61841050ec451b3f52349d0f09066186"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:caae9da64289159e16f2d6c03c5268a5fbbd377c9f193c293644f3d5c401a6bd"
         }
@@ -77,6 +81,10 @@
       "display_name": "authentik",
       "category": "Security",
       "versions": [
+        {
+          "version": "1.2.0",
+          "digest": "sha256:a20ea44f9a60be0777351d3bd1ff64952b28e4a99bbbf1ff36b2c69737439c02"
+        },
         {
           "version": "1.1.0",
           "digest": "sha256:89fd0fc0f928bcb688d39901779fe7f25bb17bed5166bed53386e9a61b3808af"
@@ -168,6 +176,10 @@
       "category": "News",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:155edb6e37cdb941f6daf58c31c16fa8f4bcec756313258dfa506401a78fe15d"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:a99d6114d1c48189c86b74c73a1cc39ac492758b41d87ee18c1fa40209fafb62"
         }
@@ -180,6 +192,10 @@
       "display_name": "Ghost",
       "category": "CMS",
       "versions": [
+        {
+          "version": "1.4.0",
+          "digest": "sha256:e256a978ff8943dbfdf61cb45f47e2fa371b412c938a719736a9ade11d32018a"
+        },
         {
           "version": "1.3.0",
           "digest": "sha256:3408da29edf0bb868aadadd2117539a9a1d15b2d69fc21a14540613c1645e012"
@@ -198,6 +214,10 @@
       "category": "Development",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:8e09521488ec19d729f83fbbb51bdffdd90623468e858ccfdcc347d2d36d94d4"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:755270c0f5e79377e3e91c7895cc608f60b831b2950b3271a61e2177daf50665"
         }
@@ -210,6 +230,10 @@
       "display_name": "GitLab",
       "category": "Development",
       "versions": [
+        {
+          "version": "1.3.0",
+          "digest": "sha256:fea7f1b39207759328b995cfff80b77fb62923806345729bf4baeeb846cc13b3"
+        },
         {
           "version": "1.2.0",
           "digest": "sha256:62c0743abb4dafaae29bd63486bb6913d88a200d8ad8f73b2246b1dfe6bcc2d0"
@@ -228,6 +252,10 @@
       "category": "Web",
       "versions": [
         {
+          "version": "1.2.0",
+          "digest": "sha256:174e21bd6d655b5ff9700f0c01c376aca69cfba2b65ce38b5396c97881d0fc52"
+        },
+        {
           "version": "1.1.0",
           "digest": "sha256:7a14fc1994e5cf1e569ae3f3cbb247d88a4fc436fcccfa0e3a7c483b74985f29"
         }
@@ -241,6 +269,10 @@
       "category": "Monitoring",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:692e725bf1560b323f693f632633af6c3b7f229ec119564d4c6ae7fc36e5a3d8"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:c6d2899814a038e23f2a740f1acc11a1ca8506e13195b8b300d25d96a03975b9"
         }
@@ -253,6 +285,10 @@
       "display_name": "Invoice Ninja",
       "category": "Productivity",
       "versions": [
+        {
+          "version": "1.2.0",
+          "digest": "sha256:e582d3c15da6c0dcd7a71f66190c8f66fca37a7ac5ee0a8b8e7d60ccb2aea790"
+        },
         {
           "version": "1.1.0",
           "digest": "sha256:2b08148e258447ec5090cc877655ac45d988c088cc93accf2897b2567f18c586"
@@ -271,6 +307,10 @@
       "category": "Media",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:b12e9c6f5f34b76c2ebdeceb355c31c5e362e2d139c53e81917529fc49c5d39d"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:ac1f20a0447eb47b42298ec0b8c251b736e0a8387a2c3d9db2dce4305b4c1940"
         }
@@ -283,6 +323,10 @@
       "display_name": "Keycloak",
       "category": "Security",
       "versions": [
+        {
+          "version": "1.2.0",
+          "digest": "sha256:1f14ab3a46df82c03cf764aa6bece0cfe35e5d0881a079c6d932c22881599984"
+        },
         {
           "version": "1.1.0",
           "digest": "sha256:84cc97c4017f6eeb2733343b567654d7bd568e68c42774c356715cbb7c705999"
@@ -361,6 +405,10 @@
       "category": "Productivity",
       "versions": [
         {
+          "version": "1.2.0",
+          "digest": "sha256:3fa682111297b0575156c8fdf31f58187e94b897749625480cda13e5eded6cb9"
+        },
+        {
           "version": "1.1.0",
           "digest": "sha256:a7e1e904dce313ecc43f587c56bf91a59f93cd827d0a16ea1f88834404f3d0a5"
         },
@@ -378,6 +426,10 @@
       "category": "Productivity",
       "versions": [
         {
+          "version": "1.2.0",
+          "digest": "sha256:ece00182deaafbf33f8dd27bcdf7927bca4f3c3d203555715da2784206a7df41"
+        },
+        {
           "version": "1.1.0",
           "digest": "sha256:ab5cb32a541b5a8f466002d31195f3cfa70a1580a2743668cd497657bfc5d879"
         },
@@ -394,6 +446,10 @@
       "display_name": "Meilisearch",
       "category": "Database",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:22bebed54ef38d9f20e7a8d278864a7396152a242d4f8b03730ff6816dadc52e"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:38e1150a77b75aa93e26be58d6355292012e6df3474474f40b0ce8ce276ef646"
@@ -420,6 +476,10 @@
       "display_name": "Metabase",
       "category": "Analytics",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:18788d71c5e67b7efa4de9c7d625254fa55e09191ef7177424763467e7b0fda4"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:5d52caf6aba4546f80b63ad4824053864bd83d8836f9d6d62cf9dda688e748a9"
@@ -486,6 +546,10 @@
       "category": "Automation",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:8e9d279ef98e1ddf953d14410559ea3477749e19012928e427981f43d5ac1037"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:43447621408c4f31a8348946f64ccdb3553bebed799aeae07f9bb0eea980dd53"
         }
@@ -538,6 +602,10 @@
       "category": "Productivity",
       "versions": [
         {
+          "version": "1.2.0",
+          "digest": "sha256:98b443ad160aca7295be345d3ddb730b10199c63d58edd4bc9fa8f901b4ded67"
+        },
+        {
           "version": "1.1.0",
           "digest": "sha256:9288552f6c3fdf86bc9d12252a6e73751d7ba26fc8e3279fde0221a49afc997c"
         },
@@ -555,6 +623,10 @@
       "category": "Productivity",
       "versions": [
         {
+          "version": "1.2.0",
+          "digest": "sha256:17a5b7c8f88792a49c3ce20e201d5bbd84ef24155a952acbd368bbf9d9d3bb3b"
+        },
+        {
           "version": "1.1.0",
           "digest": "sha256:3d4b909abefc18e54928843ee241c291917c65b3d5eb431107aeac33780a00fa"
         },
@@ -571,6 +643,10 @@
       "display_name": "Open WebUI",
       "category": "Productivity",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:d393a2e5efebb0bd9e189f411deb5834b9c5ba83b23c1066b69d9438093b4f70"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:c065bf863bca1abb341bd11083fd4ccd17c53a8148ce7ecff33a6f79f4897c9e"
@@ -597,6 +673,10 @@
       "display_name": "Paperless-ngx",
       "category": "Productivity",
       "versions": [
+        {
+          "version": "1.2.0",
+          "digest": "sha256:d10c1b1d5109431032f9d9996d573da843ed0ad129b1bc1d3fdf77a0a6a964a8"
+        },
         {
           "version": "1.1.0",
           "digest": "sha256:a2c49cbef7ffca3efb803a1cf3c4826c2eb31c14929622ec045088100982f13c"
@@ -641,6 +721,10 @@
       "category": "Email",
       "versions": [
         {
+          "version": "1.4.0",
+          "digest": "sha256:4d652e5b7db40a5036edb9895f1f0f81350b97322623fd4dbc055caeb07e1466"
+        },
+        {
           "version": "1.3.0",
           "digest": "sha256:ad6d0792291225d25dd160bc8e282cde55b74dcefff1e76fdcfe672e3c87bb5f"
         },
@@ -675,6 +759,10 @@
       "category": "Database",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:3b3f689f46860592e86a44f05b4080b04f1decda70c07059561996c3ba1b73ac"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:4c71d7e7bd6e7c190e5ff3fbcb32f929a1533841e82183abc18770671c1a772a"
         }
@@ -687,6 +775,10 @@
       "display_name": "RabbitMQ",
       "category": "Development",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:cabfa4fb2f2e7ccea56fccee01316eb49f9af9ed3469ac45ac510a9bb2ae4668"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:dbd875a136028cf9a18a1a686ab1718aa03c1e9f10b822d191d6b7a7a20eea95"
@@ -714,6 +806,10 @@
       "category": "Email",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:d597c09dedd80d237a6d904704ae12e7f2aae0f2991288a896c2c9d1d339620e"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:4a5516039dd7395ab0e717fd2170c3a5159f8cc7f05286f766cefe58d4ff4eb2"
         }
@@ -739,6 +835,10 @@
       "display_name": "Umami",
       "category": "Analytics",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:e9e410f93d8a5a6b2360f62b7cc447f7fe1d89fab0345031d1324a72ceeba0ae"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:9eed29c07d57a874fef365ae29892824e7497d05c6a74c5f19f8fcedfed2ec43"
@@ -779,6 +879,10 @@
       "category": "Security",
       "versions": [
         {
+          "version": "1.2.0",
+          "digest": "sha256:f2e8422b3d49cd7464e46cded3454ccb44fedc216029d871eb3ae0271315b371"
+        },
+        {
           "version": "1.1.0",
           "digest": "sha256:cd55116afab80409e17039b7e3d5a64ae1933c6c0f789ce3997b2247cd85f73f"
         },
@@ -813,6 +917,10 @@
       "category": "Productivity",
       "versions": [
         {
+          "version": "1.2.0",
+          "digest": "sha256:23b92c78ec4bb25ad056a2d100dcd60b59c63e33b5d55a3b70b378e9baf7b3bc"
+        },
+        {
           "version": "1.1.0",
           "digest": "sha256:a294e3d9ae659449fb6add3ff2cac428a3703b549b80048cc26698f763d8e42b"
         },
@@ -830,6 +938,10 @@
       "category": "Productivity",
       "versions": [
         {
+          "version": "1.1.0",
+          "digest": "sha256:30df46201380b632fcbb13997bcc2c232e83574ea69b8b463cbf311423672344"
+        },
+        {
           "version": "1.0.0",
           "digest": "sha256:af71cf1aac8690c1df455329a4b42c4501b30fdbb0797bcc96979b72af939eac"
         }
@@ -842,6 +954,10 @@
       "display_name": "WordPress",
       "category": "CMS",
       "versions": [
+        {
+          "version": "1.1.0",
+          "digest": "sha256:1a463682f6442e39d68a9c59e3c62b3f8ed51d9c91613dab61972236e3f42ed9"
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:6e96b630743734e805246a285aa8a2f964eb09f3362263d9ba9cd4438f6e7975"
