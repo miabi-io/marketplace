@@ -60,10 +60,7 @@ databases:
     version: "8-alpine"
     placement: dedicated
 
-# The server and the worker are two processes over one datastore, so everything
-# they must agree on lives here and is injected into both containers. An
-# app-level variable of the same name wins, which is how each app keeps its own
-# role-specific settings below.
+# Injected into both server and worker; an app-level variable of the same name wins.
 stack:
   description: Posta — the API/web server and its dedicated worker, sharing one network and configuration.
   env:
@@ -77,8 +74,7 @@ stack:
     
     POSTA_WEB_URL: "{{ .inputs.web_url }}"
     POSTA_CORS_ORIGINS: "{{ .inputs.web_url }}"
-    # The worker needs both too: it signs outgoing mail with the stamper (JWT
-    # secret) and decrypts stored SMTP passwords (encryption key).
+    # The worker needs both too: it signs outgoing mail (JWT secret) and decrypts stored SMTP passwords.
     POSTA_JWT_SECRET: "{{ .inputs.jwt_secret }}"
     POSTA_ENCRYPTION_KEY: "{{ .inputs.encryption_key }}"
   secretEnv:
@@ -101,8 +97,7 @@ applications:
       POSTA_ADMIN_EMAIL: "{{ .inputs.admin_email }}"
       POSTA_ADMIN_PASSWORD: "{{ .inputs.admin_password }}"
 
-      # Background jobs belong to the worker below; running them in-process too
-      # would double every delivery attempt.
+      # Running jobs in-process too would double every delivery attempt.
       POSTA_EMBEDDED_WORKER: "false"
 
       # Email verification endpoint (results cached in Redis).
@@ -110,8 +105,7 @@ applications:
       POSTA_EMAIL_VERIFY_CACHE_TTL_HOURS: "168"
       POSTA_EMAIL_VERIFY_MX_CACHE_TTL_HOURS: "24"
       POSTA_EMAIL_VERIFY_RATE_HOURLY: "1000"
-      # Web form messages — receive submissions from a website form, then reply from the dashboard
-      # Master toggle — enables the public /api/v1/f/{key} ingest endpoint and the messages routes
+      # Enables the public /api/v1/f/{key} form-ingest endpoint and the messages routes.
       POSTA_MESSAGES_ENABLED: "true"
       POSTA_MESSAGES_MAX_BODY_BYTES: "65536"
       POSTA_MESSAGES_MAX_ATTACH_SIZE: "5242880"
@@ -139,9 +133,7 @@ applications:
       retries: 3
       startPeriodSeconds: 10
 
-  # Background processing: email delivery, retries of failed messages, and
-  # scheduled tasks. Same image, started with the `worker` command, so it scales
-  # independently of the API.
+  # Same image with the `worker` command, so it scales independently of the API.
   - name: worker
     image: jkaninda/posta
     tag: "0.15.1"

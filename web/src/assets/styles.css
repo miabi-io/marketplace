@@ -1,6 +1,4 @@
-/* Design tokens are the Miabi console's (miabi/web/src/assets/styles.css),
-   trimmed to what the storefront uses, so the marketplace and the product look
-   like one system. */
+/* Design tokens come from the Miabi console's styles.css so the marketplace and product look like one system. */
 
 :root,
 [data-theme='light'] {
@@ -266,8 +264,6 @@ pre {
   overflow-x: auto;
 }
 
-/* Motion: honour the OS setting, and never animate the grid for people who
-   asked for stillness. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -14,9 +14,7 @@ metadata:
     website: https://miabi.io
   tags: [database, mongodb, nosql, admin, tools]
 
-# Mongo Express connects to one MongoDB server. Paste the instance's connection
-# string (from its Credentials page) so it can reach the server by its in-network
-# alias; the web UI is protected by its own basic-auth login.
+# Paste the MongoDB instance's connection string from its Credentials page.
 inputs:
   - key: mongodb_url
     label: MongoDB connection string

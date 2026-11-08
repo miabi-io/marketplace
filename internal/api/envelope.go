@@ -19,9 +19,7 @@ package api
 
 import "github.com/jkaninda/okapi"
 
-// Envelope is the shared response wrapper (mirrors Miabi). It is generic so the
-// concrete data shape flows into the generated OpenAPI schema — register a route
-// with e.g. &Envelope[catalog.Page]{} to document the full body.
+// Envelope is generic so the concrete data shape flows into the generated OpenAPI schema.
 type Envelope[T any] struct {
 	Success bool      `json:"success"`
 	Data    T         `json:"data"`
@@ -35,8 +33,6 @@ type APIError struct {
 	Error   string `json:"error,omitempty"`
 }
 
-// ErrorResponse documents a failed response (success=false, populated error) for
-// OpenAPI; it is the body shape fail() emits.
 type ErrorResponse = Envelope[any]
 
 func ok(c *okapi.Context, data any) error {

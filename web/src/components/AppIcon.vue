@@ -32,9 +32,7 @@ import {
   mdiWeatherSunny,
 } from '@mdi/js'
 
-// Inline SVG paths from @mdi/js rather than the @mdi/font webfont: the storefront
-// uses ~20 glyphs, and the font ships ~740 KB of woff2/eot plus a 337 KB
-// stylesheet. Vite tree-shakes these imports down to the paths actually used.
+// Inline @mdi/js paths, not the @mdi/font webfont: ~20 glyphs vs ~1 MB of font and stylesheet.
 const PATHS: Record<string, string> = {
   'account': mdiAccountOutline,
   'alert': mdiAlertCircleOutline,

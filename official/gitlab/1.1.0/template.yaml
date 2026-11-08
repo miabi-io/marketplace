@@ -32,24 +32,16 @@ inputs:
     default: UTC
     placeholder: Europe/Brussels
 
-# The omnibus image bundles its own PostgreSQL, Redis, Puma, Sidekiq and Nginx,
-# and GitLab supports an external database only with superuser-created extensions
-# (pg_trgm, btree_gist) — so this template runs the bundled stack rather than a
-# managed Miabi database. Everything stateful lives in the volumes below.
+# GitLab needs superuser-created extensions for an external DB, so this runs the bundled omnibus stack.
 volumes:
   - name: config    # /etc/gitlab      — secrets, generated certificates
   - name: logs      # /var/log/gitlab  — per-service logs
   - name: data      # /var/opt/gitlab  — repositories, uploads, the bundled database
 
 configs:
-  # Omnibus' own configuration file, shipped as a Miabi config rather than the
-  # GITLAB_OMNIBUS_CONFIG environment variable: it is edited as a file in the
-  # Configs view, versioned, and every change redeploys GitLab so a
-  # `gitlab-ctl reconfigure` picks it up. gitlab.rb is also read *after*
-  # GITLAB_OMNIBUS_CONFIG, so nothing left in the environment can shadow it.
+  # A config, not GITLAB_OMNIBUS_CONFIG: edits redeploy and reconfigure, and gitlab.rb is read after the env var.
   - name: omnibus
-    # Carries the initial root password: keep the content out of apply plans and
-    # behind an audited reveal.
+    # Carries the initial root password: keep it out of apply plans and behind an audited reveal.
     sensitive: true
     mode: "0600"
     files:
@@ -58,9 +50,7 @@ configs:
         gitlab_rails['time_zone'] = '{{ .inputs.time_zone }}'
         gitlab_rails['initial_root_password'] = '{{ .inputs.root_password }}'
 
-        # Serve plain HTTP behind the gateway: an https external_url would
-        # otherwise make omnibus listen on 443 and try to issue its own
-        # certificate, which fails in a container that owns no domain.
+        # An https external_url would make omnibus listen on 443 and try to issue its own certificate, which fails here.
         nginx['listen_port'] = 80
         nginx['listen_https'] = false
         letsencrypt['enable'] = false
@@ -69,13 +59,10 @@ configs:
           'X-Forwarded-Ssl' => 'on'
         }
 
-        # SSH is not published by this template (see the README), so point the
-        # shell at HTTPS clone URLs rather than advertising an unreachable port.
+        # SSH is not published (see README), so do not advertise an unreachable port.
         gitlab_rails['gitlab_shell_ssh_port'] = 22
 
-        # Right-size the bundled stack for a single node: the default worker
-        # counts and the built-in Prometheus suite together cost several GB that
-        # a small install has no use for.
+        # Default worker counts and the bundled Prometheus suite cost several GB a small install does not need.
         puma['worker_processes'] = 2
         sidekiq['max_concurrency'] = 10
         prometheus_monitoring['enable'] = false
@@ -104,9 +91,7 @@ applications:
         path: /etc/gitlab/gitlab.rb
         mode: "0600"
     healthcheck:
-      # Reconfigure + migrations make the first boot slow (5–10 minutes on a
-      # modest node), so the start period is generous — a shorter one would kill
-      # the container mid-install.
+      # First boot runs reconfigure + migrations (5-10 minutes), so a shorter start period would kill it mid-install.
       type: http
       path: /-/health
       port: 80

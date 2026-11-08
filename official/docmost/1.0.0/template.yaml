@@ -58,9 +58,7 @@ databases:
     engine: postgres
     version: "17-alpine"
     placement: auto
-  # Dedicated, not shared: Docmost's background jobs and its collaboration
-  # sessions live in Redis on db 0, under keys another tenant of a shared
-  # instance could collide with.
+  # Dedicated, not shared: Docmost's Redis keys on db 0 could collide with another tenant's.
   - name: redis
     engine: redis
     version: "8-alpine"
@@ -80,9 +78,7 @@ applications:
       APP_SECRET: "{{ .inputs.app_secret }}"
       DATABASE_URL: "{{ .databases.db.uri }}"
       REDIS_URL: "{{ .databases.redis.uri }}"
-      # Attachments and avatars go to the mounted volume. Docmost also speaks S3
-      # and Azure Blob; switch STORAGE_DRIVER and add their credentials to move
-      # them off the node.
+      # Docmost also supports S3 and Azure Blob: switch STORAGE_DRIVER and add credentials to move files off the node.
       STORAGE_DRIVER: local
 
       MAIL_DRIVER: smtp
@@ -101,8 +97,7 @@ applications:
     mounts:
       - volume: storage
         path: /app/data/storage
-    # The API answers under the global "api" prefix and its root needs no
-    # session, so it reports the server being up without authenticating.
+    # The API root under the "api" prefix needs no session, so it probes liveness without auth.
     healthcheck:
       type: http
       path: /api

@@ -15,10 +15,7 @@
  *
  */
 
-// Package manifest defines the declarative Miabi template format
-// (apiVersion miabi.io/v1, kind Template): a versioned bundle describing a
-// whole stack of applications plus the databases and volumes they depend on. It
-// owns parsing, validation, and the install-time interpolation of values.
+// Package manifest defines the Miabi template format (miabi.io/v1 Template): parsing, validation and interpolation.
 package manifest
 
 // APIVersion / Kind are the only accepted document identifiers.
@@ -31,15 +28,11 @@ const (
 type Placement string
 
 const (
-	// PlacementAuto reuses a compatible running instance in the workspace (a
-	// logical database is created in it); if none exists, a dedicated instance is
-	// provisioned first. The default.
+	// PlacementAuto reuses a compatible running instance, provisioning a dedicated one if none exists. The default.
 	PlacementAuto Placement = "auto"
-	// PlacementDedicated always provisions a fresh instance for this install.
-	// Forced for Redis (which has no logical databases).
+	// PlacementDedicated always provisions a fresh instance; forced for Redis, which has no logical databases.
 	PlacementDedicated Placement = "dedicated"
-	// PlacementShared requires an already-existing compatible instance; the
-	// install fails if the user does not select one.
+	// PlacementShared requires an existing compatible instance; the install fails if none is selected.
 	PlacementShared Placement = "shared"
 )
 
@@ -78,14 +71,7 @@ type Manifest struct {
 	Routes       []RouteSpec `yaml:"routes,omitempty" json:"routes,omitempty"`
 }
 
-// StackSpec optionally configures the Stack a template is grouped into on
-// install. A template with two or more applications is always grouped into a
-// stack; declaring this block additionally forces a stack for a single-app
-// template and lets the template describe it and share configuration across its
-// members. Env declared here is injected into every member application's
-// containers at deploy time (an app-level var with the same key wins), so the
-// connection details every member needs are written once instead of per app —
-// e.g. authentik's server + worker sharing the same database and Redis.
+// StackSpec env is injected into every member app at deploy time; an app-level var with the same key wins.
 type StackSpec struct {
 	Description string            `yaml:"description,omitempty" json:"description,omitempty"`
 	Env         map[string]string `yaml:"env,omitempty" json:"env,omitempty"`
@@ -95,8 +81,7 @@ type StackSpec struct {
 
 // Metadata describes and identifies a template.
 type Metadata struct {
-	// Name is the stable template handle (e.g. "ghost"). It must match
-	// ^[a-z0-9][a-z0-9-]*$ and equal the template's directory name.
+	// Name must match ^[a-z0-9][a-z0-9-]*$ and equal the template's directory name.
 	Name string `yaml:"name" json:"name"`
 	// DisplayName is the free-text catalog label shown in the UI (e.g. "Ghost").
 	DisplayName string   `yaml:"displayName" json:"displayName"`
@@ -110,17 +95,14 @@ type Metadata struct {
 	MinMiabi    string   `yaml:"minMiabi,omitempty" json:"minMiabi,omitempty"`
 }
 
-// Author credits whoever packaged the template. Name is required when an author
-// block is present; email and website are optional contact details. This is
-// distinct from Metadata.Homepage, which points at the upstream project.
+// Author credits the template packager, distinct from Metadata.Homepage which points at the upstream project.
 type Author struct {
 	Name    string `yaml:"name" json:"name"`
 	Email   string `yaml:"email,omitempty" json:"email,omitempty"`
 	Website string `yaml:"website,omitempty" json:"website,omitempty"`
 }
 
-// Input is a question shown in the install wizard. Its value is referenced in
-// application env as {{ .inputs.<key> }}.
+// Input is an install wizard question, referenced in env as {{ .inputs.<key> }}.
 type Input struct {
 	Key         string    `yaml:"key" json:"key"`
 	Label       string    `yaml:"label,omitempty" json:"label,omitempty"`
@@ -133,8 +115,7 @@ type Input struct {
 	Required    bool      `yaml:"required,omitempty" json:"required,omitempty"`
 	// Generate fills the value with a strong random secret when left blank.
 	Generate bool `yaml:"generate,omitempty" json:"generate,omitempty"`
-	// Length sets the size of an auto-generated value (only with generate: true).
-	// 0 uses the default (24). Set it to 32 for an AES-256 key, for example.
+	// Length of an auto-generated value (generate: true only); 0 uses the default 24.
 	Length int `yaml:"length,omitempty" json:"length,omitempty"`
 }
 
@@ -151,9 +132,7 @@ type Volume struct {
 	Name string `yaml:"name" json:"name"`
 }
 
-// Config is a set of configuration files created before the applications are
-// deployed and mounted into them read-only. File values are interpolated like
-// env, so a config can carry a rendered database password.
+// Config files are mounted read-only and interpolated like env, so they can carry a rendered database password.
 type Config struct {
 	Name  string            `yaml:"name" json:"name"`
 	Files map[string]string `yaml:"files" json:"files"`
@@ -161,13 +140,10 @@ type Config struct {
 	Mode string `yaml:"mode,omitempty" json:"mode,omitempty"`
 	// Sensitive redacts content in API responses and diffs it by digest only.
 	Sensitive bool `yaml:"sensitive,omitempty" json:"sensitive,omitempty"`
-	// Delimiters overrides the interpolation delimiters, so a file whose own
-	// syntax uses {{ }} survives rendering. Exactly two distinct entries.
+	// Delimiters lets a file whose own syntax uses {{ }} survive rendering; exactly two distinct entries.
 	Delimiters []string `yaml:"delimiters,omitempty" json:"delimiters,omitempty"`
 }
 
-// AppSpec is a single application within the template. Two or more applications
-// are grouped into a Stack on install.
 type AppSpec struct {
 	Name          string            `yaml:"name" json:"name"`
 	Primary       bool              `yaml:"primary,omitempty" json:"primary,omitempty"`
@@ -189,21 +165,18 @@ type Port struct {
 	Scheme    string `yaml:"scheme,omitempty" json:"scheme,omitempty"` // http | https
 }
 
-// Mount binds a declared template volume or config into an application. Host
-// binds are not permitted in templates (no host-preset field exists by design).
+// Host binds are not permitted in templates by design.
 type Mount struct {
 	Volume string `yaml:"volume,omitempty" json:"volume,omitempty"`
 	Config string `yaml:"config,omitempty" json:"config,omitempty"`
-	// Key selects one file from the config, making Path that file's exact
-	// location; empty projects every file under Path as a directory prefix.
+	// Key selects one file, making Path its exact location; empty projects every file under Path as a directory.
 	Key      string `yaml:"key,omitempty" json:"key,omitempty"`
 	Path     string `yaml:"path" json:"path"`
 	Mode     string `yaml:"mode,omitempty" json:"mode,omitempty"`
 	ReadOnly bool   `yaml:"readOnly,omitempty" json:"readOnly,omitempty"`
 }
 
-// Resources caps an application. Memory accepts Ki/Mi/Gi suffixes; CPU is a core
-// fraction (e.g. "0.5"). Empty fields mean "use the platform default".
+// Memory accepts Ki/Mi/Gi suffixes; CPU is a core fraction (e.g. "0.5"); empty means the platform default.
 type Resources struct {
 	Memory string `yaml:"memory,omitempty" json:"memory,omitempty"`
 	CPU    string `yaml:"cpu,omitempty" json:"cpu,omitempty"`
@@ -221,9 +194,7 @@ type Healthcheck struct {
 	StartPeriodSeconds int    `yaml:"startPeriodSeconds,omitempty" json:"startPeriodSeconds,omitempty"`
 }
 
-// PrimaryApp returns the application marked primary, or the first one when none
-// is explicitly marked (single-application templates). The bool is false when
-// the template has no applications (a database-only template).
+// PrimaryApp falls back to the first app when none is marked; false for a database-only template.
 func (m *Manifest) PrimaryApp() (AppSpec, bool) {
 	if len(m.Applications) == 0 {
 		return AppSpec{}, false
@@ -236,15 +207,11 @@ func (m *Manifest) PrimaryApp() (AppSpec, bool) {
 	return m.Applications[0], true
 }
 
-// IsDatabaseOnly reports whether the template provisions only databases (no
-// applications) — the former KindDatabase entries.
 func (m *Manifest) IsDatabaseOnly() bool {
 	return len(m.Applications) == 0 && len(m.Databases) > 0
 }
 
-// WantsStack reports whether the install should group the template's apps into a
-// Stack: always for a multi-application template, and whenever a stack block is
-// declared (forcing a stack even for a single application).
+// WantsStack is true for multi-app templates and whenever a stack block is declared.
 func (m *Manifest) WantsStack() bool {
 	return len(m.Applications) > 1 || m.Stack != nil
 }

@@ -1,6 +1,4 @@
-// Shapes mirror the Go API (internal/api, internal/catalog). Keep field names in
-// sync with the JSON tags there — the SPA is the only consumer that unwraps the
-// Envelope, machine clients use /v1/export.
+// Keep field names in sync with the Go JSON tags in internal/api and internal/catalog.
 
 export type Source = 'official' | 'community'
 

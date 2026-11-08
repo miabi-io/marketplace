@@ -36,20 +36,15 @@ inputs:
     length: 24
     required: true
 databases:
-  # PostgreSQL only. authentik dropped Redis in 2025.10 — caching, tasks, the
-  # embedded outpost and websockets all moved here, at the cost of roughly 50%
-  # more connections.
+  # PostgreSQL only: authentik dropped Redis in 2025.10, at the cost of roughly 50% more connections.
   - name: db
     engine: postgres
     version: "17-alpine"
     placement: auto
 volumes:
-  # Mounted at /data, not /media: 2025.12 moved local file storage, and media now
-  # lives under /data/media.
+  # Mounted at /data, not /media: since 2025.12 media lives under /data/media.
   - name: data
-# Shared across the server + worker: both processes need the same secret key and
-# the same PostgreSQL connection, so they are declared once here instead of
-# being repeated in every application.
+# The server and worker both need the same secret key and database connection, so they are declared once here.
 stack:
   description: authentik identity provider — a server and a background worker sharing PostgreSQL.
   env:

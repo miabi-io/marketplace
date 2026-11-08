@@ -10,8 +10,7 @@ async function copy() {
   try {
     await navigator.clipboard.writeText(props.value)
   } catch {
-    // Clipboard API needs a secure context; fall back to a selectable prompt
-    // rather than failing silently.
+    // Clipboard API needs a secure context; fall back rather than failing silently.
     const ta = document.createElement('textarea')
     ta.value = props.value
     document.body.appendChild(ta)

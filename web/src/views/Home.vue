@@ -18,9 +18,7 @@ const query = computed({
   set: (v: string) => store.setQuery(v),
 })
 
-// The URL is the shareable source of truth: every filter lands in the query
-// string (replace, so typing does not fill the back stack), and the store
-// hydrates from it on load and on back/forward.
+// replace, not push, so typing does not fill the back stack.
 function syncURL() {
   const q: Record<string, string> = {}
   if (store.q) q.q = store.q
@@ -246,8 +244,6 @@ const countLabel = computed(() => {
   gap: 16px;
   transition: opacity var(--transition);
 }
-/* A re-query dims the current results instead of tearing them down, so the page
-   never jumps while you type. */
 .grid.dim {
   opacity: 0.55;
 }

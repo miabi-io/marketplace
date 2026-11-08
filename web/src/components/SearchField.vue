@@ -7,8 +7,6 @@ const emit = defineEmits<{ 'update:modelValue': [string] }>()
 
 const input = ref<HTMLInputElement>()
 
-// "/" and ⌘K focus the field from anywhere; Escape clears it. There is no submit
-// button — results follow typing.
 function onKeydown(e: KeyboardEvent) {
   const target = e.target as HTMLElement | null
   const typing = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')

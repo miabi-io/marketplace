@@ -2,8 +2,6 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
 
-// The dev server proxies the catalog API to a locally running `marketplace
-// server` (make run), so the SPA talks to the same endpoints it will in prod.
 export default defineConfig({
   plugins: [vue()],
   resolve: {

@@ -45,11 +45,7 @@ applications:
     primary: true
     image: docker.dragonflydb.io/dragonflydb/dragonfly
     tag: "v1.40.2"
-    # No ports block: Dragonfly speaks the Redis protocol, which the gateway does
-    # not route. Clients reach it at mb-app-<name>:6379 on the workspace network.
-    #
-    # Flags come through a shell so the password stays an env var instead of being
-    # interpolated into argv, where docker inspect would show it.
+    # No ports: the gateway cannot route Redis protocol; flags go through sh so the password stays out of argv.
     command:
       - sh
       - -c

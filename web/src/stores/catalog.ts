@@ -6,9 +6,7 @@ import type { CategoryFacet, Listing, Page } from '@/api/types'
 const PER_PAGE = 24
 const DEBOUNCE_MS = 180
 
-// The catalog store owns search as a single piece of state: every filter change
-// funnels through run(), which debounces, cancels the in-flight request, and
-// drops responses that arrive out of order. Views never call the API directly.
+// Every filter change funnels through run(), which debounces, cancels in-flight requests and drops stale responses.
 export const useCatalogStore = defineStore('catalog', () => {
   const q = ref('')
   const source = ref('')
@@ -21,9 +19,7 @@ export const useCatalogStore = defineStore('catalog', () => {
   const totalPages = ref(0)
   const categories = ref<CategoryFacet[]>([])
 
-  // `loading` is the first load (shows skeletons); `refreshing` is a keystroke
-  // re-query, which keeps the current results on screen and only dims them —
-  // swapping to skeletons on every character makes the grid strobe.
+  // Swapping to skeletons on every keystroke makes the grid strobe, so re-queries only dim the results.
   const loading = ref(false)
   const refreshing = ref(false)
   const error = ref('')
@@ -75,8 +71,7 @@ export const useCatalogStore = defineStore('catalog', () => {
     }
   }
 
-  // run debounces typing but applies chip/facet clicks immediately — a click is
-  // a deliberate act and waiting on it feels broken.
+  // Clicks apply immediately; only typing is debounced.
   function run(immediate = false) {
     if (timer) clearTimeout(timer)
     if (immediate) {
@@ -124,8 +119,6 @@ export const useCatalogStore = defineStore('catalog', () => {
     run(true)
   }
 
-  // hydrate applies URL state on first paint (deep links and back/forward) and
-  // only re-queries when something actually changed.
   function hydrate(state: { q?: string; source?: string; category?: string; tag?: string; page?: number }) {
     const next = {
       q: state.q ?? '',

@@ -26,8 +26,7 @@ import (
 	marketplace "github.com/miabi-io/marketplace"
 )
 
-// The schema is only useful to an editor if the URL it advertises is the URL it
-// is served from, so the route and the $id have to stay in agreement.
+// The schema is only useful to an editor if its $id is the URL it is served from.
 func TestSchemaIDMatchesItsRoute(t *testing.T) {
 	const route = "/schema/template.schema.json"
 
@@ -51,8 +50,7 @@ func TestSchemaIDMatchesItsRoute(t *testing.T) {
 	}
 }
 
-// The ETag is a strong validator over the served bytes, so a schema change
-// invalidates the copy an editor cached.
+// A schema change must invalidate the copy an editor cached.
 func TestSchemaETag(t *testing.T) {
 	if !strings.HasPrefix(schemaETag, `"`) || !strings.HasSuffix(schemaETag, `"`) {
 		t.Errorf("etag %q should be quoted", schemaETag)

@@ -36,8 +36,7 @@ inputs:
     default: "true"
 
 configs:
-  # The bot policy. Editing it under Configs redeploys Anubis with the new rules,
-  # which is the point of shipping it as a config rather than baking it into the image.
+  # Shipped as a config so editing it under Configs redeploys Anubis with the new rules.
   - name: policy
     mode: "0644"
     files:
@@ -58,9 +57,7 @@ configs:
             path_regex: ^/robots.txt$
             action: ALLOW
 
-          # Anything claiming to be a browser is challenged; a request matching no
-          # rule is allowed through, so add ALLOW rules for feed readers and
-          # monitoring before they start failing.
+          # A request matching no rule is allowed, so add ALLOW rules for feed readers and monitoring.
           - name: generic-browser
             user_agent_regex: Mozilla
             action: CHALLENGE

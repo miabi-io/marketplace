@@ -54,8 +54,7 @@ func TestLoadEmbedded(t *testing.T) {
 	}
 }
 
-// TestBundleDigestRoundTrip is the exact integrity check the Miabi consumer
-// runs: every inlined manifest's digest must equal sha256 of its bytes.
+// This is the exact integrity check the Miabi consumer runs.
 func TestBundleDigestRoundTrip(t *testing.T) {
 	c, err := Load()
 	if err != nil {
@@ -75,9 +74,7 @@ func TestSearchFilterAndPaginate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("load: %v", err)
 	}
-	// The community-source filter should return only community templates, and
-	// the seeded sample must be among them. We assert behavior rather than an
-	// exact count so adding a community template doesn't break this test.
+	// Assert behavior rather than an exact count so adding a community template doesn't break this test.
 	comm := c.Search(Query{Source: SourceCommunity, PerPage: 100})
 	if comm.Total == 0 {
 		t.Fatal("expected at least one community template")
@@ -119,8 +116,6 @@ applications:
     tag: latest
 `
 
-// TestDuplicateNameAcrossSourcesFails ensures the loader fails closed when the
-// same template name appears in both official/ and community/.
 func TestDuplicateNameAcrossSourcesFails(t *testing.T) {
 	fsys := fstest.MapFS{
 		"official/dup/1.0.0/template.yaml":  {Data: []byte(fixtureManifest)},

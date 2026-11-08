@@ -14,9 +14,7 @@ metadata:
     website: https://miabi.io
   tags: [database, mysql, mariadb, admin, tools]
 
-# Connects to any MySQL/MariaDB server in the workspace: PMA_ARBITRARY lets you
-# enter the target instance's host (its in-network alias) on the login screen, so
-# no specific database dependency is wired here.
+# PMA_ARBITRARY lets you enter any MySQL/MariaDB instance's in-network alias on the login screen.
 applications:
   - name: phpmyadmin
     primary: true

@@ -2,8 +2,6 @@ import type { BuildInfo, CategoryFacet, Envelope, Page, TemplateDetail } from '.
 
 const BASE = '/v1'
 
-// ApiError carries the API's stable error code so callers can branch on it
-// (a 404 renders the "not found" view rather than a failure banner).
 export class ApiError extends Error {
   status: number
   code: string

@@ -8,8 +8,7 @@ import CopyButton from '@/components/CopyButton.vue'
 const repoUrl = 'https://github.com/miabi-io/marketplace'
 const contributingUrl = `${repoUrl}/blob/main/CONTRIBUTING.md`
 
-// The origin, not a hard-coded marketplace.miabi.io: a self-hosted mirror should
-// tell its readers to point Miabi at itself.
+// The origin, not marketplace.miabi.io: a self-hosted mirror should point Miabi at itself.
 const envLine = `MIABI_MARKETPLACE_URL=${window.location.origin}`
 
 const links = [

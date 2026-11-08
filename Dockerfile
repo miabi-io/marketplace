@@ -1,9 +1,5 @@
 # syntax=docker/dockerfile:1
-#
-# Marketplace server image: serves the catalog API + storefront (the catalog is
-# embedded, so the binary is stateless). This is what runs the hosted registry at
-# marketplace.miabi.io, and what you deploy to self-host a fork or an internal
-# mirror; the committed export.json remains the no-server alternative.
+# Marketplace server image (API + storefront, catalog embedded); the committed export.json is the no-server alternative.
 
 FROM node:26-alpine AS web
 WORKDIR /web

@@ -9,8 +9,6 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ category: [string]; source: [string] }>()
 
-// Categories are chips rather than a <select>: the whole taxonomy is visible and
-// one click away. Beyond a dozen they'd wrap into a wall, so the tail collapses.
 const VISIBLE = 8
 const expanded = ref(false)
 const shown = computed(() =>

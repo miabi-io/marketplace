@@ -29,8 +29,7 @@ build: ## Build the marketplace binary into bin/
 build-ui: ## Build the storefront (Vue) and stage it for embedding
 	npm --prefix $(WEB_DIR) ci
 	npm --prefix $(WEB_DIR) run build
-	# Stage the build output where `go build` embeds it, keeping the committed
-	# .gitkeep so `go build` still works on a clean tree.
+	# Keep the committed .gitkeep so go build still works on a clean tree.
 	rm -rf $(EMBED_WEB_DIR)
 	cp -r $(WEB_DIR)/dist $(EMBED_WEB_DIR)
 	touch $(EMBED_WEB_DIR)/.gitkeep

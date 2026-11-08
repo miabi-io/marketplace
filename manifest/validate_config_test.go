@@ -30,8 +30,7 @@ kind: Template
 metadata: { name: t, displayName: T, version: 1.0.0 }
 `
 
-// anApp satisfies the "at least one application or database" rule, so a case
-// exercising configs alone still reaches the config checks.
+// anApp satisfies the "at least one application or database" rule so config-only cases reach the config checks.
 const anApp = "applications:\n  - name: a\n    image: i\n"
 
 func parse(t *testing.T, body string) error {
@@ -64,8 +63,7 @@ applications:
 	}
 }
 
-// The linter must reject here whatever the platform would reject at install —
-// a template that lints but fails to install is the failure mode this guards.
+// A template that lints but fails to install is the failure mode this guards.
 func TestConfigTemplateRejects(t *testing.T) {
 	tests := []struct {
 		name, body, want string

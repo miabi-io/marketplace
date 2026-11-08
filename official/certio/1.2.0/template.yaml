@@ -43,9 +43,7 @@ inputs:
     type: password
     required: true
     generate: true
-    # Certio accepts a 32-byte key as 64 hex chars, base64, or 32 raw characters.
-    # Miabi generates exactly `length` alphanumerics, so 32 is the only value that
-    # produces a valid key — 16, 24, 48 and 64 all fail to parse at boot.
+    # Certio needs a 32-byte key; Miabi generates exactly `length` alphanumerics, so only 32 parses at boot.
     length: 32
     pattern: "^([0-9a-fA-F]{64}|[A-Za-z0-9+/]{42,43}={0,2}|.{32})$"
   - key: jwt_secret
@@ -67,8 +65,7 @@ inputs:
     default: US
     pattern: "^[A-Za-z]{2}$"
 
-# The CAs, the issued certificates and their encrypted private keys all live
-# here. No volume: with Postgres, Certio keeps no state on its own filesystem.
+# No volume: with Postgres, Certio keeps no state on its own filesystem.
 databases:
   - name: db
     engine: postgres
@@ -84,8 +81,7 @@ applications:
       - container: 8080
         scheme: http
     env:
-      # Refuses to boot without a real master key and JWT secret, and marks
-      # session cookies secure — the right posture for something holding a CA.
+      # Refuses to boot without a real master key and JWT secret, and marks session cookies secure.
       CERTIO_PRODUCTION: "true"
       CERTIO_BASE_URL: "{{ .inputs.base_url }}"
 
@@ -100,8 +96,7 @@ applications:
       CERTIO_DEFAULT_ORGANIZATION: "{{ .inputs.organization }}"
       CERTIO_DEFAULT_COUNTRY: "{{ .inputs.country }}"
 
-      # A private key that stays downloadable forever is a copy waiting to be
-      # made; once lets the issuer collect it and closes the door after.
+      # once lets the issuer collect the private key, then closes the door.
       CERTIO_KEY_DOWNLOAD_POLICY: once
 
       # Renewal and expiry warnings run in-process.

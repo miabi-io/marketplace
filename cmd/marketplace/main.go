@@ -15,19 +15,7 @@
  *
  */
 
-// Command marketplace runs the Miabi marketplace registry service, and (as
-// subcommands) regenerates the machine index and lints the catalog for CI.
-//
-//	marketplace          # serve the API + storefront
-//	marketplace generate # write export.json + registry/index.json (CI drift check)
-//	marketplace lint     # validate every embedded template, exit non-zero on error
-//	marketplace version  # print the build version, commit and date
-//
-// The generated export.json is the full bundle (every manifest inline) — the
-// same document GET /v1/export serves. The hosted registry at
-// marketplace.miabi.io is what Miabi installs point MIABI_MARKETPLACE_URL at;
-// the committed export.json additionally lets a fork or an air-gapped install
-// sync from static git with no server at all.
+// Command marketplace serves the registry API and storefront; subcommands generate, lint and version support CI.
 package main
 
 import (
@@ -91,13 +79,9 @@ func serve(cli *okapicli.CLI) error {
 		License:     okapi.License{Name: "Apache-2.0", URL: "http://www.apache.org/licenses/LICENSE-2.0"},
 	})
 	api.Register(app, cat)
-	// Crawler surface: robots.txt, the sitemap, and the SPA shell with per-page
-	// head tags. Registered before the file server so those paths reach it.
+	// Registered before the file server so these paths reach the SEO handlers.
 	seo.Register(app, cat, os.Getenv("MARKETPLACE_BASE_URL"))
-	// The storefront is the built Vue SPA. It is registered last so every API
-	// route keeps precedence; unmatched paths fall back to index.html for the
-	// client-side router. Assets are content-hashed by Vite, so they cache hard;
-	// index.html is always served no-cache by Okapi.
+	// Registered last so every API route keeps precedence; unmatched paths fall back to index.html.
 	app.WebFS("/", web.Assets, okapi.WebConfig{
 		Root:    "dist",
 		Exclude: []string{"/v1", "/docs", "/healthz", "/metrics"},
@@ -111,10 +95,7 @@ func serve(cli *okapicli.CLI) error {
 	})
 }
 
-// generate writes the static catalog artifacts: export.json (the full bundle,
-// every manifest inline — the same document /v1/export serves) and registry/index.json
-// (the lightweight machine index). The time-based generatedAt is omitted from
-// both so they are deterministic and CI can diff them for drift.
+// generatedAt is omitted so the output is deterministic and CI can diff it for drift.
 func generate() error {
 	cat, err := catalog.Load()
 	if err != nil {
@@ -145,8 +126,6 @@ func writeJSON(path string, v any) error {
 	return os.WriteFile(path, append(data, '\n'), 0o644)
 }
 
-// lint loads the catalog, which validates every manifest, verifies digests, and
-// enforces cross-source name uniqueness — a non-zero exit fails CI.
 func lint() error {
 	cat, err := catalog.Load()
 	if err != nil {

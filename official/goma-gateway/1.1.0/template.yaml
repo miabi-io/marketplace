@@ -29,17 +29,12 @@ inputs:
     default: "true"
 
 volumes:
-  # Everything Goma reads besides its main file: extra/ for the dynamic route and
-  # middleware files it hot-reloads, and certs/ for certificates you bring yourself.
+  # extra/ holds hot-reloaded routes and middlewares; certs/ holds certificates you bring yourself.
   - name: data    # /etc/goma
   - name: acme    # /etc/letsencrypt
 
 configs:
-  # The static configuration. It is a Miabi config rather than a file baked into
-  # the image or written by hand in the container: edit it under Configs, and the
-  # save redeploys the gateway with the new file. Changes to *this* file need the
-  # restart anyway — routes and middlewares you want to change without one belong
-  # in /etc/goma/extra, which Goma watches.
+  # Edit under Configs to redeploy; routes you want to change without a restart belong in /etc/goma/extra.
   - name: config
     mode: "0644"
     files:
@@ -51,8 +46,6 @@ configs:
             write: 60
             idle: 60
 
-          # Match the container ports the template publishes. Goma's own defaults
-          # are the same, but writing them here keeps the file self-describing.
           entryPoints:
             web:
               address: "[::]:8080"
@@ -69,14 +62,12 @@ configs:
           log:
             level: {{ .inputs.log_level }}
 
-          # Dropping a YAML file in here adds routes and middlewares without a
-          # redeploy: the directory is on the volume and Goma watches it.
+          # Drop YAML files here to add routes and middlewares without a redeploy; Goma watches the directory.
           extraConfig:
             directory: /etc/goma/extra
             watch: true
 
-          # Routes can live here or in extraConfig. Starting empty means the
-          # gateway answers /healthz and 404s everything else until you add one.
+          # Empty: the gateway answers /healthz and 404s everything else until you add a route.
           routes: []
 
         middlewares: []
@@ -87,9 +78,7 @@ applications:
     image: jkaninda/goma-gateway
     tag: "1.0.0"
     ports:
-      # Plain HTTP is the entry point to attach a Miabi domain to: TLS already
-      # terminates at the platform gateway. 8443 is Goma's own TLS listener, for
-      # traffic that reaches it directly.
+      # Attach a Miabi domain to plain HTTP since TLS terminates at the platform gateway; 8443 is for direct traffic.
       - container: 8080
         scheme: http
       - container: 8443
