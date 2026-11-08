@@ -14,6 +14,9 @@
   --success-600: #16a34a;
   --info-500: #0ea5e9;
   --info-600: #0284c7;
+  --warning-50: #fffbeb;
+  --warning-200: #fde68a;
+  --warning-700: #b45309;
 
   --bg-primary: #ffffff;
   --bg-secondary: #f9fafb;
@@ -73,6 +76,10 @@
 
   --tile-bg: hsl(var(--tile-hue, 265) 40% 18%);
   --tile-fg: hsl(var(--tile-hue, 265) 70% 78%);
+
+  --warning-50: #2a2010;
+  --warning-200: #5c4512;
+  --warning-700: #fbbf24;
 }
 
 :root {
@@ -206,6 +213,11 @@ img {
   background: var(--bg-tertiary);
   color: var(--text-secondary);
   border-color: var(--border-primary);
+}
+.badge-warning {
+  background: var(--warning-50);
+  color: var(--warning-700);
+  border-color: var(--warning-200);
 }
 .badge-neutral {
   background: var(--bg-tertiary);

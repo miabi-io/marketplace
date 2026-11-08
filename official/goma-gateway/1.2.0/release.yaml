@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `goma-gateway`: `jkaninda/goma-gateway` 1.0.0 → 1.2.0
+images:
+  goma-gateway: sha256:5fa911dee515c252baf382593f7916a8c30044f3d281dc46db033ecefc61db0e

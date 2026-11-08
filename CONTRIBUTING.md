@@ -17,6 +17,7 @@ workspace — before adding it here (see the tip under step 2).
      metadata.yaml          # optional storefront enrichment (featured, screenshots, sourceRepo)
      README.md              # optional long description, shown on the detail page
      <version>/template.yaml  # the install manifest (apiVersion: miabi.io/v1)
+     <version>/release.yaml   # optional release notes, upgrade rules and image digests
    ```
 
    - `<name>` is the template **handle**: lowercase `^[a-z0-9][a-z0-9-]*$`,
@@ -97,6 +98,89 @@ Changes under `official/` require core-maintainer review (enforced by
 `CODEOWNERS` + branch protection). Official is the source of truth that Miabi
 vendors into its binary as the offline floor. Promoting a community template to
 official is a maintainer-reviewed folder move within this repo.
+
+## Releasing a new version
+
+A version directory is immutable once merged, so an update is always a new
+directory. `marketplace bump` creates it for you:
+
+```sh
+go run ./cmd/marketplace outdated               # what has newer upstream tags
+go run ./cmd/marketplace bump grafana           # newest tag within the pinned major
+go run ./cmd/marketplace bump grafana --major   # cross a major (marked breaking)
+go run ./cmd/marketplace bump posta --set server=0.19.0,worker=0.19.0
+go run ./cmd/marketplace generate
+```
+
+It copies the latest version, retags the images (keeping comments and layout),
+and writes a `release.yaml` with the date, the image changes as notes, and the
+digest each tag resolves to. A weekly workflow opens one pull request per
+template that has an update; major upgrades come as draft PRs, opened from a
+manual run of that workflow.
+
+### release.yaml
+
+```yaml
+released: "2026-11-08"
+notes: |                # Markdown, shown in Miabi's upgrade preview and the storefront changelog
+  Moves to Nextcloud 35. Back up the data volume first.
+breaking: true          # the upgrade needs the operator's attention
+requiresFrom: 1.4.0     # installs older than this must upgrade to 1.4.0 first
+deprecated: false       # hide this version from new installs
+images:                 # app name -> digest the tag resolved to when published
+  nextcloud: sha256:…
+```
+
+Before merging a major bump, read the upstream upgrade notes and replace the
+placeholder in `notes` with the steps an operator needs. Set `requiresFrom` when
+installs can't skip versions (Nextcloud majors, GitLab upgrade stops).
+
+`release.yaml` sits beside `template.yaml`, not inside it, because Miabi parses
+manifests with unknown fields rejected: a new manifest field would break every
+older Miabi's sync, while the bundle's extra JSON is simply ignored by it.
+
+Miabi installs the pinned digest, so an install gets exactly the published
+image even if upstream later moves the tag. `marketplace lock` backfills dates
+and digests for a template's latest version.
+
+### Holding an image back
+
+When an update is deliberately skipped, record why in `metadata.yaml` so the
+weekly job stops proposing it:
+
+```yaml
+updates:
+  meilisearch:
+    hold: Pinned to the version Linkwarden's upstream compose ships.
+  wordpress:
+    match: '^\d+\.\d+-php8\.3-apache$'   # only tags on this PHP line
+```
+
+### Deprecating a template
+
+```yaml
+# metadata.yaml
+deprecated: true
+deprecationNote: Upstream no longer publishes public images.
+replacedBy: other-template   # optional
+```
+
+A deprecated template leaves the storefront and Miabi's browse tabs, and Miabi
+refuses new installs; existing installs keep running and can still upgrade.
+
+## Checks
+
+| Command | What it checks |
+|---|---|
+| `marketplace lint [--strict]` | Every manifest and `release.yaml` parses and cross-references hold; warns about a missing README or release info (`--strict` fails on warnings). |
+| `marketplace check-images [--strict]` | Every installable image still resolves in its registry; reports tags that moved off their pinned digest. |
+| `marketplace e2e --upgrade <names>` | Imports the templates into a live Miabi, installs (and upgrades from the previous version), waits for every app to run, then cleans up. |
+
+CI runs all three on pull requests. The e2e job needs the `MIABI_E2E_URL`,
+`MIABI_E2E_TOKEN` (an account API token), `MIABI_E2E_WORKSPACE` (a dedicated
+workspace ID) and `MIABI_E2E_DOMAIN` secrets, and is skipped without them.
+Set `DOCKERHUB_USERNAME`/`DOCKERHUB_TOKEN` to lift Docker Hub's anonymous rate
+limit, and `BUMP_TOKEN` (a PAT or app token) so bump PRs trigger CI.
 
 ## Safety
 

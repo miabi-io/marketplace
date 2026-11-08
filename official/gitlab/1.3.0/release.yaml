@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `gitlab`: `gitlab/gitlab-ce` 19.2.1-ce.0 → 19.5.3-ce.0
+images:
+  gitlab: sha256:6863d156a1a477bd6f69fc674b671d0163cd8b06bf63bb17cc4a4a803b78b27c

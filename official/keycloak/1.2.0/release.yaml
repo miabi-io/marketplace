@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `keycloak`: `quay.io/keycloak/keycloak` 26.7.1 → 26.8.2
+images:
+  keycloak: sha256:3879c623248408de29a5303178b5816c77e8dfef3890c361f8c0bbeaa979ba3b

@@ -3,3 +3,7 @@ featured: true
 sourceRepo: https://github.com/miabi-io/marketplace/tree/main/official/nginx
 screenshots:
   - https://nginx.org/nginx.png
+updates:
+  # Even minors are nginx's stable line; odd ones are mainline.
+  nginx:
+    match: '^\d+\.\d*[02468]-alpine$'

@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `metabase`: `metabase/metabase` v0.52.8 → v0.52.17
+images:
+  metabase: sha256:6f2e9fba7bc9a6f61b0ef0b8e895cc29f998756713c7447596ec8b77162aca35

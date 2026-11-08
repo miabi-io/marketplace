@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `mealie`: `ghcr.io/mealie-recipes/mealie` v2.6.0 → v2.8.0
+images:
+  mealie: sha256:63aef46d90975d9cf9c0fdb9399fc2fe36acd222e1db6be99c504b9ccdbee967

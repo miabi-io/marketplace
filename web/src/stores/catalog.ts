@@ -12,6 +12,7 @@ export const useCatalogStore = defineStore('catalog', () => {
   const source = ref('')
   const category = ref('')
   const tag = ref('')
+  const sort = ref('')
   const page = ref(1)
 
   const items = ref<Listing[]>([])
@@ -47,6 +48,7 @@ export const useCatalogStore = defineStore('catalog', () => {
           source: source.value || undefined,
           category: category.value || undefined,
           tag: tag.value || undefined,
+          sort: sort.value || undefined,
           page: page.value,
           per_page: PER_PAGE,
         },
@@ -105,6 +107,12 @@ export const useCatalogStore = defineStore('catalog', () => {
     run(true)
   }
 
+  function setSort(value: string) {
+    sort.value = value
+    page.value = 1
+    run(true)
+  }
+
   function setPage(value: number) {
     page.value = Math.max(1, value)
     run(true)
@@ -119,12 +127,13 @@ export const useCatalogStore = defineStore('catalog', () => {
     run(true)
   }
 
-  function hydrate(state: { q?: string; source?: string; category?: string; tag?: string; page?: number }) {
+  function hydrate(state: { q?: string; source?: string; category?: string; tag?: string; sort?: string; page?: number }) {
     const next = {
       q: state.q ?? '',
       source: state.source ?? '',
       category: state.category ?? '',
       tag: state.tag ?? '',
+      sort: state.sort ?? '',
       page: state.page && state.page > 0 ? state.page : 1,
     }
     const changed =
@@ -132,11 +141,13 @@ export const useCatalogStore = defineStore('catalog', () => {
       next.source !== source.value ||
       next.category !== category.value ||
       next.tag !== tag.value ||
+      next.sort !== sort.value ||
       next.page !== page.value
     q.value = next.q
     source.value = next.source
     category.value = next.category
     tag.value = next.tag
+    sort.value = next.sort
     page.value = next.page
     if (changed || items.value.length === 0) run(true)
   }
@@ -154,6 +165,7 @@ export const useCatalogStore = defineStore('catalog', () => {
     source,
     category,
     tag,
+    sort,
     page,
     items,
     total,
@@ -168,6 +180,7 @@ export const useCatalogStore = defineStore('catalog', () => {
     setSource,
     setCategory,
     setTag,
+    setSort,
     setPage,
     clearFilters,
     hydrate,

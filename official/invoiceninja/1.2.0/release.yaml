@@ -1,0 +1,7 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `app`: `invoiceninja/invoiceninja-debian` 5.13.30 → 5.13.53
+images:
+  app: sha256:217a0f2d45403b9562f90af51762cdd22bc6d9728c9a8751571ff6bfefc51f64
+  web: sha256:583b7f2fce1cdb8da5ad5c39ebd3c33b98b87d493190e548bdee1fa8c619c311

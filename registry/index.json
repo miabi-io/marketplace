@@ -1,5 +1,5 @@
 {
-  "etag": "\"1483a5b446412071f313998658b7209a9b4e03a964f853218798bad0a6e43325\"",
+  "etag": "\"7b525d1a96be89eac2f2c420003aeec17955012cf76f69a2c77e074090bdc4e0\"",
   "generatedAt": "",
   "templates": [
     {
@@ -11,7 +11,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:3d6b3d41eaa19f6ec3b652a2e7260f8b4a4461848194f3745a6b2fa0804e5a4d"
+          "digest": "sha256:3d6b3d41eaa19f6ec3b652a2e7260f8b4a4461848194f3745a6b2fa0804e5a4d",
+          "released": "2026-08-09"
         }
       ]
     },
@@ -24,7 +25,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:934a66877710608df09f44bbca3f34f0a20353c6539988934479f710b1b18262"
+          "digest": "sha256:934a66877710608df09f44bbca3f34f0a20353c6539988934479f710b1b18262",
+          "released": "2026-10-04"
         },
         {
           "version": "1.1.0",
@@ -45,7 +47,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:565c2f3c2460de21a90b5b3f7e9ee8643a4140a219f1e24bab4ce6c5cb1c19f7"
+          "digest": "sha256:565c2f3c2460de21a90b5b3f7e9ee8643a4140a219f1e24bab4ce6c5cb1c19f7",
+          "released": "2026-10-04"
         },
         {
           "version": "1.1.0",
@@ -66,7 +69,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:87ef18bc36218b1780d963428385694a61841050ec451b3f52349d0f09066186"
+          "digest": "sha256:87ef18bc36218b1780d963428385694a61841050ec451b3f52349d0f09066186",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -83,7 +87,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:a20ea44f9a60be0777351d3bd1ff64952b28e4a99bbbf1ff36b2c69737439c02"
+          "digest": "sha256:a20ea44f9a60be0777351d3bd1ff64952b28e4a99bbbf1ff36b2c69737439c02",
+          "released": "2026-11-08"
         },
         {
           "version": "1.1.0",
@@ -104,7 +109,8 @@
       "versions": [
         {
           "version": "1.3.0",
-          "digest": "sha256:8e1ba5ad945476a20070a039d7131ccce6d406670fffc852ccff034a8307fbc6"
+          "digest": "sha256:8e1ba5ad945476a20070a039d7131ccce6d406670fffc852ccff034a8307fbc6",
+          "released": "2026-09-29"
         },
         {
           "version": "1.2.0",
@@ -121,7 +127,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:7087476e8c7e8c521de8383ba263b21bce73a4d16db53d65667c30de0aba89ed"
+          "digest": "sha256:7087476e8c7e8c521de8383ba263b21bce73a4d16db53d65667c30de0aba89ed",
+          "released": "2026-08-09"
         }
       ]
     },
@@ -134,7 +141,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:298ee2afebc208f12b63e5c9c24c9f572fe2c00e74bf702daa7783cbba71914d"
+          "digest": "sha256:298ee2afebc208f12b63e5c9c24c9f572fe2c00e74bf702daa7783cbba71914d",
+          "released": "2026-09-29"
         },
         {
           "version": "1.0.0",
@@ -151,7 +159,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:3b8df1be52df1b2f8a03ca935f825a1c82951543ea43ed2a743611bb4feebf31"
+          "digest": "sha256:3b8df1be52df1b2f8a03ca935f825a1c82951543ea43ed2a743611bb4feebf31",
+          "released": "2026-09-03"
         }
       ]
     },
@@ -164,7 +173,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:a2015bbbc8b417a0894cf084c2c8a3a3175850a3940a42bbbf60e466df0d73a1"
+          "digest": "sha256:a2015bbbc8b417a0894cf084c2c8a3a3175850a3940a42bbbf60e466df0d73a1",
+          "released": "2026-06-27"
         }
       ]
     },
@@ -177,7 +187,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:155edb6e37cdb941f6daf58c31c16fa8f4bcec756313258dfa506401a78fe15d"
+          "digest": "sha256:155edb6e37cdb941f6daf58c31c16fa8f4bcec756313258dfa506401a78fe15d",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -194,7 +205,8 @@
       "versions": [
         {
           "version": "1.4.0",
-          "digest": "sha256:e256a978ff8943dbfdf61cb45f47e2fa371b412c938a719736a9ade11d32018a"
+          "digest": "sha256:e256a978ff8943dbfdf61cb45f47e2fa371b412c938a719736a9ade11d32018a",
+          "released": "2026-11-08"
         },
         {
           "version": "1.3.0",
@@ -215,7 +227,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:8e09521488ec19d729f83fbbb51bdffdd90623468e858ccfdcc347d2d36d94d4"
+          "digest": "sha256:8e09521488ec19d729f83fbbb51bdffdd90623468e858ccfdcc347d2d36d94d4",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -232,7 +245,8 @@
       "versions": [
         {
           "version": "1.3.0",
-          "digest": "sha256:fea7f1b39207759328b995cfff80b77fb62923806345729bf4baeeb846cc13b3"
+          "digest": "sha256:fea7f1b39207759328b995cfff80b77fb62923806345729bf4baeeb846cc13b3",
+          "released": "2026-11-08"
         },
         {
           "version": "1.2.0",
@@ -253,7 +267,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:174e21bd6d655b5ff9700f0c01c376aca69cfba2b65ce38b5396c97881d0fc52"
+          "digest": "sha256:174e21bd6d655b5ff9700f0c01c376aca69cfba2b65ce38b5396c97881d0fc52",
+          "released": "2026-11-08"
         },
         {
           "version": "1.1.0",
@@ -270,7 +285,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:692e725bf1560b323f693f632633af6c3b7f229ec119564d4c6ae7fc36e5a3d8"
+          "digest": "sha256:692e725bf1560b323f693f632633af6c3b7f229ec119564d4c6ae7fc36e5a3d8",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -287,7 +303,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:e582d3c15da6c0dcd7a71f66190c8f66fca37a7ac5ee0a8b8e7d60ccb2aea790"
+          "digest": "sha256:e582d3c15da6c0dcd7a71f66190c8f66fca37a7ac5ee0a8b8e7d60ccb2aea790",
+          "released": "2026-11-08"
         },
         {
           "version": "1.1.0",
@@ -308,7 +325,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:b12e9c6f5f34b76c2ebdeceb355c31c5e362e2d139c53e81917529fc49c5d39d"
+          "digest": "sha256:b12e9c6f5f34b76c2ebdeceb355c31c5e362e2d139c53e81917529fc49c5d39d",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -325,7 +343,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:1f14ab3a46df82c03cf764aa6bece0cfe35e5d0881a079c6d932c22881599984"
+          "digest": "sha256:1f14ab3a46df82c03cf764aa6bece0cfe35e5d0881a079c6d932c22881599984",
+          "released": "2026-11-08"
         },
         {
           "version": "1.1.0",
@@ -346,7 +365,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:b91faf71fb412d2038c100a4a5d50e3b7819bd313846b4068fb4bf078ce5d3c8"
+          "digest": "sha256:b91faf71fb412d2038c100a4a5d50e3b7819bd313846b4068fb4bf078ce5d3c8",
+          "released": "2026-06-27"
         }
       ]
     },
@@ -359,7 +379,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:c086be884e02f9207f875761f4d8ef9e9d041696e713c4fa3d919c0d3885ce29"
+          "digest": "sha256:c086be884e02f9207f875761f4d8ef9e9d041696e713c4fa3d919c0d3885ce29",
+          "released": "2026-09-29"
         },
         {
           "version": "1.0.0",
@@ -376,7 +397,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:2fb5e75d28636e40787569da376a8f9380214f239abba6f2f34ab369d274b106"
+          "digest": "sha256:2fb5e75d28636e40787569da376a8f9380214f239abba6f2f34ab369d274b106",
+          "released": "2026-09-29"
         },
         {
           "version": "1.0.0",
@@ -393,7 +415,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:3613b6127c6d81e21a08bb79c40c42afc83a38978335d0a221a073dc6986e1e0"
+          "digest": "sha256:3613b6127c6d81e21a08bb79c40c42afc83a38978335d0a221a073dc6986e1e0",
+          "released": "2026-06-28"
         }
       ]
     },
@@ -406,7 +429,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:3fa682111297b0575156c8fdf31f58187e94b897749625480cda13e5eded6cb9"
+          "digest": "sha256:3fa682111297b0575156c8fdf31f58187e94b897749625480cda13e5eded6cb9",
+          "released": "2026-11-08"
         },
         {
           "version": "1.1.0",
@@ -427,7 +451,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:ece00182deaafbf33f8dd27bcdf7927bca4f3c3d203555715da2784206a7df41"
+          "digest": "sha256:ece00182deaafbf33f8dd27bcdf7927bca4f3c3d203555715da2784206a7df41",
+          "released": "2026-11-08"
         },
         {
           "version": "1.1.0",
@@ -448,7 +473,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:22bebed54ef38d9f20e7a8d278864a7396152a242d4f8b03730ff6816dadc52e"
+          "digest": "sha256:22bebed54ef38d9f20e7a8d278864a7396152a242d4f8b03730ff6816dadc52e",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -465,7 +491,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:8a1698a348e69ab3319498bf107d9dd8de89a0218984ac3a97ec634c7138dd62"
+          "digest": "sha256:8a1698a348e69ab3319498bf107d9dd8de89a0218984ac3a97ec634c7138dd62",
+          "released": "2026-08-09"
         }
       ]
     },
@@ -478,7 +505,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:18788d71c5e67b7efa4de9c7d625254fa55e09191ef7177424763467e7b0fda4"
+          "digest": "sha256:18788d71c5e67b7efa4de9c7d625254fa55e09191ef7177424763467e7b0fda4",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -492,10 +520,12 @@
       "source": "official",
       "display_name": "MinIO",
       "category": "Storage",
+      "deprecated": true,
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:91a8c8d283ffa0ab59e444ddfa870ff3668dee36720891d17630e57f06873e9b"
+          "digest": "sha256:91a8c8d283ffa0ab59e444ddfa870ff3668dee36720891d17630e57f06873e9b",
+          "released": "2026-06-28"
         }
       ]
     },
@@ -508,7 +538,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:e5a7524d968febb4a715fe14db2a6d19f80df866c0fdd8a9864d23aa13105014"
+          "digest": "sha256:e5a7524d968febb4a715fe14db2a6d19f80df866c0fdd8a9864d23aa13105014",
+          "released": "2026-06-27"
         }
       ]
     },
@@ -521,7 +552,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:5a104d5797a175f4e990c244910d479fe72180b827951b6067509a9372d9d1b5"
+          "digest": "sha256:5a104d5797a175f4e990c244910d479fe72180b827951b6067509a9372d9d1b5",
+          "released": "2026-06-27"
         }
       ]
     },
@@ -534,7 +566,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:61427dcaec99941d089f17d78eb0a2f485def34a2a08393006cfffe0ce9587dc"
+          "digest": "sha256:61427dcaec99941d089f17d78eb0a2f485def34a2a08393006cfffe0ce9587dc",
+          "released": "2026-06-27"
         }
       ]
     },
@@ -547,7 +580,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:8e9d279ef98e1ddf953d14410559ea3477749e19012928e427981f43d5ac1037"
+          "digest": "sha256:8e9d279ef98e1ddf953d14410559ea3477749e19012928e427981f43d5ac1037",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -564,7 +598,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:02acb9dbc095877d3717d1a049f03ebdeb4e4c6ecf739120ab0d864d34787f98"
+          "digest": "sha256:02acb9dbc095877d3717d1a049f03ebdeb4e4c6ecf739120ab0d864d34787f98",
+          "released": "2026-08-09"
         }
       ]
     },
@@ -577,7 +612,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:b04957eae300bb1523fee20b2bed971495e80d4b29f281ab8917b3d51a55e08e"
+          "digest": "sha256:b04957eae300bb1523fee20b2bed971495e80d4b29f281ab8917b3d51a55e08e",
+          "released": "2026-06-27"
         }
       ]
     },
@@ -590,7 +626,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:4ed9eabb17eb4a1ad7e7c50c5c10803f246cd3194bdc41d2d92466184f166563"
+          "digest": "sha256:4ed9eabb17eb4a1ad7e7c50c5c10803f246cd3194bdc41d2d92466184f166563",
+          "released": "2026-06-27"
         }
       ]
     },
@@ -603,7 +640,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:98b443ad160aca7295be345d3ddb730b10199c63d58edd4bc9fa8f901b4ded67"
+          "digest": "sha256:98b443ad160aca7295be345d3ddb730b10199c63d58edd4bc9fa8f901b4ded67",
+          "released": "2026-11-08"
         },
         {
           "version": "1.1.0",
@@ -624,7 +662,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:17a5b7c8f88792a49c3ce20e201d5bbd84ef24155a952acbd368bbf9d9d3bb3b"
+          "digest": "sha256:17a5b7c8f88792a49c3ce20e201d5bbd84ef24155a952acbd368bbf9d9d3bb3b",
+          "released": "2026-11-08"
         },
         {
           "version": "1.1.0",
@@ -645,7 +684,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:d393a2e5efebb0bd9e189f411deb5834b9c5ba83b23c1066b69d9438093b4f70"
+          "digest": "sha256:d393a2e5efebb0bd9e189f411deb5834b9c5ba83b23c1066b69d9438093b4f70",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -662,7 +702,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:44ef773b2e8a72ddddab94c661af6d367b07a6d6a717e2d6406e1cacdfbe1185"
+          "digest": "sha256:44ef773b2e8a72ddddab94c661af6d367b07a6d6a717e2d6406e1cacdfbe1185",
+          "released": "2026-09-29"
         }
       ]
     },
@@ -675,7 +716,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:d10c1b1d5109431032f9d9996d573da843ed0ad129b1bc1d3fdf77a0a6a964a8"
+          "digest": "sha256:d10c1b1d5109431032f9d9996d573da843ed0ad129b1bc1d3fdf77a0a6a964a8",
+          "released": "2026-11-08"
         },
         {
           "version": "1.1.0",
@@ -696,7 +738,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:46dfc6315afb87f948cf699adefde5a9e396357cf874679f88c449c7da30fd33"
+          "digest": "sha256:46dfc6315afb87f948cf699adefde5a9e396357cf874679f88c449c7da30fd33",
+          "released": "2026-06-27"
         }
       ]
     },
@@ -709,7 +752,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:e43546e192dab3a81779a798edc33b0f732b83e3aaf3219dd9f913252ba31d1d"
+          "digest": "sha256:e43546e192dab3a81779a798edc33b0f732b83e3aaf3219dd9f913252ba31d1d",
+          "released": "2026-06-27"
         }
       ]
     },
@@ -722,7 +766,8 @@
       "versions": [
         {
           "version": "1.4.0",
-          "digest": "sha256:4d652e5b7db40a5036edb9895f1f0f81350b97322623fd4dbc055caeb07e1466"
+          "digest": "sha256:4d652e5b7db40a5036edb9895f1f0f81350b97322623fd4dbc055caeb07e1466",
+          "released": "2026-11-08"
         },
         {
           "version": "1.3.0",
@@ -747,7 +792,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:8ebff50d692e0258b43b9400e892f70373dce946e7b95186ec159350a959badb"
+          "digest": "sha256:8ebff50d692e0258b43b9400e892f70373dce946e7b95186ec159350a959badb",
+          "released": "2026-06-27"
         }
       ]
     },
@@ -760,7 +806,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:3b3f689f46860592e86a44f05b4080b04f1decda70c07059561996c3ba1b73ac"
+          "digest": "sha256:3b3f689f46860592e86a44f05b4080b04f1decda70c07059561996c3ba1b73ac",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -777,7 +824,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:cabfa4fb2f2e7ccea56fccee01316eb49f9af9ed3469ac45ac510a9bb2ae4668"
+          "digest": "sha256:cabfa4fb2f2e7ccea56fccee01316eb49f9af9ed3469ac45ac510a9bb2ae4668",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -794,7 +842,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:f1b00006157a52b7b90642d98ba03de19b810eb32ad582d2b7d1e4986553d41b"
+          "digest": "sha256:f1b00006157a52b7b90642d98ba03de19b810eb32ad582d2b7d1e4986553d41b",
+          "released": "2026-06-27"
         }
       ]
     },
@@ -807,7 +856,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:d597c09dedd80d237a6d904704ae12e7f2aae0f2991288a896c2c9d1d339620e"
+          "digest": "sha256:d597c09dedd80d237a6d904704ae12e7f2aae0f2991288a896c2c9d1d339620e",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -824,7 +874,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:f83b1703fd707318bf5057118fd5818d9bd5aa77884fbcf8659964f9071140d1"
+          "digest": "sha256:f83b1703fd707318bf5057118fd5818d9bd5aa77884fbcf8659964f9071140d1",
+          "released": "2026-08-09"
         }
       ]
     },
@@ -837,7 +888,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:e9e410f93d8a5a6b2360f62b7cc447f7fe1d89fab0345031d1324a72ceeba0ae"
+          "digest": "sha256:e9e410f93d8a5a6b2360f62b7cc447f7fe1d89fab0345031d1324a72ceeba0ae",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -854,7 +906,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:4c540060c7d77b9d807cc61cb874cd9929bcdd9a98f394a39dd0f960d04fc9dd"
+          "digest": "sha256:4c540060c7d77b9d807cc61cb874cd9929bcdd9a98f394a39dd0f960d04fc9dd",
+          "released": "2026-09-29"
         }
       ]
     },
@@ -867,7 +920,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:dbfc575a7ac8936f3a0ad81f3d739e8a23738ab41b01a618e2c72af89054e73d"
+          "digest": "sha256:dbfc575a7ac8936f3a0ad81f3d739e8a23738ab41b01a618e2c72af89054e73d",
+          "released": "2026-08-09"
         }
       ]
     },
@@ -880,7 +934,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:f2e8422b3d49cd7464e46cded3454ccb44fedc216029d871eb3ae0271315b371"
+          "digest": "sha256:f2e8422b3d49cd7464e46cded3454ccb44fedc216029d871eb3ae0271315b371",
+          "released": "2026-11-08"
         },
         {
           "version": "1.1.0",
@@ -901,7 +956,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:2d165f2d8df9188e3e494c3bb9fc1bda286865df25abf544a89a91f9fbddc37e"
+          "digest": "sha256:2d165f2d8df9188e3e494c3bb9fc1bda286865df25abf544a89a91f9fbddc37e",
+          "released": "2026-09-29"
         },
         {
           "version": "1.0.0",
@@ -918,7 +974,8 @@
       "versions": [
         {
           "version": "1.2.0",
-          "digest": "sha256:23b92c78ec4bb25ad056a2d100dcd60b59c63e33b5d55a3b70b378e9baf7b3bc"
+          "digest": "sha256:23b92c78ec4bb25ad056a2d100dcd60b59c63e33b5d55a3b70b378e9baf7b3bc",
+          "released": "2026-11-08"
         },
         {
           "version": "1.1.0",
@@ -939,7 +996,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:30df46201380b632fcbb13997bcc2c232e83574ea69b8b463cbf311423672344"
+          "digest": "sha256:30df46201380b632fcbb13997bcc2c232e83574ea69b8b463cbf311423672344",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -956,7 +1014,8 @@
       "versions": [
         {
           "version": "1.1.0",
-          "digest": "sha256:1a463682f6442e39d68a9c59e3c62b3f8ed51d9c91613dab61972236e3f42ed9"
+          "digest": "sha256:1a463682f6442e39d68a9c59e3c62b3f8ed51d9c91613dab61972236e3f42ed9",
+          "released": "2026-11-08"
         },
         {
           "version": "1.0.0",
@@ -973,7 +1032,8 @@
       "versions": [
         {
           "version": "2.0.0",
-          "digest": "sha256:66035af5cf95e61d1a81a1de96f6dfa70cc6802d3d72c517d41363fa802c3e2d"
+          "digest": "sha256:66035af5cf95e61d1a81a1de96f6dfa70cc6802d3d72c517d41363fa802c3e2d",
+          "released": "2026-07-07"
         },
         {
           "version": "1.0.0",
@@ -990,7 +1050,8 @@
       "versions": [
         {
           "version": "1.0.0",
-          "digest": "sha256:76d6816df23410aead64b5351e763c0913f17a0f6b3fb86f088f5992f97936f4"
+          "digest": "sha256:76d6816df23410aead64b5351e763c0913f17a0f6b3fb86f088f5992f97936f4",
+          "released": "2026-06-27"
         }
       ]
     }

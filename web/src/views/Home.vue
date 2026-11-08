@@ -25,11 +25,18 @@ function syncURL() {
   if (store.source) q.source = store.source
   if (store.category) q.category = store.category
   if (store.tag) q.tag = store.tag
+  if (store.sort) q.sort = store.sort
   if (store.page > 1) q.page = String(store.page)
   void router.replace({ name: 'home', query: q })
 }
 
-watch(() => [store.q, store.source, store.category, store.tag, store.page], syncURL)
+watch(() => [store.q, store.source, store.category, store.tag, store.sort, store.page], syncURL)
+
+const sortOptions = [
+  { value: '', label: 'Featured' },
+  { value: 'updated', label: 'Recently updated' },
+  { value: 'name', label: 'Name' },
+]
 
 watch(
   () => route.query,
@@ -40,6 +47,7 @@ watch(
       source: (q.source as string) || '',
       category: (q.category as string) || '',
       tag: (q.tag as string) || '',
+      sort: (q.sort as string) || '',
       page: Number(q.page) || 1,
     })
   },
@@ -52,6 +60,7 @@ onMounted(() => {
     source: (route.query.source as string) || '',
     category: (route.query.category as string) || '',
     tag: (route.query.tag as string) || '',
+    sort: (route.query.sort as string) || '',
     page: Number(route.query.page) || 1,
   })
   void store.loadCategories()
@@ -100,15 +109,33 @@ const countLabel = computed(() => {
       >
         {{ countLabel }}
       </p>
-      <button
-        v-if="store.hasFilters"
-        type="button"
-        class="btn btn-secondary btn-sm"
-        @click="store.clearFilters()"
-      >
-        <AppIcon name="filter-remove" />
-        Clear filters
-      </button>
+      <div class="bar-actions">
+        <button
+          v-if="store.hasFilters"
+          type="button"
+          class="btn btn-secondary btn-sm"
+          @click="store.clearFilters()"
+        >
+          <AppIcon name="filter-remove" />
+          Clear filters
+        </button>
+        <label class="sort">
+          <span>Sort</span>
+          <select
+            :value="store.sort"
+            aria-label="Sort templates"
+            @change="store.setSort(($event.target as HTMLSelectElement).value)"
+          >
+            <option
+              v-for="o in sortOptions"
+              :key="o.value"
+              :value="o.value"
+            >
+              {{ o.label }}
+            </option>
+          </select>
+        </label>
+      </div>
     </div>
 
     <p
@@ -218,6 +245,27 @@ const countLabel = computed(() => {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 16px;
+}
+.bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+.sort select {
+  padding: 5px 8px;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 13px;
 }
 .count {
   font-size: 14px;

@@ -37,21 +37,27 @@ type BundleTemplate struct {
 	Slug     string          `json:"slug"`
 	Source   string          `json:"source"`
 	Versions []BundleVersion `json:"versions"`
+	// Deprecation fields are additive: a consumer that predates them simply keeps listing the template.
+	Deprecated      bool   `json:"deprecated,omitempty"`
+	DeprecationNote string `json:"deprecation_note,omitempty"`
+	ReplacedBy      string `json:"replaced_by,omitempty"`
 }
 
 type BundleVersion struct {
-	Version  string `json:"version"`
-	Digest   string `json:"digest"`
-	Manifest string `json:"manifest"` // raw template.yaml
+	Version  string   `json:"version"`
+	Digest   string   `json:"digest"`
+	Manifest string   `json:"manifest"` // raw template.yaml
+	Release  *Release `json:"release,omitempty"`
 }
 
 // Bundle builds the full export document.
 func (c *Catalog) Bundle() Bundle {
 	b := Bundle{ETag: c.etag, GeneratedAt: c.generatedAt, Templates: make([]BundleTemplate, 0, len(c.templates))}
 	for _, t := range c.templates {
-		bt := BundleTemplate{Name: t.Name, Slug: t.Name, Source: t.Source}
+		bt := BundleTemplate{Name: t.Name, Slug: t.Name, Source: t.Source,
+			Deprecated: t.Meta.Deprecated, DeprecationNote: t.Meta.DeprecationNote, ReplacedBy: t.Meta.ReplacedBy}
 		for _, v := range t.Versions {
-			bt.Versions = append(bt.Versions, BundleVersion{Version: v.Version, Digest: v.Digest, Manifest: string(v.Raw)})
+			bt.Versions = append(bt.Versions, BundleVersion{Version: v.Version, Digest: v.Digest, Manifest: string(v.Raw), Release: v.Release})
 		}
 		b.Templates = append(b.Templates, bt)
 	}
@@ -71,21 +77,27 @@ type IndexTemplate struct {
 	Source      string         `json:"source"`
 	DisplayName string         `json:"display_name"`
 	Category    string         `json:"category,omitempty"`
+	Deprecated  bool           `json:"deprecated,omitempty"`
 	Versions    []IndexVersion `json:"versions"`
 }
 
 type IndexVersion struct {
-	Version string `json:"version"`
-	Digest  string `json:"digest"`
+	Version    string `json:"version"`
+	Digest     string `json:"digest"`
+	Released   string `json:"released,omitempty"`
+	Breaking   bool   `json:"breaking,omitempty"`
+	Deprecated bool   `json:"deprecated,omitempty"`
 }
 
 // Index builds the lightweight machine index.
 func (c *Catalog) Index() Index {
 	idx := Index{ETag: c.etag, GeneratedAt: c.generatedAt, Templates: make([]IndexTemplate, 0, len(c.templates))}
 	for _, t := range c.templates {
-		it := IndexTemplate{Name: t.Name, Slug: t.Name, Source: t.Source, DisplayName: t.Latest().Manifest.Metadata.DisplayName, Category: t.Latest().Manifest.Metadata.Category}
+		it := IndexTemplate{Name: t.Name, Slug: t.Name, Source: t.Source, DisplayName: t.Latest().Manifest.Metadata.DisplayName,
+			Category: t.Latest().Manifest.Metadata.Category, Deprecated: t.Meta.Deprecated}
 		for _, v := range t.Versions {
-			it.Versions = append(it.Versions, IndexVersion{Version: v.Version, Digest: v.Digest})
+			r := v.Info()
+			it.Versions = append(it.Versions, IndexVersion{Version: v.Version, Digest: v.Digest, Released: r.Released, Breaking: r.Breaking, Deprecated: r.Deprecated})
 		}
 		idx.Templates = append(idx.Templates, it)
 	}
@@ -94,29 +106,34 @@ func (c *Catalog) Index() Index {
 
 // Listing is the storefront card view of a template (its latest version).
 type Listing struct {
-	Name         string           `json:"name"`
-	Slug         string           `json:"slug"` // deprecated: alias of Name, for pre-rename consumers
-	DisplayName  string           `json:"display_name"`
-	Description  string           `json:"description"`
-	Category     string           `json:"category"`
-	Icon         string           `json:"icon,omitempty"`
-	Tags         []string         `json:"tags,omitempty"`
-	Homepage     string           `json:"homepage,omitempty"`
-	Author       *manifest.Author `json:"author,omitempty"`
-	Source       string           `json:"source"`
-	Featured     bool             `json:"featured,omitempty"`
-	Version      string           `json:"version"`
-	Versions     []string         `json:"versions"`
-	Applications int              `json:"applications"`
-	Databases    int              `json:"databases"`
-	Volumes      int              `json:"volumes"`
-	Configs      int              `json:"configs"`
-	DBOnly       bool             `json:"db_only"`
+	Name            string             `json:"name"`
+	Slug            string             `json:"slug"` // deprecated: alias of Name, for pre-rename consumers
+	DisplayName     string             `json:"display_name"`
+	Description     string             `json:"description"`
+	Category        string             `json:"category"`
+	Icon            string             `json:"icon,omitempty"`
+	Tags            []string           `json:"tags,omitempty"`
+	Homepage        string             `json:"homepage,omitempty"`
+	Author          *manifest.Author   `json:"author,omitempty"`
+	Source          string             `json:"source"`
+	Featured        bool               `json:"featured,omitempty"`
+	Version         string             `json:"version"`
+	Versions        []string           `json:"versions"`
+	Applications    int                `json:"applications"`
+	Databases       int                `json:"databases"`
+	Volumes         int                `json:"volumes"`
+	Configs         int                `json:"configs"`
+	DBOnly          bool               `json:"db_only"`
+	Updated         string             `json:"updated,omitempty"`
+	Deprecated      bool               `json:"deprecated,omitempty"`
+	DeprecationNote string             `json:"deprecation_note,omitempty"`
+	ReplacedBy      string             `json:"replaced_by,omitempty"`
+	Freshness       *TemplateFreshness `json:"freshness,omitempty"`
 }
 
 // Listing builds the card view of a template.
 func (t *Template) Listing() Listing {
-	m := t.Latest().Manifest
+	m := t.Installable().Manifest
 	vers := make([]string, 0, len(t.Versions))
 	for _, v := range t.Versions {
 		vers = append(vers, v.Version)
@@ -129,6 +146,9 @@ func (t *Template) Listing() Listing {
 		Applications: len(m.Applications), Databases: len(m.Databases), Volumes: len(m.Volumes),
 		Configs: len(m.Configs),
 		DBOnly:  m.IsDatabaseOnly(),
+		Updated: t.Latest().Info().Released, Deprecated: t.Meta.Deprecated,
+		DeprecationNote: t.Meta.DeprecationNote, ReplacedBy: t.Meta.ReplacedBy,
+		Freshness: t.Freshness,
 	}
 }
 
@@ -162,9 +182,11 @@ type Query struct {
 	Source   string
 	Category string
 	Tag      string
-	Sort     string // name | updated | popularity (updated/popularity fall back to name today)
-	Page     int
-	PerPage  int
+	Sort     string // name | updated | popularity (popularity falls back to name today)
+	// IncludeDeprecated lists retired templates too; the storefront hides them by default.
+	IncludeDeprecated bool
+	Page              int
+	PerPage           int
 }
 
 // Page is one page of search results.
@@ -194,6 +216,9 @@ func (c *Catalog) Search(q Query) Page {
 		if q.Source != "" && t.Source != q.Source {
 			continue
 		}
+		if t.Meta.Deprecated && !q.IncludeDeprecated {
+			continue
+		}
 		l := t.Listing()
 		if q.Category != "" && !strings.EqualFold(l.Category, q.Category) {
 			continue
@@ -208,7 +233,11 @@ func (c *Catalog) Search(q Query) Page {
 	}
 
 	// Featured first within the (already name-ordered) set, unless sorting by name.
-	if q.Sort != "name" {
+	switch q.Sort {
+	case "name":
+	case "updated":
+		sort.SliceStable(matched, func(i, j int) bool { return matched[i].Updated > matched[j].Updated })
+	default:
 		sort.SliceStable(matched, func(i, j int) bool { return matched[i].Featured && !matched[j].Featured })
 	}
 

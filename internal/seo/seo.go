@@ -124,6 +124,9 @@ func (s *Server) Sitemap(c *okapi.Context) error {
 	}
 	set.URLs = append(set.URLs, urlEntry{Loc: s.base + "/"}, urlEntry{Loc: s.base + "/about"})
 	for i := range templates {
+		if templates[i].Meta.Deprecated {
+			continue
+		}
 		set.URLs = append(set.URLs, urlEntry{Loc: s.templateURL(templates[i].Name)})
 	}
 	body, err := xml.MarshalIndent(set, "", "  ")
@@ -203,7 +206,7 @@ func (s *Server) Template(c *okapi.Context) error {
 		})
 	}
 	l := t.Listing()
-	m := t.Latest().Manifest
+	m := t.Installable().Manifest
 	url := s.templateURL(t.Name)
 	desc := clamp(strings.TrimSpace(l.Description), descMax)
 	if desc == "" {

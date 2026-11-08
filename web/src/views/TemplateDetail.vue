@@ -2,8 +2,8 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { api, ApiError } from '@/api/client'
-import type { TemplateDetail } from '@/api/types'
-import { engineLabel, hueOf, isURL, monogram, provision } from '@/utils/format'
+import type { TemplateDetail, VersionRef } from '@/api/types'
+import { engineLabel, hueOf, isURL, monogram, provision, shortDate } from '@/utils/format'
 import CopyButton from '@/components/CopyButton.vue'
 import MarkdownView from '@/components/MarkdownView.vue'
 import EmptyState from '@/components/EmptyState.vue'
@@ -25,6 +25,40 @@ const iconFailed = ref(false)
 const hue = computed(() => hueOf(name.value))
 const entry = computed(() => detail.value?.entry)
 const manifest = computed(() => detail.value?.manifest)
+interface TagChange {
+  app: string
+  from?: string
+  to: string
+}
+
+// versions arrive newest first, so each entry's predecessor is the next one in the list.
+function imageChanges(v: VersionRef, older?: VersionRef): TagChange[] {
+  if (!older?.images || !v.images) return []
+  const before = new Map(older.images.map((i) => [i.app, i.tag]))
+  return v.images
+    .filter((i) => before.get(i.app) !== i.tag)
+    .map((i) => ({ app: i.app, from: before.get(i.app), to: i.tag }))
+}
+
+const history = computed(() =>
+  (detail.value?.versions ?? []).map((v, i, all) => ({ ...v, changes: imageChanges(v, all[i + 1]) })),
+)
+const hasHistory = computed(() =>
+  history.value.some((v) => v.release?.notes || v.release?.released || v.changes.length),
+)
+
+const freshnessHint = computed(() => {
+  const f = entry.value?.freshness
+  if (!f || (f.status !== 'major' && f.status !== 'update')) return ''
+  const checked = f.checked_at ? ` (checked ${shortDate(f.checked_at)})` : ''
+  if (f.status === 'major') {
+    const app = f.apps.find((a) => a.status === 'major')
+    const latest = app?.latest ? `: ${app.image} ${app.latest}` : ''
+    return `Upstream has a newer major release${latest}${checked}.`
+  }
+  return `A newer upstream release is available${checked}.`
+})
+
 const configFileCount = computed(() =>
   (manifest.value?.configs ?? []).reduce((n, c) => n + Object.keys(c.files ?? {}).length, 0),
 )
@@ -133,7 +167,21 @@ const absoluteManifestURL = computed(() =>
                 class="badge badge-neutral"
               >{{ entry.category }}</span>
               <span class="badge badge-neutral">{{ provision(entry) }}</span>
+              <span
+                v-if="entry.deprecated"
+                class="badge badge-warning"
+              >deprecated</span>
             </div>
+            <p
+              v-if="entry.updated || freshnessHint"
+              class="meta-line"
+            >
+              <span v-if="entry.updated">Last updated {{ shortDate(entry.updated) }}</span>
+              <span
+                v-if="freshnessHint"
+                class="fresh"
+              >{{ freshnessHint }}</span>
+            </p>
           </div>
 
           <div class="actions">
@@ -156,6 +204,23 @@ const absoluteManifestURL = computed(() =>
 
     <section class="container body">
       <div class="main">
+        <div
+          v-if="entry.deprecated"
+          class="deprecated"
+          role="status"
+        >
+          <AppIcon name="alert" />
+          <div>
+            <p class="deprecated-title">This template is deprecated</p>
+            <p v-if="entry.deprecation_note">{{ entry.deprecation_note }}</p>
+            <p v-if="entry.replaced_by">
+              Use
+              <RouterLink :to="{ name: 'template', params: { name: entry.replaced_by } }">{{ entry.replaced_by }}</RouterLink>
+              instead.
+            </p>
+          </div>
+        </div>
+
         <div class="card panel install">
           <h2 class="section-title">Install</h2>
           <ol class="steps">
@@ -211,6 +276,71 @@ const absoluteManifestURL = computed(() =>
         >
           <h2 class="section-title">Readme</h2>
           <MarkdownView :source="detail.readme" />
+        </div>
+
+        <div
+          v-if="hasHistory"
+          class="card panel"
+        >
+          <h2 class="section-title">Version history</h2>
+          <ol class="history">
+            <li
+              v-for="v in history"
+              :key="v.version"
+              class="rel"
+            >
+              <div class="rel-head">
+                <button
+                  type="button"
+                  class="rel-version"
+                  :class="{ active: v.version === version }"
+                  @click="selectVersion(v.version)"
+                >
+                  v{{ v.version }}
+                </button>
+                <span
+                  v-if="v.release?.released"
+                  class="rel-date"
+                >{{ shortDate(v.release.released) }}</span>
+                <span
+                  v-if="v.release?.breaking"
+                  class="badge badge-warning"
+                >breaking</span>
+                <span
+                  v-if="v.release?.deprecated"
+                  class="badge badge-neutral"
+                >deprecated</span>
+              </div>
+              <p
+                v-if="v.release?.requires_from"
+                class="rel-requires"
+              >
+                Requires upgrading from v{{ v.release.requires_from }} or later first.
+              </p>
+              <p
+                v-if="v.release?.deprecation_note"
+                class="rel-requires"
+              >
+                {{ v.release.deprecation_note }}
+              </p>
+              <MarkdownView
+                v-if="v.release?.notes"
+                class="rel-notes"
+                :source="v.release.notes"
+              />
+              <ul
+                v-else-if="v.changes.length"
+                class="rel-changes"
+              >
+                <li
+                  v-for="c in v.changes"
+                  :key="c.app"
+                >
+                  <code>{{ c.app }}</code>: {{ c.from ?? 'new' }} → {{ c.to }}
+                </li>
+              </ul>
+            </li>
+          </ol>
         </div>
 
         <div class="card panel">
@@ -399,6 +529,90 @@ const absoluteManifestURL = computed(() =>
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
+}
+.meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+.fresh {
+  color: var(--text-muted);
+}
+.deprecated {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--warning-200);
+  border-radius: var(--radius-lg);
+  background: var(--warning-50);
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+.deprecated > .icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--warning-700);
+}
+.deprecated-title {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.history {
+  list-style: none;
+  display: grid;
+}
+.rel {
+  padding: 14px 0;
+  border-top: 1px solid var(--border-secondary);
+}
+.rel:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+.rel-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.rel-version {
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.rel-version:hover,
+.rel-version.active {
+  color: var(--primary-600);
+}
+.rel-date {
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+}
+.rel-requires {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.rel-notes {
+  margin-top: 8px;
+  font-size: 13.5px;
+}
+.rel-changes {
+  margin-top: 8px;
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.rel-changes code {
+  font-size: 12.5px;
 }
 .actions {
   display: flex;

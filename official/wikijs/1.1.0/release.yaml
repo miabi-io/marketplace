@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `wikijs`: `ghcr.io/requarks/wiki` 2.5.314 → 2.5.317
+images:
+  wikijs: sha256:e4708eed80c014449c0c8426c8d466c7a52a62131555bb44372fa48378b448b8

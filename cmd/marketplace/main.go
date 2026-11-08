@@ -20,9 +20,11 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jkaninda/logger"
@@ -44,9 +46,59 @@ func main() {
 	generateCmd := func(*okapicli.Command) error { return generate() }
 	cli.Command("generate", "Write export.json + registry/index.json", generateCmd)
 	cli.Command("generate-index", "Alias of generate", generateCmd)
-	cli.Command("lint", "Validate every embedded template (CI drift check)", func(*okapicli.Command) error {
-		return lint()
+	cli.Command("lint", "Validate every embedded template (CI drift check)", func(cmd *okapicli.Command) error {
+		return lint(cmd.GetBool("strict"))
+	}).Bool("strict", "", false, "Fail on warnings (missing README, release info, image locks)")
+	cli.Command("outdated", "Report templates whose images have newer upstream tags", func(cmd *okapicli.Command) error {
+		return outdated(cmd.Args(), cmd.GetBool("json"), cmd.GetString("write"))
+	}).Bool("json", "", false, "Print the report as JSON").
+		String("write", "", "", "Also write the report to this path (registry/freshness.json is embedded)")
+	cli.Command("bump", "Publish a new template version with newer image tags", func(cmd *okapicli.Command) error {
+		if len(cmd.Args()) == 0 && !cmd.GetBool("all") {
+			return errors.New("name the templates to bump, or pass --all")
+		}
+		set, err := parseSet(cmd.GetString("set"))
+		if err != nil {
+			return err
+		}
+		return bump(cmd.Args(), bumpOptions{major: cmd.GetBool("major"), dryRun: cmd.GetBool("dry-run"), asJSON: cmd.GetBool("json"),
+			today: time.Now().UTC().Format(time.DateOnly), setTags: set})
+	}).Bool("all", "", false, "Bump every template that has an update").
+		Bool("major", "", false, "Allow major upgrades (marks the version breaking)").
+		Bool("dry-run", "", false, "Report what would change without writing").
+		Bool("json", "", false, "Print the bumped versions as JSON").
+		String("set", "", "", "Pin explicit tags instead of looking upstream: app=tag[,app=tag]")
+	cli.Command("lock", "Backfill release dates and image digests on each template's latest version", func(cmd *okapicli.Command) error {
+		return lock(cmd.Args(), time.Now().UTC().Format(time.DateOnly))
 	})
+	cli.Command("check-images", "Verify every installable image still resolves in its registry", func(cmd *okapicli.Command) error {
+		return checkImages(cmd.Args(), cmd.GetBool("strict"))
+	}).Bool("strict", "", false, "Also fail when a tag has moved off its locked digest")
+	cli.Command("e2e", "Install (and optionally upgrade) templates on a live Miabi, then clean up", func(cmd *okapicli.Command) error {
+		inputs, err := parseSet(cmd.GetString("input"))
+		if err != nil {
+			return err
+		}
+		return e2e(cmd.Args(), e2eOptions{
+			baseURL:   envOr(cmd.GetString("url"), "MIABI_E2E_URL"),
+			token:     envOr(cmd.GetString("token"), "MIABI_E2E_TOKEN"),
+			workspace: envOr(cmd.GetString("workspace"), "MIABI_E2E_WORKSPACE"),
+			domain:    envOr(cmd.GetString("domain"), "MIABI_E2E_DOMAIN"),
+			upgrade:   cmd.GetBool("upgrade"),
+			keep:      cmd.GetBool("keep"),
+			insecure:  cmd.GetBool("insecure"),
+			timeout:   cmd.GetDuration("timeout"),
+			inputs:    inputs,
+		})
+	}).String("url", "", "", "Miabi base URL (MIABI_E2E_URL)").
+		String("token", "", "", "Account API token (MIABI_E2E_TOKEN)").
+		String("workspace", "", "", "Workspace ID to install into (MIABI_E2E_WORKSPACE)").
+		String("domain", "", "", "Domain for generated URL/host inputs, default example.com (MIABI_E2E_DOMAIN)").
+		String("input", "", "", "Explicit input answers: key=value[,key=value]").
+		Bool("upgrade", "", false, "Install the previous version, then upgrade to the latest").
+		Bool("keep", "", false, "Leave the install in place for inspection").
+		Bool("insecure", "", false, "Skip TLS verification (test servers with private CAs)").
+		Duration("timeout", "", 20*time.Minute, "Per-template timeout")
 	cli.Command("version", "Print the build version", func(*okapicli.Command) error {
 		fmt.Printf("marketplace %s (commit %s, built %s)\n", buildinfo.Version, buildinfo.CommitID, buildinfo.BuildDate)
 		return nil
@@ -126,11 +178,40 @@ func writeJSON(path string, v any) error {
 	return os.WriteFile(path, append(data, '\n'), 0o644)
 }
 
-func lint() error {
+func lint(strict bool) error {
 	cat, err := catalog.Load()
 	if err != nil {
 		return err
 	}
-	logger.Info("catalog valid", "templates", len(cat.Templates()))
+	warnings := lintWarnings(cat)
+	for _, w := range warnings {
+		logger.Warn(w)
+	}
+	logger.Info("catalog valid", "templates", len(cat.Templates()), "warnings", len(warnings))
+	if strict && len(warnings) > 0 {
+		return fmt.Errorf("%d lint warning(s)", len(warnings))
+	}
 	return nil
+}
+
+func envOr(v, env string) string {
+	if v != "" {
+		return v
+	}
+	return os.Getenv(env)
+}
+
+func parseSet(s string) (map[string]string, error) {
+	out := map[string]string{}
+	for _, pair := range strings.Split(s, ",") {
+		if pair = strings.TrimSpace(pair); pair == "" {
+			continue
+		}
+		app, tag, ok := strings.Cut(pair, "=")
+		if !ok || app == "" || tag == "" {
+			return nil, fmt.Errorf("--set: %q is not app=tag", pair)
+		}
+		out[app] = tag
+	}
+	return out, nil
 }

@@ -1,0 +1,4 @@
+sourceRepo: https://github.com/miabi-io/marketplace/tree/main/official/linkwarden
+updates:
+  meilisearch:
+    hold: Pinned to the version Linkwarden's upstream compose ships; Linkwarden's search client tracks it.

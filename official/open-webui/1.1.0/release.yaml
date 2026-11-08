@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `open-webui`: `ghcr.io/open-webui/open-webui` v0.11.0 → v0.11.4
+images:
+  open-webui: sha256:9591b13f13843c7721c2b8eaf7382846c81b3ffe126526d1888d1fed50c6a33f

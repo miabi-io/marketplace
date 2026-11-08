@@ -56,6 +56,49 @@ jobs:
           git diff --exit-code export.json registry/index.json \
             || (echo "::error::export.json / registry/index.json are stale — run 'go run ./cmd/marketplace generate' and commit, or let the merge-to-main job regenerate them." && exit 1)
 
+  images:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27"
+          cache-dependency-path: go.sum
+      - name: Every installable image still resolves
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: go run ./cmd/marketplace check-images
+
+  # Installs each changed template on a real Miabi; skipped when the MIABI_E2E_* secrets aren't configured.
+  e2e:
+    if: github.event_name == 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    env:
+      MIABI_E2E_URL: ${{ secrets.MIABI_E2E_URL }}
+      MIABI_E2E_TOKEN: ${{ secrets.MIABI_E2E_TOKEN }}
+      MIABI_E2E_WORKSPACE: ${{ secrets.MIABI_E2E_WORKSPACE }}
+      MIABI_E2E_DOMAIN: ${{ secrets.MIABI_E2E_DOMAIN }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27"
+          cache-dependency-path: go.sum
+      - name: Changed templates
+        id: changed
+        run: |
+          names=$(git diff --name-only "origin/${GITHUB_BASE_REF}...HEAD" -- official community \
+            | awk -F/ 'NF >= 4 && $3 ~ /^[0-9]/ { print $2 }' | sort -u | tr '\n' ' ')
+          echo "names=${names}" >> "$GITHUB_OUTPUT"
+      - name: Install and upgrade on Miabi
+        if: env.MIABI_E2E_URL != '' && steps.changed.outputs.names != ''
+        run: go run ./cmd/marketplace e2e --upgrade ${{ steps.changed.outputs.names }}
+
   # Regenerate the artifacts on main so contributors never have to; Miabi syncs from release assets, not main.
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'

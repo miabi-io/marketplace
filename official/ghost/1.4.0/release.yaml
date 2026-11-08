@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `ghost`: `ghost` 6.45-alpine → 6.75-alpine
+images:
+  ghost: sha256:3af1575bb8917c6c0057beff85db92a4ac650f726956fd9de96932fea01c397c

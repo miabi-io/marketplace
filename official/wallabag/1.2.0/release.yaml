@@ -1,0 +1,6 @@
+released: "2026-11-08"
+notes: |
+  Image updates:
+  - `wallabag`: `wallabag/wallabag` 2.6.10 → 2.6.15
+images:
+  wallabag: sha256:d54d48f58503505192c8c283f575d7b90e116ae43ec90e54afadf7d279bfe106

@@ -1,0 +1,79 @@
+name: Template updates
+
+on:
+  schedule:
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+    inputs:
+      major:
+        description: Also open draft PRs for major upstream releases
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: template-updates
+  cancel-in-progress: false
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27"
+          cache-dependency-path: go.sum
+
+      - name: Refresh the freshness report
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: go run ./cmd/marketplace outdated --write registry/freshness.json
+
+      - name: Commit the report
+        run: |
+          if git diff --quiet -- registry/freshness.json; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add registry/freshness.json
+          git commit -m "chore(catalog): refresh template freshness report [skip ci]"
+          git push
+
+  bump:
+    needs: freshness
+    runs-on: ubuntu-latest
+    steps:
+      # A PR opened with the default token doesn't trigger CI, so BUMP_TOKEN (a PAT or app token) is preferred.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.BUMP_TOKEN || github.token }}
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27"
+          cache-dependency-path: go.sum
+
+      - name: Open in-major bump PRs
+        env:
+          GH_TOKEN: ${{ secrets.BUMP_TOKEN || github.token }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull -q origin main
+          scripts/open-bump-prs.sh minor
+
+      - name: Open draft PRs for major releases
+        if: github.event_name == 'workflow_dispatch' && inputs.major
+        env:
+          GH_TOKEN: ${{ secrets.BUMP_TOKEN || github.token }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: scripts/open-bump-prs.sh major

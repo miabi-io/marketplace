@@ -1,0 +1,5 @@
+sourceRepo: https://github.com/miabi-io/marketplace/tree/main/official/wordpress
+updates:
+  # A PHP minor change can break plugins, so it is a deliberate, separate bump.
+  wordpress:
+    match: '^\d+\.\d+-php8\.3-apache$'
