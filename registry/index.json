@@ -1,5 +1,5 @@
 {
-  "etag": "\"7b525d1a96be89eac2f2c420003aeec17955012cf76f69a2c77e074090bdc4e0\"",
+  "etag": "\"145855286dc4aa524b05366dd0d89c57f12611bbb95901ae132e843a11cc265d\"",
   "generatedAt": "",
   "templates": [
     {
@@ -9,6 +9,12 @@
       "display_name": "Adminer",
       "category": "Database",
       "versions": [
+        {
+          "version": "2.0.0",
+          "digest": "sha256:eaf58820b13b34a22d38651b1e0681c01c8e9dc08fbe38d32345d1329eba8f98",
+          "released": "2026-11-08",
+          "breaking": true
+        },
         {
           "version": "1.0.0",
           "digest": "sha256:3d6b3d41eaa19f6ec3b652a2e7260f8b4a4461848194f3745a6b2fa0804e5a4d",
