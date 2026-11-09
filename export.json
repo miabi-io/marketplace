@@ -1,5 +1,5 @@
 {
-  "etag": "\"03e3781ff209dcd126ed482f0aa7b68d4e5de080c184124c03aa1f12b4bb664e\"",
+  "etag": "\"31f34f86ca695dd8497dd3c5174be9750b9e3371ff43bcec9ec6a83b10a9e0f7\"",
   "generatedAt": "",
   "templates": [
     {
@@ -1147,6 +1147,18 @@
       "slug": "roundcube",
       "source": "official",
       "versions": [
+        {
+          "version": "1.2.0",
+          "digest": "sha256:186d003469dde421d17e72cbdfba3a4c4e60aa431001a1d4ad4ff1a706c770d8",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: roundcube\n  displayName: Roundcube\n  version: 1.2.0\n  description: Browser-based IMAP webmail client, backed by PostgreSQL.\n  category: Email\n  icon: https://cdn.simpleicons.org/roundcube\n  homepage: https://roundcube.net\n  tags: [email, webmail, imap, smtp]\ninputs:\n  - key: imap_host\n    label: IMAP server\n    help: Your mail server's IMAP host. Prefix with ssl:// for implicit TLS (port 993) or tls:// for STARTTLS.\n    type: string\n    required: true\n    placeholder: ssl://imap.example.com\n  - key: imap_port\n    label: IMAP port\n    help: IMAP port — 993 for SSL/TLS, 143 for STARTTLS.\n    type: number\n    default: \"993\"\n  - key: smtp_host\n    label: SMTP server\n    help: Your mail server's outgoing SMTP host. Prefix with tls:// for STARTTLS or ssl:// for implicit TLS.\n    type: string\n    required: true\n    placeholder: tls://smtp.example.com\n  - key: smtp_port\n    label: SMTP port\n    help: SMTP submission port — 587 for STARTTLS, 465 for SSL/TLS.\n    type: number\n    default: \"587\"\ndatabases:\n  - name: db\n    engine: postgres\n    version: \"17-alpine\"\n    placement: auto\napplications:\n  - name: roundcube\n    primary: true\n    image: roundcube/roundcubemail\n    tag: \"1.7.6-apache\"\n    ports:\n      - container: 80\n        scheme: http\n    env:\n      ROUNDCUBEMAIL_DB_TYPE: pgsql\n      ROUNDCUBEMAIL_DB_HOST: \"{{ .databases.db.host }}\"\n      ROUNDCUBEMAIL_DB_PORT: \"{{ .databases.db.port }}\"\n      ROUNDCUBEMAIL_DB_USER: \"{{ .databases.db.user }}\"\n      ROUNDCUBEMAIL_DB_PASSWORD: \"{{ .databases.db.password }}\"\n      ROUNDCUBEMAIL_DB_NAME: \"{{ .databases.db.name }}\"\n      ROUNDCUBEMAIL_DEFAULT_HOST: \"{{ .inputs.imap_host }}\"\n      ROUNDCUBEMAIL_DEFAULT_PORT: \"{{ .inputs.imap_port }}\"\n      ROUNDCUBEMAIL_SMTP_SERVER: \"{{ .inputs.smtp_host }}\"\n      ROUNDCUBEMAIL_SMTP_PORT: \"{{ .inputs.smtp_port }}\"\n    secretEnv:\n      - ROUNDCUBEMAIL_DB_PASSWORD\n    healthcheck:\n      type: http\n      path: /\n      port: 80\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 15\n",
+          "release": {
+            "released": "2026-11-09",
+            "notes": "Image updates:\n- `roundcube`: `roundcube/roundcubemail` 1.7.5-apache → 1.7.6-apache\n",
+            "images": {
+              "roundcube": "sha256:d23169b8bbb99b5e75adcd502b627d6f29e60833a7053a12e4ff133468c2e5b4"
+            }
+          }
+        },
         {
           "version": "1.1.0",
           "digest": "sha256:d597c09dedd80d237a6d904704ae12e7f2aae0f2991288a896c2c9d1d339620e",

@@ -1,5 +1,5 @@
 {
-  "etag": "\"03e3781ff209dcd126ed482f0aa7b68d4e5de080c184124c03aa1f12b4bb664e\"",
+  "etag": "\"31f34f86ca695dd8497dd3c5174be9750b9e3371ff43bcec9ec6a83b10a9e0f7\"",
   "generatedAt": "",
   "templates": [
     {
@@ -875,6 +875,11 @@
       "display_name": "Roundcube",
       "category": "Email",
       "versions": [
+        {
+          "version": "1.2.0",
+          "digest": "sha256:186d003469dde421d17e72cbdfba3a4c4e60aa431001a1d4ad4ff1a706c770d8",
+          "released": "2026-11-09"
+        },
         {
           "version": "1.1.0",
           "digest": "sha256:d597c09dedd80d237a6d904704ae12e7f2aae0f2991288a896c2c9d1d339620e",

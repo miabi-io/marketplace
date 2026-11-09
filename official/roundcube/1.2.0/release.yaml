@@ -1,0 +1,6 @@
+released: "2026-11-09"
+notes: |
+  Image updates:
+  - `roundcube`: `roundcube/roundcubemail` 1.7.5-apache → 1.7.6-apache
+images:
+  roundcube: sha256:d23169b8bbb99b5e75adcd502b627d6f29e60833a7053a12e4ff133468c2e5b4
