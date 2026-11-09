@@ -1,45 +1,45 @@
 {
-  "checked_at": "2026-11-08",
+  "checked_at": "2026-11-09",
   "templates": {
     "adminer": {
-      "version": "1.0.0",
-      "status": "major",
+      "version": "2.0.0",
+      "status": "current",
       "apps": [
         {
           "app": "adminer",
           "image": "adminer",
-          "tag": "5.5.1",
-          "latest_in_major": "5.5.1",
+          "tag": "6.3.0",
+          "latest_in_major": "6.3.0",
           "latest": "6.3.0",
-          "status": "major"
+          "status": "current"
         }
       ]
     },
     "akili": {
-      "version": "1.2.0",
-      "status": "major",
+      "version": "1.3.0",
+      "status": "current",
       "apps": [
         {
           "app": "akili",
           "image": "jkaninda/akili",
-          "tag": "0.1.0",
-          "latest_in_major": "0.1.0",
+          "tag": "0.4.0",
+          "latest_in_major": "0.4.0",
           "latest": "0.4.0",
-          "status": "major"
+          "status": "current"
         }
       ]
     },
     "akili-agent": {
-      "version": "1.2.0",
-      "status": "major",
+      "version": "1.3.0",
+      "status": "current",
       "apps": [
         {
           "app": "akili-agent",
           "image": "jkaninda/akili-agent",
-          "tag": "0.1.0",
-          "latest_in_major": "0.1.0",
+          "tag": "0.4.0",
+          "latest_in_major": "0.4.0",
           "latest": "0.4.0",
-          "status": "major"
+          "status": "current"
         }
       ]
     },
@@ -536,7 +536,7 @@
           "image": "ghcr.io/open-webui/open-webui",
           "tag": "v0.11.4",
           "latest_in_major": "v0.11.4",
-          "latest": "v0.13.0",
+          "latest": "v0.13.3",
           "status": "major"
         }
       ]
@@ -608,24 +608,24 @@
       ]
     },
     "posta": {
-      "version": "1.4.0",
-      "status": "major",
+      "version": "1.5.0",
+      "status": "current",
       "apps": [
         {
           "app": "server",
           "image": "jkaninda/posta",
-          "tag": "0.15.1",
-          "latest_in_major": "0.15.1",
+          "tag": "0.19.0",
+          "latest_in_major": "0.19.0",
           "latest": "0.19.0",
-          "status": "major"
+          "status": "current"
         },
         {
           "app": "worker",
           "image": "jkaninda/posta",
-          "tag": "0.15.1",
-          "latest_in_major": "0.15.1",
+          "tag": "0.19.0",
+          "latest_in_major": "0.19.0",
           "latest": "0.19.0",
-          "status": "major"
+          "status": "current"
         }
       ]
     },
@@ -683,15 +683,15 @@
     },
     "roundcube": {
       "version": "1.1.0",
-      "status": "current",
+      "status": "update",
       "apps": [
         {
           "app": "roundcube",
           "image": "roundcube/roundcubemail",
           "tag": "1.7.5-apache",
-          "latest_in_major": "1.7.5-apache",
-          "latest": "1.7.5-apache",
-          "status": "current"
+          "latest_in_major": "1.7.6-apache",
+          "latest": "1.7.6-apache",
+          "status": "update"
         }
       ]
     },
@@ -802,7 +802,7 @@
           "image": "ghcr.io/requarks/wiki",
           "tag": "2.5.317",
           "latest_in_major": "2.5.317",
-          "latest": "3.1.1",
+          "latest": "3.3.0",
           "status": "major"
         }
       ]
