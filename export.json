@@ -1,5 +1,5 @@
 {
-  "etag": "\"03e3781ff209dcd126ed482f0aa7b68d4e5de080c184124c03aa1f12b4bb664e\"",
+  "etag": "\"eadb855fcd66a68ada4fb0026a44015cb2558df10d1b2dcb937562507c1728c3\"",
   "generatedAt": "",
   "templates": [
     {
@@ -294,6 +294,18 @@
       "slug": "ghost",
       "source": "official",
       "versions": [
+        {
+          "version": "1.5.0",
+          "digest": "sha256:5044760660f291d05809f63d50d70026388eed346df1aeaa8da3ec180775a3a4",
+          "manifest": "apiVersion: miabi.io/v1\nkind: Template\nmetadata:\n  name: ghost\n  displayName: Ghost\n  version: 1.5.0\n  description: Professional publishing platform — a headless Node.js CMS for blogs and newsletters.\n  category: CMS\n  icon: https://cdn.simpleicons.org/ghost\n  homepage: https://ghost.org\n  author:\n    name: Miabi\n    email: community@miabi.io\n    website: https://miabi.io\n  tags: [blog, cms, publishing, newsletter]\n  minMiabi: \"1.10.10\" # routes\n\n# Questions asked in the install wizard. Referenced below as {{ .inputs.\u003ckey\u003e }}.\ninputs:\n  - key: site_url\n    label: Public URL\n    help: The full URL your blog will be served on (used for links and webhooks).\n    type: string\n    required: true\n    pattern: \"^https?://\"\n    placeholder: https://blog.example.com\n\n# placement: auto reuses a compatible MySQL instance or provisions one; Ghost always gets its own database + user.\ndatabases:\n  - name: db\n    engine: mysql\n    version: \"8.4\"\n    placement: auto\n\n# Managed volume holding Ghost's content (images, themes, settings).\nvolumes:\n  - name: content\n\napplications:\n  - name: ghost\n    primary: true\n    image: ghost\n    tag: \"6.77-alpine\"\n    ports:\n      - container: 2368\n        scheme: http\n    env:\n      NODE_ENV: production\n      url: \"{{ .inputs.site_url }}\"\n      database__client: mysql\n      database__connection__host: \"{{ .databases.db.host }}\"\n      database__connection__port: \"{{ .databases.db.port }}\"\n      database__connection__user: \"{{ .databases.db.user }}\"\n      database__connection__password: \"{{ .databases.db.password }}\"\n      database__connection__database: \"{{ .databases.db.name }}\"\n    secretEnv:\n      - database__connection__password\n    mounts:\n      - volume: content\n        path: /var/lib/ghost/content\n    resources:\n      memory: 512Mi\n      cpu: 0.5\n    healthcheck:\n      type: http\n      path: /\n      port: 2368\n      intervalSeconds: 30\n      timeoutSeconds: 5\n      retries: 3\n      startPeriodSeconds: 20\n# Created on install when the URL's domain belongs to this workspace; skipped with a warning otherwise.\nroutes:\n  - app: ghost\n    host: \"{{ .inputs.site_url }}\"\n",
+          "release": {
+            "released": "2026-11-16",
+            "notes": "Image updates:\n- `ghost`: `ghost` 6.75-alpine → 6.77-alpine\n",
+            "images": {
+              "ghost": "sha256:a1c2adb3ab81b6d3fcae4d33bebe56a94a57c3e76c2f0b7b3d213726b2ca8922"
+            }
+          }
+        },
         {
           "version": "1.4.0",
           "digest": "sha256:e256a978ff8943dbfdf61cb45f47e2fa371b412c938a719736a9ade11d32018a",

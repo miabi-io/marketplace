@@ -1,5 +1,5 @@
 {
-  "etag": "\"03e3781ff209dcd126ed482f0aa7b68d4e5de080c184124c03aa1f12b4bb664e\"",
+  "etag": "\"eadb855fcd66a68ada4fb0026a44015cb2558df10d1b2dcb937562507c1728c3\"",
   "generatedAt": "",
   "templates": [
     {
@@ -219,6 +219,11 @@
       "display_name": "Ghost",
       "category": "CMS",
       "versions": [
+        {
+          "version": "1.5.0",
+          "digest": "sha256:5044760660f291d05809f63d50d70026388eed346df1aeaa8da3ec180775a3a4",
+          "released": "2026-11-16"
+        },
         {
           "version": "1.4.0",
           "digest": "sha256:e256a978ff8943dbfdf61cb45f47e2fa371b412c938a719736a9ade11d32018a",
